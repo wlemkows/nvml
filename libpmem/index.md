@@ -18,7 +18,7 @@ Man pages that contains a list of the interfaces provided:
 
 * Man page for [libpmem HEAD](master/libpmem.3.html)
 * Latest releases:
-   * [libpmem version 1.0](v1.0/libpmem.3.md)
+   * [libpmem version 1.0](v1.0/libpmem.3.html)
 
 #### libpmem Examples
 
