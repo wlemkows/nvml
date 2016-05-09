@@ -14,7 +14,7 @@ developers will find higher level libraries like
 
 Man pages that contains a list of the interfaces provided:
 
-* Man page for: [libpmemlog HEAD](master/libpmemlog.3.html)
+* Man page for [libpmemlog HEAD](master/libpmemlog.3.html)
 * Latest releases:
    * [libpmemlog version 1.0](v1.0/libpmemlog.3.html)
 

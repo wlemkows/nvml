@@ -17,7 +17,7 @@ by setting the environment variable **LD_PRELOAD**.
 
 Man pages that contains a list of the interfaces provided:
 
-* Man page for: [libvmmalloc HEAD](master/libvmmalloc.3.html)
+* Man page for [libvmmalloc HEAD](master/libvmmalloc.3.html)
 * Latest releases:
    * [libvmmalloc version 1.0](v1.0/libvmmalloc.3.html)
 

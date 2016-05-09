@@ -17,7 +17,7 @@ developers will find higher level libraries like
 
 Man pages that contains a list of the interfaces provided:
 
-* Man page for: [libpmemblk HEAD](master/libpmemblk.3.html)
+* Man page for [libpmemblk HEAD](master/libpmemblk.3.html)
 * Latest releases:
    * [libpmemblk version 1.0](v1.0/libpmemblk.3.html)
 
