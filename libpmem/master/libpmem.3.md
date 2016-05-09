@@ -21,7 +21,7 @@ title: libpmem
 <!-- Creator     : groff version 1.18.1.4 -->
 <!-- CreationDate: Mon Mar 21 14:06:24 2016 -->
 
-<p style=style="text-align: center;">libpmem</p>
+<p style="text-align: center;" markdown="1">libpmem</p>
 =======
 
 []()
