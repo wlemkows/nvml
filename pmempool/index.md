@@ -9,7 +9,7 @@ layout: nvml
 of persistent memory pools. It works for both the *single-file* pools and
 for *pool set files*. Below you can find a list of available commands.
 
-See the [pmempool man page](master/pmempool.1.html) page for HEAD documentation,
+See the [pmempool man page](master/pmempool.1.html) page for HEAD documentation,<br />  
 or see older versions:
    * [pmempool version 1.0](v1.0/pmempool.1.html)
 
