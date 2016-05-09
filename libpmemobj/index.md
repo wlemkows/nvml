@@ -12,7 +12,8 @@ management, locking, lists, and a number of other features.
 Man pages that contains a list of the interfaces provided:
 
 * Man page for: [libpmemobj HEAD](master/libpmemobj.3.html)
-* Man page for: [libpmemobj version 1.0](v1.0/libpmemobj.3.html)
+* Latest releases:
+    * [libpmemobj version 1.0](v1.0/libpmemobj.3.html)
 
 #### libpmemobj Examples
 
