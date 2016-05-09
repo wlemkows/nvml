@@ -12,7 +12,7 @@ can be found in the
 
 The NVM Library is actually six separate libraries:
 
-#### libpmemobjj
+#### libpmemobj
 
 The **libpmemobj** library provides a transactional object store,
 providing memory allocation, transactions, and general facilities
