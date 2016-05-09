@@ -4,7 +4,7 @@ generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
 ...
 
-libpmem {#libpmem align="center"}
+-> libpmem <-
 =======
 
 [NAME](#name)\
