@@ -4,10 +4,24 @@ generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
 ...
 
--> libpmem <-
+-   [libpmem](#libpmem)
+    -   [NAME](#name)
+    -   [SYNOPSIS](#synopsis)
+    -   [DESCRIPTION](#description)
+    -   [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
+    -   [PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
+    -   [COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
+    -   [LIBRARY API VERSIONING](#library-api-versioning)
+    -   [DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
+    -   [ENVIRONMENT VARIABLES](#environment-variables)
+    -   [EXAMPLES](#examples)
+    -   [ACKNOWLEDGEMENTS](#acknowledgements)
+    -   [SEE ALSO](#see-also)
+
+libpmem {#libpmem align="center"}
 =======
 
-[NAME](#name)\
+[NAME](#NAME)\
 [SYNOPSIS](#SYNOPSIS)\
 [DESCRIPTION](#DESCRIPTION)\
 [MOST COMMONLY USED FUNCTIONS](#MOST%20COMMONLY%20USED%20FUNCTIONS)\
@@ -16,7 +30,7 @@ title: libpmem
 [LIBRARY API VERSIONING](#LIBRARY%20API%20VERSIONING)\
 [DEBUGGING AND ERROR HANDLING](#DEBUGGING%20AND%20ERROR%20HANDLING)\
 [ENVIRONMENT VARIABLES](#ENVIRONMENT%20VARIABLES)\
-[EXAMPLES](#examples)\
+[EXAMPLES](#EXAMPLES)\
 [ACKNOWLEDGEMENTS](#ACKNOWLEDGEMENTS)\
 [SEE ALSO](#SEE%20ALSO)\
 
@@ -24,7 +38,7 @@ title: libpmem
 
 []()
 
-# NAME
+NAME
 ----
 
 +--------------------------------------+--------------------------------------+
@@ -210,7 +224,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | WARNING: Using **pmem\_persist**()   |
 |                                      | on a range where                     |
 |                                      | **pmem\_is\_pmem**() returns false   |
-|                                      | may not do anything useful -- use    |
+|                                      | may not do anything useful – use     |
 |                                      | **msync**(2) instead.                |
 +--------------------------------------+--------------------------------------+
 
@@ -243,7 +257,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | policies. Correctly written code     |
 |                                      | must not depend on stores waiting    |
 |                                      | until **pmem\_persist**() is called  |
-|                                      | to become persistent -- they can     |
+|                                      | to become persistent – they can      |
 |                                      | become persistent at any time before |
 |                                      | **pmem\_persist**() is called.       |
 +--------------------------------------+--------------------------------------+
@@ -820,7 +834,7 @@ DEBUGGING AND ERROR HANDLING
 |                                      | **PMEM\_LOG\_FILE** specifies a file |
 |                                      | name where all logging information   |
 |                                      | should be written. If the last       |
-|                                      | character in the name is "-", the    |
+|                                      | character in the name is “-”, the    |
 |                                      | PID of the current process will be   |
 |                                      | appended to the file name when the   |
 |                                      | log file is created. If              |
@@ -996,7 +1010,7 @@ ENVIRONMENT VARIABLES
 
 []()
 
-# EXAMPLES
+EXAMPLES
 --------
 
 +--------------------------------------+--------------------------------------+
@@ -1035,8 +1049,8 @@ ENVIRONMENT VARIABLES
 |                | \#define       |                | PMEM\_LEN 4096 |                |
 +----------------+----------------+----------------+----------------+----------------+
 |                | \#define       |                | PATH           |                |
-|                |                |                | "/pmem-fs/myfi |                |
-|                |                |                | le"            |                |
+|                |                |                | “/pmem-fs/myfi |                |
+|                |                |                | le”            |                |
 +----------------+----------------+----------------+----------------+----------------+
 
 +--------------------------------------+--------------------------------------+
@@ -1080,9 +1094,9 @@ ENVIRONMENT VARIABLES
 |            |            |            |            |            | )          |            |
 |            |            |            |            |            | == NULL) { |            |
 +------------+------------+------------+------------+------------+------------+------------+
-|            |            |            | perror("pm |            |            |            |
+|            |            |            | perror(“pm |            |            |            |
 |            |            |            | em\_map\_f |            |            |            |
-|            |            |            | ile");     |            |            |            |
+|            |            |            | ile”);     |            |            |            |
 +------------+------------+------------+------------+------------+------------+------------+
 |            |            |            | exit(1);   |            |            |            |
 +------------+------------+------------+------------+------------+------------+------------+
@@ -1096,9 +1110,9 @@ ENVIRONMENT VARIABLES
 +------------+------------+------------+------------+------------+------------+------------+
 |            |            | strcpy(pme |            |            |            |            |
 |            |            | maddr,     |            |            |            |            |
-|            |            | "hello,    |            |            |            |            |
+|            |            | “hello,    |            |            |            |            |
 |            |            | persistent |            |            |            |            |
-|            |            | memory");  |            |            |            |            |
+|            |            | memory”);  |            |            |            |            |
 +------------+------------+------------+------------+------------+------------+------------+
 |            |            | /\* flush  |            |            |            |            |
 |            |            | above      |            |            |            |            |
