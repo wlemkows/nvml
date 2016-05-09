@@ -18,38 +18,28 @@ title: libpmem
     -   [ACKNOWLEDGEMENTS](#acknowledgements)
     -   [SEE ALSO](#see-also)
 
-libpmem {#libpmem align="center"}
+<!-- Creator     : groff version 1.18.1.4 -->
+<!-- CreationDate: Mon Mar 21 14:06:24 2016 -->
+
+<p style=style="text-align: center;">libpmem</p>
 =======
-
-[NAME](#NAME)\
-[SYNOPSIS](#SYNOPSIS)\
-[DESCRIPTION](#DESCRIPTION)\
-[MOST COMMONLY USED FUNCTIONS](#MOST%20COMMONLY%20USED%20FUNCTIONS)\
-[PARTIAL FLUSHING OPERATIONS](#PARTIAL%20FLUSHING%20OPERATIONS)\
-[COPYING TO PERSISTENT MEMORY](#COPYING%20TO%20PERSISTENT%20MEMORY)\
-[LIBRARY API VERSIONING](#LIBRARY%20API%20VERSIONING)\
-[DEBUGGING AND ERROR HANDLING](#DEBUGGING%20AND%20ERROR%20HANDLING)\
-[ENVIRONMENT VARIABLES](#ENVIRONMENT%20VARIABLES)\
-[EXAMPLES](#EXAMPLES)\
-[ACKNOWLEDGEMENTS](#ACKNOWLEDGEMENTS)\
-[SEE ALSO](#SEE%20ALSO)\
-
-------------------------------------------------------------------------
 
 []()
 
 NAME
 ----
 
-+--------------------------------------+--------------------------------------+
-|                                      | libpmem − persistent memory support  |
-|                                      | library                              |
-+--------------------------------------+--------------------------------------+
+libpmem − persistent memory support
 
 []()
 
 SYNOPSIS
 --------
+
+
+{% highlight c %}
+#include test test
+{% endhighlight %}
 
 +--------------------------------------+--------------------------------------+
 |                                      |     #include <libpmem.h>             |
@@ -103,8 +93,10 @@ SYNOPSIS
 |                                      |         unsigned major_required,     |
 |                                      |         unsigned minor_required);    |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **Error handling:**                  |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **const char                         |
 |                                      | \*pmem\_errormsg(void);**            |
 +--------------------------------------+--------------------------------------+
@@ -113,6 +105,8 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | **libpmem** provides low-level       |
@@ -132,6 +126,7 @@ DESCRIPTION
 |                                      | results in the load/store, non-paged |
 |                                      | access to pmem.                      |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | This library is for applications     |
 |                                      | that use persistent memory directly, |
 |                                      | without the help of any              |
@@ -142,6 +137,8 @@ DESCRIPTION
 |                                      | for most applications, see:          |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **libpmemobj**(3), a general use     |
 |                                      | persistent memory API, providing     |
@@ -149,13 +146,17 @@ DESCRIPTION
 |                                      | operations on variable-sized         |
 |                                      | objects.                             |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **libpmemblk**(3), providing         |
 |                                      | pmem-resident arrays of fixed-sized  |
 |                                      | blocks with atomic updates.          |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **libpmemlog**(3), providing a       |
 |                                      | pmem-resident log file.              |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Under normal usage, **libpmem** will |
@@ -173,6 +174,8 @@ DESCRIPTION
 MOST COMMONLY USED FUNCTIONS
 ----------------------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | Most pmem-aware applications will    |
 |                                      | take advantage of higher level       |
@@ -188,9 +191,12 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | section to be the most commonly      |
 |                                      | used.                                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **int pmem\_is\_pmem(const void      |
 |                                      | \****addr***, size\_t** *len***);**  |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_is\_pmem**() function    |
@@ -204,6 +210,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | changes durable for that memory      |
 |                                      | range.                               |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | The implementation of                |
 |                                      | **pmem\_is\_pmem**() requires a      |
 |                                      | non-trivial amount of work to        |
@@ -221,6 +228,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | time changes are flushed to          |
 |                                      | persistence will not perform well.   |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: Using **pmem\_persist**()   |
 |                                      | on a range where                     |
 |                                      | **pmem\_is\_pmem**() returns false   |
@@ -228,10 +236,14 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | **msync**(2) instead.                |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **void pmem\_persist(const void      |
 |                                      | \****addr***, size\_t** *len***);**  |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Force any changes in the range       |
@@ -247,6 +259,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | range as necessary to meet platform  |
 |                                      | alignment requirements.              |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: Like **msync**(2), there is |
 |                                      | nothing atomic or transactional      |
 |                                      | about this call. Any unwritten       |
@@ -262,10 +275,14 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | **pmem\_persist**() is called.       |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **int pmem\_msync(const void         |
 |                                      | \****addr***, size\_t** *len***);**  |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The function **pmem\_msync**() is    |
@@ -288,6 +305,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | and then uses that result throughout |
 |                                      | the program, for example:            |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      |         /* do this call once, after  |
 |                                      | the pmem is memory mapped */         |
 |                                      |         int is_pmem = pmem_is_pmem(r |
@@ -307,12 +325,15 @@ MOST COMMONLY USED FUNCTIONS
 |                                      |                                      |
 |                                      |        /* ... */                     |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | The return value of                  |
 |                                      | **pmem\_msync**() is the return      |
 |                                      | value of **msync**(), which can      |
 |                                      | return -1 and set errno to indicate  |
 |                                      | an error.                            |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | **void \*pmem\_map\_file(const char  |
@@ -323,6 +344,8 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | \****is\_pmemp***);**                |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | Given a *path*,                      |
 |                                      | **pmem\_map\_file**() function       |
@@ -332,6 +355,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | extra steps to make large page       |
 |                                      | mappings more likely.                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | On success, **pmem\_map\_file**()    |
 |                                      | returns a pointer to mapped area. If |
 |                                      | *mapped\_lenp* is not NULL, the      |
@@ -348,10 +372,12 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | *mapped\_lenp* and *is\_pmemp* are   |
 |                                      | left untouched.                      |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | The *flags* argument can be 0 or     |
 |                                      | bitwise OR of one or more of the     |
 |                                      | following file creation flags:       |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **PMEM\_FILE\_CREATE** - Create the  |
 |                                      | named file if it does not exist.     |
 |                                      | *len* must be non-zero and specifies |
@@ -364,6 +390,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | **PMEM\_FILE\_TMPFILE** is           |
 |                                      | specified, then *mode* is ignored.   |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **PMEM\_FILE\_EXCL** - Same meaning  |
 |                                      | as **O\_EXCL** on **open**(2) -      |
 |                                      | Ensure that this call creates the    |
@@ -373,6 +400,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | already exists, then                 |
 |                                      | **pmem\_map\_file**() will fail.     |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **PMEM\_FILE\_TMPFILE** - Same       |
 |                                      | meaning as **O\_TMPFILE** on         |
 |                                      | **open**(2). Create a mapping for an |
@@ -381,6 +409,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | must be specified and *path* must be |
 |                                      | an existing directory name.          |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **PMEM\_FILE\_SPARSE** - When        |
 |                                      | creating a file, create a sparse     |
 |                                      | (holey) file instead of calling      |
@@ -390,6 +419,7 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | **PMEM\_FILE\_TMPFILE**, otherwise   |
 |                                      | ignored.                             |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | If creation flags are not supplied,  |
 |                                      | then **pmem\_map\_file**() creates a |
 |                                      | mapping for an existing file. In     |
@@ -399,15 +429,20 @@ MOST COMMONLY USED FUNCTIONS
 |                                      | mapping and returned via             |
 |                                      | *mapped\_lenp*.                      |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | To delete mappings created with      |
 |                                      | **pmem\_map\_file**(), use           |
 |                                      | **pmem\_unmap**().                   |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **int pmem\_unmap(void \****addr***, |
 |                                      | size\_t** *len***);**                |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_unmap**() function       |
@@ -431,6 +466,8 @@ MOST COMMONLY USED FUNCTIONS
 PARTIAL FLUSHING OPERATIONS
 ---------------------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | The functions in this section        |
 |                                      | provide access to the stages of      |
@@ -441,10 +478,13 @@ PARTIAL FLUSHING OPERATIONS
 |                                      | **pmem\_persist**() function         |
 |                                      | described above.                     |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **void pmem\_flush(const void        |
 |                                      | \****addr***, size\_t** *len***);\   |
 |                                      | void pmem\_drain(void);**            |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | These functions provide partial      |
@@ -453,6 +493,7 @@ PARTIAL FLUSHING OPERATIONS
 |                                      | **pmem\_persist**() can be thought   |
 |                                      | of as this:                          |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      |     void                             |
 |                                      |     pmem_persist(const void *addr, s |
 |                                      | ize_t len)                           |
@@ -466,6 +507,7 @@ PARTIAL FLUSHING OPERATIONS
 |                                      |         pmem_drain();                |
 |                                      |     }                                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | These functions allow advanced       |
 |                                      | programs to create their own         |
 |                                      | variations of **pmem\_persist**().   |
@@ -475,6 +517,7 @@ PARTIAL FLUSHING OPERATIONS
 |                                      | range and then follow up by calling  |
 |                                      | **pmem\_drain**() once.              |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | NOTE: Some software is designed for  |
 |                                      | custom platforms that obviate the    |
 |                                      | need for using PCOMMIT (perhaps the  |
@@ -493,9 +536,13 @@ PARTIAL FLUSHING OPERATIONS
 |                                      | section.                             |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **int pmem\_has\_hw\_drain(void);**  |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_has\_hw\_drain**()       |
@@ -528,11 +575,14 @@ PARTIAL FLUSHING OPERATIONS
 COPYING TO PERSISTENT MEMORY
 ----------------------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | The functions in this section        |
 |                                      | provide optimized copying to         |
 |                                      | persistent memory.                   |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **void \*pmem\_memmove\_persist(void |
 |                                      | \****pmemdest***, const void         |
 |                                      | \****src***,\                        |
@@ -544,6 +594,8 @@ COPYING TO PERSISTENT MEMORY
 |                                      | \****pmemdest***, int** *c***,       |
 |                                      | size\_t** *len***);**                |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_memmove\_persist**(),    |
@@ -559,6 +611,7 @@ COPYING TO PERSISTENT MEMORY
 |                                      | functionally equivalent to           |
 |                                      | **pmem\_memmove\_persist**():        |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      |     void *                           |
 |                                      |     pmem_memmove_persist(void *pmemd |
 |                                      | est, const void *src, size_t len)    |
@@ -571,6 +624,7 @@ COPYING TO PERSISTENT MEMORY
 |                                      |        return retval;                |
 |                                      |     }                                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | Calling **pmem\_memmove\_persist**() |
 |                                      | may out-perform the above code,      |
 |                                      | however, since the **libpmem**       |
@@ -581,11 +635,14 @@ COPYING TO PERSISTENT MEMORY
 |                                      | stores to avoid the need to flush    |
 |                                      | processor caches.                    |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: Using these functions where |
 |                                      | **pmem\_is\_pmem**() returns false   |
 |                                      | may not do anything useful. Use the  |
 |                                      | normal libc functions in that case.  |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | **void \*pmem\_memmove\_nodrain(void |
@@ -599,6 +656,8 @@ COPYING TO PERSISTENT MEMORY
 |                                      | \****pmemdest***, int** *c***,       |
 |                                      | size\_t** *len***);**                |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_memmove\_nodrain**(),    |
@@ -621,6 +680,7 @@ COPYING TO PERSISTENT MEMORY
 |                                      | when copying several ranges of       |
 |                                      | memory to pmem:                      |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      |         /* ... write several ranges  |
 |                                      | to pmem ... */                       |
 |                                      |         pmem_memcpy_nodrain(pmemdest |
@@ -634,6 +694,7 @@ COPYING TO PERSISTENT MEMORY
 |                                      | o drain from HW buffers */           |
 |                                      |         pmem_drain();                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: Using                       |
 |                                      | **pmem\_memmove\_nodrain**(),        |
 |                                      | **pmem\_memcpy\_nodrain**() or       |
@@ -648,17 +709,22 @@ COPYING TO PERSISTENT MEMORY
 LIBRARY API VERSIONING
 ----------------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | This section describes how the       |
 |                                      | library API is versioned, allowing   |
 |                                      | applications to work with an         |
 |                                      | evolving API.                        |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **const char                         |
 |                                      | \*pmem\_check\_version(\             |
 |                                      | unsigned** *major\_required***,\     |
 |                                      | unsigned** *minor\_required***);**   |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_check\_version**()       |
@@ -671,6 +737,7 @@ LIBRARY API VERSIONING
 |                                      | information, supplied by defines in  |
 |                                      | **&lt;libpmem.h&gt;**, like this:    |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      |     reason = pmem_check_version(PMEM |
 |                                      | _MAJOR_VERSION,                      |
 |                                      |                                 PMEM |
@@ -680,6 +747,7 @@ LIBRARY API VERSIONING
 |                                      | ason string tells you why */         |
 |                                      |     }                                |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | Any mismatch in the major version    |
 |                                      | number is considered a failure, but  |
 |                                      | a library with a newer minor version |
@@ -687,6 +755,7 @@ LIBRARY API VERSIONING
 |                                      | increasing minor versions imply      |
 |                                      | backwards compatibility.             |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | An application can also check        |
 |                                      | specifically for the existence of an |
 |                                      | interface by checking for the        |
@@ -702,6 +771,7 @@ LIBRARY API VERSIONING
 |                                      | section of this manual describing    |
 |                                      | the feature.                         |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | When the version check performed by  |
 |                                      | **pmem\_check\_version**() is        |
 |                                      | successful, the return value is      |
@@ -717,6 +787,8 @@ LIBRARY API VERSIONING
 
 DEBUGGING AND ERROR HANDLING
 ----------------------------
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Two versions of **libpmem** are      |
@@ -735,9 +807,12 @@ DEBUGGING AND ERROR HANDLING
 |                                      | failure using the following          |
 |                                      | function:                            |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **const char                         |
 |                                      | \*pmem\_errormsg(void);**            |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | The **pmem\_errormsg**() function    |
@@ -763,6 +838,8 @@ DEBUGGING AND ERROR HANDLING
 |                                      | calls to other library functions.    |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | A second version of **libpmem**,     |
 |                                      | accessed when a program uses the     |
@@ -783,6 +860,8 @@ DEBUGGING AND ERROR HANDLING
 |                                      | **PMEM\_LOG\_LEVEL**, which can be   |
 |                                      | set to the following values:         |
 +--------------------------------------+--------------------------------------+
+
+<!-- TABS -->
 
 +--------------------+--------------------+--------------------+--------------------+
 |                    | 0                  |                    | This is the        |
@@ -829,6 +908,8 @@ DEBUGGING AND ERROR HANDLING
 |                    |                    |                    | developers.        |
 +--------------------+--------------------+--------------------+--------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | The environment variable             |
 |                                      | **PMEM\_LOG\_FILE** specifies a file |
@@ -841,6 +922,7 @@ DEBUGGING AND ERROR HANDLING
 |                                      | **PMEM\_LOG\_FILE** is not set, the  |
 |                                      | logging output goes to stderr.       |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | Setting the environment variable     |
 |                                      | **PMEM\_LOG\_LEVEL** has no effect   |
 |                                      | on the non-debug version of          |
@@ -852,6 +934,8 @@ DEBUGGING AND ERROR HANDLING
 ENVIRONMENT VARIABLES
 ---------------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **libpmem** can change its default   |
 |                                      | behavior based on the following      |
@@ -859,8 +943,11 @@ ENVIRONMENT VARIABLES
 |                                      | largely intended for testing and are |
 |                                      | not normally required.               |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | **PMEM\_IS\_PMEM\_FORCE=***val*      |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | If *val* is 0 (zero), then           |
@@ -874,9 +961,13 @@ ENVIRONMENT VARIABLES
 |                                      | detectable as pmem for some reason.  |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_NO\_PCOMMIT=1**              |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Setting this environment variable to |
@@ -887,14 +978,19 @@ ENVIRONMENT VARIABLES
 |                                      | some other way, like automatic       |
 |                                      | flushing during a power failure.     |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: Using this environment      |
 |                                      | variable incorrectly may impact      |
 |                                      | program correctness.                 |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_NO\_CLWB=1**                 |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Setting this environment variable to |
@@ -915,9 +1011,13 @@ ENVIRONMENT VARIABLES
 |                                      | a negative impact on performance.    |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_NO\_CLFLUSHOPT=1**           |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Setting this environment variable to |
@@ -936,9 +1036,13 @@ ENVIRONMENT VARIABLES
 |                                      | testing.                             |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_NO\_MOVNT=1**                |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | Setting this environment variable to |
@@ -955,9 +1059,13 @@ ENVIRONMENT VARIABLES
 |                                      | testing.                             |
 +--------------------------------------+--------------------------------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_MOVNT\_THRESHOLD=***val*     |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | This environment variable allows     |
@@ -975,6 +1083,8 @@ ENVIRONMENT VARIABLES
 |                                      | to 1. This variable is intended for  |
 |                                      | use during library testing.          |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | **PMEM\_MMAP\_HINT=***val* This      |
@@ -1013,12 +1123,15 @@ ENVIRONMENT VARIABLES
 EXAMPLES
 --------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | The following example uses           |
 |                                      | **libpmem** to flush changes made to |
 |                                      | raw, memory-mapped persistent        |
 |                                      | memory.                              |
 |                                      |                                      |
+|                                      | <!-- INDENTATION -->                 |
 |                                      | WARNING: there is nothing            |
 |                                      | transactional about the              |
 |                                      | **pmem\_persist**() or               |
@@ -1029,6 +1142,8 @@ EXAMPLES
 |                                      | such as **libpmemobj**(3) to avoid   |
 |                                      | torn updates.                        |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      |     #include <sys/types.h>           |
@@ -1045,6 +1160,8 @@ EXAMPLES
 |                                      | mple */                              |
 +--------------------------------------+--------------------------------------+
 
+<!-- TABS -->
+
 +----------------+----------------+----------------+----------------+----------------+
 |                | \#define       |                | PMEM\_LEN 4096 |                |
 +----------------+----------------+----------------+----------------+----------------+
@@ -1053,11 +1170,15 @@ EXAMPLES
 |                |                |                | le”            |                |
 +----------------+----------------+----------------+----------------+----------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | int\                                 |
 |                                      | main(int argc, char \*argv\[\])\     |
 |                                      | {                                    |
 +--------------------------------------+--------------------------------------+
+
+<!-- TABS -->
 
 +------------+------------+------------+------------+------------+------------+------------+
 |            |            | char       |            |            |            |            |
@@ -1166,9 +1287,13 @@ EXAMPLES
 |            |            | n);        |            |            |            |            |
 +------------+------------+------------+------------+------------+------------+------------+
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | }                                    |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | See http://pmem.io/nvml/libpmem for  |
@@ -1181,12 +1306,16 @@ EXAMPLES
 ACKNOWLEDGEMENTS
 ----------------
 
+<!-- INDENTATION -->
+
 +--------------------------------------+--------------------------------------+
 |                                      | **libpmem** builds on the persistent |
 |                                      | memory programming model recommended |
 |                                      | by the SNIA NVM Programming          |
 |                                      | Technical Work Group:                |
 +--------------------------------------+--------------------------------------+
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | http://snia.org/nvmp                 |
@@ -1196,6 +1325,8 @@ ACKNOWLEDGEMENTS
 
 SEE ALSO
 --------
+
+<!-- INDENTATION -->
 
 +--------------------------------------+--------------------------------------+
 |                                      | **open**(2), **mmap**(2),            |
