@@ -3,6 +3,14 @@ title: NVM Library
 layout: nvml
 ---
 
+--------------------------------------------------
+| No | Sadly        | There is none              |
+--------------------------------------------------
+| Except this, which is a poor alternative       |
+--------------------------------------------------
+| There really      | should be one              |
+--------------------------------------------------
+
 The NVM Library is a library for using memory-mapped persistence,
 optimized specifically for _persistent memory_.  The source is in this
 [GitHub repository](https://github.com/pmem/nvml/).  The latest
