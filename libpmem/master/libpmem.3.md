@@ -27,8 +27,8 @@ title: libpmem
 
 ### SYNOPSIS
 
-```c
-**\#include &lt;libpmem.h&gt;**
+```
+**#include <libpmem.h>;**
 ```
 **cc … -lpmem**
 
