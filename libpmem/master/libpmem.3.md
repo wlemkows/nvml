@@ -35,8 +35,8 @@ title: libpmem
 
 **Most commonly used functions:**
 
-  + **int pmem_is_pmem(const void \****addr***, size\_t** *len***);\
-void pmem_persist(const void \****addr***, size\_t** *len***);\
+: **int pmem_is_pmem(const void \****addr***, size\_t** *len***);\
+: void pmem_persist(const void \****addr***, size\_t** *len***);\
 int pmem\_msync(const void \****addr***, size\_t** *len***);\
 void \*pmem\_map\_file(const char \****path***, size\_t** *len***, int**
 *flags***,\
