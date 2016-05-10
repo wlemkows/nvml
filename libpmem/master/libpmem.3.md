@@ -3,29 +3,29 @@ Content-Style: 'text/css'
 generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
 ...
+#libpmem
 
 #### TABLE OF CONTENT
 
--   [NAME](#name)
--   [SYNOPSI](#synopsis)
--   [DESCRIPTION](#description)
--   [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
--   [PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
--   [COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
--   [LIBRARY API VERSIONING](#library-api-versioning)
--   [DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
--   [ENVIRONMENT VARIABLES](#environment-variables)
--   [EXAMPLES](#examples)
--   [ACKNOWLEDGEMENTS](#acknowledgements)
--   [SEE ALSO](#see-also)
+[NAME](#name)
+[SYNOPSI](#synopsis)
+[DESCRIPTION](#description)
+[MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
+[PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
+[COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
+[LIBRARY API VERSIONING](#library-api-versioning)
+[DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
+[ENVIRONMENT VARIABLES](#environment-variables)
+[EXAMPLES](#examples)
+[ACKNOWLEDGEMENTS](#acknowledgements)
+[SEE ALSO](#see-also)
 
-libpmem
 
-## NAME
+#### NAME
 
 libpmem − persistent memory support library
 
-## SYNOPSIS
+#### SYNOPSIS
 
 **\#include &lt;libpmem.h&gt;**
 
@@ -73,7 +73,7 @@ unsigned** *minor\_required***);**
 
 **const char \*pmem\_errormsg(void);**
 
-## DESCRIPTION
+#### DESCRIPTION
 
 
 **libpmem** provides low-level *persistent memory* (pmem) support for
@@ -103,7 +103,7 @@ intentionally cause the process to exit. The only exception to this is
 the debugging information, when enabled, as described under **DEBUGGING
 AND ERROR HANDLING** below.
 
-## MOST COMMONLY USED FUNCTIONS
+#### MOST COMMONLY USED FUNCTIONS
 
 Most pmem-aware applications will take advantage of higher level
 libraries that alleviate the application from calling into **libpmem**
@@ -237,7 +237,7 @@ previously mapped region. **pmem\_unmap**() will delete the mappings
 using the **munmap**(2), On success, **pmem\_unmap**() returns zero. On
 error, -1 is returned, and errno is set appropriately.
 
-## PARTIAL FLUSHING OPERATIONS
+#### PARTIAL FLUSHING OPERATIONS
 
 The functions in this section provide access to the stages of flushing
 to persistence, for the less common cases where an application needs
@@ -288,7 +288,7 @@ available. Note that the lack of this feature means that calling
 additional platform features such as Asynchronous DRAM Refresh (ADR) or
 something similar.
 
-## COPYING TO PERSISTENT MEMORY
+#### COPYING TO PERSISTENT MEMORY
 
 The functions in this section provide optimized copying to persistent
 memory.
@@ -479,7 +479,7 @@ the logging output goes to stderr.
 Setting the environment variable **PMEM\_LOG\_LEVEL** has no effect on
 the non-debug version of **libpmem**.
 
-## ENVIRONMENT VARIABLES
+#### ENVIRONMENT VARIABLES
 
 **libpmem** can change its default behavior based on the following
 environment variables. These are largely intended for testing and are
@@ -558,7 +558,7 @@ affects all the NVM libraries,** disabling mapping address randomization
 and causing the specified address to be used as a hint about where to
 place the mapping.
 
-## EXAMPLES
+#### EXAMPLES
 
 The following example uses **libpmem** to flush changes made to raw,
 memory-mapped persistent memory.
@@ -812,14 +812,14 @@ main(int argc, char \*argv\[\])\
 See http://pmem.io/nvml/libpmem for more examples using the **libpmem**
 API.
 
-## ACKNOWLEDGEMENTS
+#### ACKNOWLEDGEMENTS
 
 **libpmem** builds on the persistent memory programming model
 recommended by the SNIA NVM Programming Technical Work Group:
 
 http://snia.org/nvmp
 
-## SEE ALSO
+#### SEE ALSO
 
 **open**(2), **mmap**(2), **munmap**(2), **msync**(2), **strerror**(3),
 **libpmemobj**(3), **libpmemblk**(3), **libpmemlog**(3), **libvmem**(3)
