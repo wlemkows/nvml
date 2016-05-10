@@ -7,18 +7,18 @@ title: libpmem
 
 ### TABLE OF CONTENT
 
-[NAME](#name)
-[SYNOPSI](#synopsis)
-[DESCRIPTION](#description)
-[MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
-[PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
-[COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
-[LIBRARY API VERSIONING](#library-api-versioning)
-[DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
-[ENVIRONMENT VARIABLES](#environment-variables)
-[EXAMPLES](#examples)
-[ACKNOWLEDGEMENTS](#acknowledgements)
-[SEE ALSO](#see-also)
+* [NAME](#name)
+* [SYNOPSI](#synopsis)
+* [DESCRIPTION](#description)
+* [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
+* [PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
+* [COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
+* [LIBRARY API VERSIONING](#library-api-versioning)
+* [DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
+* [ENVIRONMENT VARIABLES](#environment-variables)
+* [EXAMPLES](#examples)
+* [ACKNOWLEDGEMENTS](#acknowledgements)
+* [SEE ALSO](#see-also)
 
 
 ### NAME
