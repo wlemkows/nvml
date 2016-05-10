@@ -1,4 +1,5 @@
 ---
+layout: manual
 Content-Style: 'text/css'
 generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
