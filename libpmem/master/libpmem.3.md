@@ -23,12 +23,13 @@ title: libpmem
 
 ### NAME
 
-libpmem − persistent memory support library
+**libpmem** − persistent memory support library
 
 ### SYNOPSIS
 
+```c
 **\#include &lt;libpmem.h&gt;**
-
+```
 **cc … -lpmem**
 
 **Most commonly used functions:**
