@@ -8,18 +8,18 @@ title: libpmem
 
 ### TABLE OF CONTENT
 
-* [NAME](#name)
-* [SYNOPSI](#synopsis)
-* [DESCRIPTION](#description)
-* [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)
-* [PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)
-* [COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)
-* [LIBRARY API VERSIONING](#library-api-versioning)
-* [DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)
-* [ENVIRONMENT VARIABLES](#environment-variables)
-* [EXAMPLES](#examples)
-* [ACKNOWLEDGEMENTS](#acknowledgements)
-* [SEE ALSO](#see-also)
+[NAME](#name)<br />
+[SYNOPSI](#synopsis)<br />
+[DESCRIPTION](#description)<br />
+[MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)<br />
+[PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)<br />
+[COPYING TO PERSISTENT MEMORY](#copying-to-persistent-memory)<br />
+[LIBRARY API VERSIONING](#library-api-versioning)<br />
+[DEBUGGING AND ERROR HANDLING](#debugging-and-error-handling)<br />
+[ENVIRONMENT VARIABLES](#environment-variables)<br />
+[EXAMPLES](#examples)<br />
+[ACKNOWLEDGEMENTS](#acknowledgements)<br />
+[SEE ALSO](#see-also)
 
 
 ### NAME
@@ -35,14 +35,18 @@ title: libpmem
 
 **Most commonly used functions:**
 
-: **int pmem_is_pmem(const void \****addr***, size\_t** *len***);<br />
-  void pmem_persist(const void \****addr***, size\_t** *len***);<br />
- int pmem\_msync(const void \****addr***, size\_t** *len***);<br />
+: **int pmem_is_pmem(const void \****addr***, size\_t** *len***);
+
+  void pmem_persist(const void \****addr***, size\_t** *len***);
+
+  int pmem\_msync(const void \****addr***, size\_t** *len***);
+
   void \*pmem\_map\_file(const char \****path***, size\_t** *len***, int**
 *flags***,\
 mode\_t** *mode***, size\_t \****mapped\_lenp***, int
-\****is\_pmemp***);<br />
-int pmem\_unmap(void \****addr***, size\_t** *len***);**
+\****is\_pmemp***);
+
+  int pmem\_unmap(void \****addr***, size\_t** *len***);**
 
 **Partial flushing operations:**
 
