@@ -20,7 +20,7 @@ title: libpmem
 
 libpmem
 
-NAME
+NAME []()
 
 libpmem − persistent memory support library
 
@@ -820,8 +820,7 @@ recommended by the SNIA NVM Programming Technical Work Group:
 
 http://snia.org/nvmp
 
-SEE ALSO []()
--------------
+# SEE ALSO
 
 **open**(2), **mmap**(2), **munmap**(2), **msync**(2), **strerror**(3),
 **libpmemobj**(3), **libpmemblk**(3), **libpmemlog**(3), **libvmem**(3)
