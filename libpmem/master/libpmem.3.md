@@ -4,7 +4,7 @@ generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
 ...
 
-## TABLE OF CONTENT
+#### TABLE OF CONTENT
 
 -   [NAME](#name)
 -   [SYNOPSI](#synopsis)
