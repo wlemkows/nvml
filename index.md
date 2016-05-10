@@ -3,16 +3,6 @@ title: NVM Library
 layout: nvml
 ---
 
-|             |          Grouping           ||
-First Header  | Second Header | Third Header |
- ------------ | :-----------: | -----------: |
-Content       |          *Long Cell*        ||
-Content       |   **Cell**    |         Cell |
-
-New section   |     More      |         Data |
-And more      | With an escaped '\|'         ||  
-[Prototype table]
-
 The NVM Library is a library for using memory-mapped persistence,
 optimized specifically for _persistent memory_.  The source is in this
 [GitHub repository](https://github.com/pmem/nvml/).  The latest
