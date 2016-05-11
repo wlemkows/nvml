@@ -424,11 +424,11 @@ where the debug libraries are installed on the system. The trace points
 in the debug version of the library are enabled using the environment
 variable **PMEM_LOG_LEVEL**, which can be set to the following values:
 
-0. This is the default level when <strong>PMEM_LOG_LEVEL</strong> is not set. No log messages are emitted at this level.</p></td>
-1. Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
-2. A trace of basic operations is logged.
-3. This level enables a very verbose amount of function call tracing in the library.
-4. This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
+0 - This is the default level when **PMEM_LOG_LEVEL** is not set. No log messages are emitted at this level.
+1 - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
+2 - A trace of basic operations is logged.
+3 - This level enables a very verbose amount of function call tracing in the library.
+4 - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
 
 The environment variable **PMEM_LOG_FILE** specifies a file name where
 all logging information should be written. If the last character in the
@@ -474,7 +474,7 @@ correctness.
   library testing but may be required for some rare cases where using
   **CLWB** has a negative impact on performance.
 
-**PMEM_NO_CLFLUSHOPT=1**
+**PMEM_NO_CLFLUSHOPT**=1
 
   Setting this environment variable to 1 forces **libpmem** to never issue
   the **CLFLUSHOPT** instruction on Intel hardware, falling back to the
@@ -504,8 +504,7 @@ correctness.
   This variable is intended for use during library testing.
 
 **PMEM_MMAP_HINT**=val
-
-  This environment variable allows overriding
+: This environment variable allows overriding
   the hint address used by **pmem_map_file**(). If set, it also disables
   mapping address randomization. This variable is intended for use during
   library testing and debugging. Setting it to some fairly large value
@@ -515,8 +514,10 @@ correctness.
   makes it easier to calculate the actual address of the persistent memory
   block, based on its offset in the file. In case of **libpmemobj** it
   simplifies conversion of a persistent object identifier (OID) into a
-  direct pointer to the object. **NOTE: Setting this environment variable
-  affects all the NVM libraries,** disabling mapping address randomization
+  direct pointer to the object.
+
+  >NOTE: Setting this environment variable
+  affects all the NVM libraries, disabling mapping address randomization
   and causing the specified address to be used as a hint about where to
   place the mapping.
 
