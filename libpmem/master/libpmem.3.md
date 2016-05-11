@@ -296,37 +296,34 @@ the **PMEM_NO_PCOMMIT** environment variable as described in the
 The functions in this section provide optimized copying to persistent
 memory.
 
-**void \*pmem\_memmove\_persist(void \****pmemdest***, const void
-\****src***,\
-size\_t** *len***);\
-void \*pmem\_memcpy\_persist(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memset\_persist(void \****pmemdest***, int** *c***,
-size\_t** *len***);**
+void **\*pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
+void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
+void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
 
-The **pmem\_memmove\_persist**(), **pmem\_memcpy\_persist**(), and
-**pmem\_memset\_persist**(), functions provide the same memory copying
+The **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
+**pmem_memset_persist**(), functions provide the same memory copying
 as their namesakes **memmove**(3) **memcpy**(3), and **memset**(3), and
 ensure that the result has been flushed to persistence before returning.
 For example, the following code is functionally equivalent to
-**pmem\_memmove\_persist**():
+**pmem_memmove_persist**():
 
-void \*\
-pmem\_memmove\_persist(void \*pmemdest, const void \*src, size\_t len)\
-{\
-void \*retval = memmove(pmemdest, src, len);
+```
+void *
+pmem_memmove_persist(void *pmemdest, const void *src, size\_t len)
+{
+  void *retval = memmove(pmemdest, src, len);
+  pmem_persist(pmemdest, len);
 
-pmem\_persist(pmemdest, len);
-
-return retval;\
+return retval;
 }
+```
 
-Calling **pmem\_memmove\_persist**() may out-perform the above code,
+Calling **pmem_memmove_persist**() may out-perform the above code,
 however, since the **libpmem** implementation may take advantage of the
 fact that *pmemdest* is persistent memory and use instructions such as
 *non-temporal* stores to avoid the need to flush processor caches.
 
-WARNING: Using these functions where **pmem\_is\_pmem**() returns false
+>WARNING: Using these functions where **pmem_is_pmem**() returns false
 may not do anything useful. Use the normal libc functions in that case.
 
 **void \*pmem\_memmove\_nodrain(void \****pmemdest***, const void
