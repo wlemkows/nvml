@@ -424,11 +424,11 @@ where the debug libraries are installed on the system. The trace points
 in the debug version of the library are enabled using the environment
 variable **PMEM_LOG_LEVEL**, which can be set to the following values:
 
-0 - This is the default level when **PMEM_LOG_LEVEL** is not set. No log messages are emitted at this level.
-1 - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
-2 - A trace of basic operations is logged.
-3 - This level enables a very verbose amount of function call tracing in the library.
-4 - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
+**0** - This is the default level when **PMEM_LOG_LEVEL** is not set. No log messages are emitted at this level.
+**1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
+**2** - A trace of basic operations is logged.
+**3** - This level enables a very verbose amount of function call tracing in the library.
+**4** - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
 
 The environment variable **PMEM_LOG_FILE** specifies a file name where
 all logging information should be written. If the last character in the
@@ -447,11 +447,11 @@ not normally required.
 
 **PMEM_IS_PMEM_FORCE**=val
 
-  If *val* is 0 (zero), then **pmem_is_pmem**() will always return
-  false. Setting *val* to 1 causes **pmem_is_pmem**() to always return
-  true. This variable is mostly used for testing but can be used to force
-  pmem behavior on a system where a range of pmem is not detectable as
-  pmem for some reason.
+If *val* is 0 (zero), then **pmem_is_pmem**() will always return
+false. Setting *val* to 1 causes **pmem_is_pmem**() to always return
+true. This variable is mostly used for testing but can be used to force
+pmem behavior on a system where a range of pmem is not detectable as
+pmem for some reason.
 
 **PMEM_NO_PCOMMIT**=1
 
@@ -495,26 +495,26 @@ correctness.
 
 **PMEM_MOVNT_THRESHOLD**=val
 
-  This environment variable allows overriding the minimal length of
-  **pmem_memcpy_**\*(), **pmem_memmove_**\*() or
-  **pmem_memset_**\*() operations, for which **libpmem** uses
-  *non-temporal* move instructions. Setting this environment variable to 0
-  forces **libpmem** to always use the *non-temporal* move instructions if
-  available. It has no effect if **PMEM_NO_MOVNT** variable is set to 1.
-  This variable is intended for use during library testing.
+This environment variable allows overriding the minimal length of
+**pmem_memcpy_**\*(), **pmem_memmove_**\*() or
+**pmem_memset_**\*() operations, for which **libpmem** uses
+*non-temporal* move instructions. Setting this environment variable to 0
+forces **libpmem** to always use the *non-temporal* move instructions if
+available. It has no effect if **PMEM_NO_MOVNT** variable is set to 1.
+This variable is intended for use during library testing.
 
 **PMEM_MMAP_HINT**=val
-: This environment variable allows overriding
-  the hint address used by **pmem_map_file**(). If set, it also disables
-  mapping address randomization. This variable is intended for use during
-  library testing and debugging. Setting it to some fairly large value
-  (i.e. 0x10000000000) will very likely result in mapping the file at the
-  specified address (if not used) or at the first unused region above
-  given address, without adding any random offset. When debugging, this
-  makes it easier to calculate the actual address of the persistent memory
-  block, based on its offset in the file. In case of **libpmemobj** it
-  simplifies conversion of a persistent object identifier (OID) into a
-  direct pointer to the object.
+This environment variable allows overriding
+the hint address used by **pmem_map_file**(). If set, it also disables
+mapping address randomization. This variable is intended for use during
+library testing and debugging. Setting it to some fairly large value
+(i.e. 0x10000000000) will very likely result in mapping the file at the
+specified address (if not used) or at the first unused region above
+given address, without adding any random offset. When debugging, this
+makes it easier to calculate the actual address of the persistent memory
+block, based on its offset in the file. In case of **libpmemobj** it
+simplifies conversion of a persistent object identifier (OID) into a
+direct pointer to the object.
 
   >NOTE: Setting this environment variable
   affects all the NVM libraries, disabling mapping address randomization
