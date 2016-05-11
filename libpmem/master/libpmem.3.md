@@ -78,11 +78,9 @@ title: libpmem
 ### DESCRIPTION
 
 **libpmem**
-
->provides low-level *persistent memory* (pmem) support for
+provides low-level *persistent memory* (pmem) support for
 applications using direct access storage (DAX), which is storage that
-
->>supports load/store access without paging blocks from a block storage
+supports load/store access without paging blocks from a block storage
 device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
 type of byte addressable access to storage. A *persistent memory aware
 file system* is typically used to expose the direct access to
@@ -101,7 +99,7 @@ with atomic updates.
 
  + **libpmemlog**(3), providing a pmem-resident log file.
 
->Under normal usage, **libpmem** will never print messages or
+Under normal usage, **libpmem** will never print messages or
 intentionally cause the process to exit.
 The only exception to this is the debugging information, when enabled,
 as described under **DEBUGGING AND ERROR HANDLING** below.
@@ -115,129 +113,132 @@ persistence directly (via **mmap**(2)) and that wish to take on the
 responsibility for flushing stores to persistence will find the
 functions described in this section to be the most commonly used.
 
-**int pmem\_is\_pmem(const void \****addr***, size\_t** *len***);**
+int **pmem_is_pmem**(const void \*addr, size_t len);
 
-The **pmem\_is\_pmem**() function returns true only if the entire range
+The **pmem_is_pmem**() function returns true only if the entire range
 \[*addr*, *addr*+*len*) consists of persistent memory. A true return
-from **pmem\_is\_pmem**() means it is safe to use **pmem\_persist**()
+from **pmem_is_pmem**() means it is safe to use **pmem_persist**()
 and the related functions below to make changes durable for that memory
 range.
 
-The implementation of **pmem\_is\_pmem**() requires a non-trivial amount
+The implementation of **pmem_is_pmem**() requires a non-trivial amount
 of work to determine if the given range is entirely persistent memory.
-For this reason, it is better to call **pmem\_is\_pmem**() once when a
+For this reason, it is better to call **pmem_is_pmem**() once when a
 range of memory is first encountered, save the result, and use the saved
-result to determine whether **pmem\_persist**() or **msync**(2) is
+result to determine whether **pmem_persist**() or **msync**(2) is
 appropriate for flushing changes to persistence. Calling
-**pmem\_is\_pmem**() each time changes are flushed to persistence will
+**pmem_is_pmem**() each time changes are flushed to persistence will
 not perform well.
 
-WARNING: Using **pmem\_persist**() on a range where **pmem\_is\_pmem**()
+WARNING: Using **pmem_persist**() on a range where **pmem_is_pmem**()
 returns false may not do anything useful – use **msync**(2) instead.
 
-**void pmem\_persist(const void \****addr***, size\_t** *len***);**
+void **pmem_persist**(const void \*addr, size_t len);
 
 Force any changes in the range \[*addr*, *addr*+*len*) to be stored
 durably in persistent memory. This is equivalent to calling **msync**(2)
 but may be more optimal and will avoid calling into the kernel if
 possible. There are no alignment restrictions on the range described by
-*addr* and *len*, but **pmem\_persist**() may expand the range as
+*addr* and *len*, but **pmem_persist**() may expand the range as
 necessary to meet platform alignment requirements.
 
-WARNING: Like **msync**(2), there is nothing atomic or transactional
+>WARNING: Like **msync**(2), there is nothing atomic or transactional
 about this call. Any unwritten stores in the given range will be
 written, but some stores may have already been written by virtue of
 normal cache eviction/replacement policies. Correctly written code must
-not depend on stores waiting until **pmem\_persist**() is called to
+not depend on stores waiting until **pmem_persist**() is called to
 become persistent – they can become persistent at any time before
-**pmem\_persist**() is called.
+**pmem_persist**() is called.
 
-**int pmem\_msync(const void \****addr***, size\_t** *len***);**
+int **pmem_msync**(const void \*addr, size_t len);
 
-The function **pmem\_msync**() is like **pmem\_persist**() in that it
+The function **pmem_msync**() is like **pmem_persist**() in that it
 forces any changes in the range \[*addr*, *addr*+*len*) to be stored
 durably. Since it calls **msync**(), this function works on either
 persistent memory or a memory mapped file on traditional storage.
-**pmem\_msync**() takes steps to ensure the alignment of addresses and
+**pmem_msync**() takes steps to ensure the alignment of addresses and
 lengths passed to **msync**() meet the requirements of that system call.
-It calls **msync**() with the *MS\_SYNC* flag as described in
+It calls **msync**() with the *MS_SYNC* flag as described in
 **msync**(2). Typically the application only checks for the existence of
 persistent memory once, and then uses that result throughout the
 program, for example:
 
 /\* do this call once, after the pmem is memory mapped \*/\
-int is\_pmem = pmem\_is\_pmem(rangeaddr, rangelen);
 
+```c
+  int is_pmem = pmem_is_pmem(rangeaddr, rangelen);
+```
 /\* … make changes to a range of pmem … \*/
 
 /\* make the changes durable \*/\
-if (is\_pmem)\
-pmem\_persist(subrangeaddr, subrangelen);\
-else\
-pmem\_msync(subrangeaddr, subrangelen);
+```c
+if (is_pmem)
+  pmem_persist(subrangeaddr, subrangelen);
+else
+  pmem_msync(subrangeaddr, subrangelen);
+```
 
 /\* … \*/
 
-The return value of **pmem\_msync**() is the return value of
+The return value of **pmem_msync**() is the return value of
 **msync**(), which can return -1 and set errno to indicate an error.
 
-**void \*pmem\_map\_file(const char \****path***, size\_t** *len***,
-int** *flags***,\
-mode\_t** *mode***, size\_t \****mapped\_lenp***, int
-\****is\_pmemp***);**
 
-Given a *path*, **pmem\_map\_file**() function creates a new read/write
+void **\*pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
+
+Given a *path*, **pmem_map_file**() function creates a new read/write
 mapping for the named file. It will map the file using **mmap**(2), but
 it also takes extra steps to make large page mappings more likely.
 
-On success, **pmem\_map\_file**() returns a pointer to mapped area. If
-*mapped\_lenp* is not NULL, the length of the mapping is also stored at
-the address it points to. The *is\_pmemp* argument, if non-NULL, points
-to a flag that **pmem\_is\_pmem**() sets to say if the mapped file is
+On success, **pmem_map_file**() returns a pointer to mapped area. If
+*mapped_lenp* is not NULL, the length of the mapping is also stored at
+the address it points to. The *is_pmemp* argument, if non-NULL, points
+to a flag that **pmem_is_pmem**() sets to say if the mapped file is
 actual pmem, or if **msync**() must be used to flush writes for the
 mapped range. On error, NULL is returned, errno is set appropriately,
-and *mapped\_lenp* and *is\_pmemp* are left untouched.
+and *mapped_lenp* and *is_pmemp* are left untouched.
 
 The *flags* argument can be 0 or bitwise OR of one or more of the
 following file creation flags:
 
-**PMEM\_FILE\_CREATE** - Create the named file if it does not exist.
+**PMEM_FILE_CREATE** - Create the named file if it does not exist.
 *len* must be non-zero and specifies the size of the file to be created.
 *mode* has the same meaning as for **open**(2) and specifies the mode to
-use in case a new file is created. If neither **PMEM\_FILE\_CREATE** nor
-**PMEM\_FILE\_TMPFILE** is specified, then *mode* is ignored.
+use in case a new file is created. If neither **PMEM_FILE_CREATE** nor
+**PMEM_FILE_TMPFILE** is specified, then *mode* is ignored.
 
-**PMEM\_FILE\_EXCL** - Same meaning as **O\_EXCL** on **open**(2) -
+**PMEM_FILE_EXCL** - Same meaning as **O_EXCL** on **open**(2) -
 Ensure that this call creates the file. If this flag is specified in
-conjunction with **PMEM\_FILE\_CREATE**, and pathname already exists,
-then **pmem\_map\_file**() will fail.
+conjunction with **PMEM_FILE_CREATE**, and pathname already exists,
+then **pmem_map_file**() will fail.
 
-**PMEM\_FILE\_TMPFILE** - Same meaning as **O\_TMPFILE** on **open**(2).
-Create a mapping for an unnamed temporary file. **PMEM\_FILE\_CREATE**
+**PMEM_FILE_TMPFILE** - Same meaning as **O_TMPFILE** on **open**(2).
+Create a mapping for an unnamed temporary file. **PMEM_FILE_CREATE**
 and *len* must be specified and *path* must be an existing directory
 name.
 
-**PMEM\_FILE\_SPARSE** - When creating a file, create a sparse (holey)
-file instead of calling **posix\_fallocate**(2). Valid only if specified
-in conjunction with **PMEM\_FILE\_CREATE** or **PMEM\_FILE\_TMPFILE**,
+**PMEM_FILE_SPARSE** - When creating a file, create a sparse (holey)
+file instead of calling **posix_fallocate**(2). Valid only if specified
+in conjunction with **PMEM_FILE_CREATE** or **PMEM_FILE_TMPFILE**,
 otherwise ignored.
 
-If creation flags are not supplied, then **pmem\_map\_file**() creates a
+If creation flags are not supplied, then **pmem_map_file**() creates a
 mapping for an existing file. In such case, *len* should be zero. The
 entire file is mapped to memory; its length is used as the length of the
-mapping and returned via *mapped\_lenp*.
+mapping and returned via *mapped_lenp*.
 
-To delete mappings created with **pmem\_map\_file**(), use
-**pmem\_unmap**().
+To delete mappings created with **pmem_map_file**(), use
+**pmem_unmap**().
 
-**int pmem\_unmap(void \****addr***, size\_t** *len***);**
 
-The **pmem\_unmap**() function deletes all the mappings for the
+int **pmem_unmap**(void \*addr, size_t len);
+
+The **pmem_unmap**() function deletes all the mappings for the
 specified address range, and causes further references to addresses
 within the range to generate invalid memory references. It will use the
 address specified by the parameter *addr*, where *addr* must be a
-previously mapped region. **pmem\_unmap**() will delete the mappings
-using the **munmap**(2), On success, **pmem\_unmap**() returns zero. On
+previously mapped region. **pmem_unmap**() will delete the mappings
+using the **munmap**(2), On success, **pmem_unmap**() returns zero. On
 error, -1 is returned, and errno is set appropriately.
 
 ### PARTIAL FLUSHING OPERATIONS
