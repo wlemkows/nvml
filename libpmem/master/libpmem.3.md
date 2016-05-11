@@ -246,26 +246,26 @@ to persistence, for the less common cases where an application needs
 more control of the flushing operations than the **pmem\_persist**()
 function described above.
 
-void pmem_flush(const void \*addr, size_t len);
-void pmem_drain(void);
+* void pmem_flush(const void \*addr, size_t len);
+* void pmem_drain(void);
 
-These functions provide partial versions of the **pmem_persist**()
-function described above. **pmem_persist**() can be thought of as this:
+  These functions provide partial versions of the **pmem_persist**()
+  function described above. **pmem_persist**() can be thought of as this:
 
 ```c
-void pmem_persist(const void *addr, size_t len)
+void pmem_persist(const void \*addr, size_t len)
 {
-  /* flush the processor caches */
+  /* flush the processor caches \*/
     pmem_flush(addr, len);
-  /* wait for any pmem stores to drain from HW buffers */
+  /* wait for any pmem stores to drain from HW buffers \*/
     pmem_drain();
 }
 ```
 
-These functions allow advanced programs to create their own variations
-of **pmem_persist**(). For example, a program that needs to flush
-several discontiguous ranges can call **pmem_flush**() for each range
-and then follow up by calling **pmem_drain**() once.
+  These functions allow advanced programs to create their own variations
+  of **pmem_persist**(). For example, a program that needs to flush
+  several discontiguous ranges can call **pmem_flush**() for each range
+  and then follow up by calling **pmem_drain**() once.
 
 >NOTE: Some software is designed for custom platforms that obviate the
 need for using PCOMMIT (perhaps the platform issues PCOMMIT on shutdown
@@ -276,20 +276,20 @@ recommended way to inhibit use of the PCOMMIT instruction is by setting
 the **PMEM_NO_PCOMMIT** environment variable as described in the
 **ENVIRONMENT VARIABLES** section.
 
-**int pmem_has_hw_drain(void);**
+* int **pmem_has_hw_drain**(void);
 
-The **pmem_has_hw_drain**() function returns true if the machine
-supports the *hardware drain* function for persistent memory, such as
-that provided by the **PCOMMIT** instruction on Intel processors. If
-support for hardware drain is not found, or cannot be detected by the
-library, **pmem_has_hw_drain**() will return false. Although it is
-typically an administrative task to provide the correct platform
-configuration for persistent memory, this function is provided for the
-less common cases where an application needs to ensure this feature is
-available. Note that the lack of this feature means that calling
-**pmem_persist**() may not fully ensure stores are durable, without
-additional platform features such as Asynchronous DRAM Refresh (ADR) or
-something similar.
+  The **pmem_has_hw_drain**() function returns true if the machine
+  supports the *hardware drain* function for persistent memory, such as
+  that provided by the **PCOMMIT** instruction on Intel processors. If
+  support for hardware drain is not found, or cannot be detected by the
+  library, **pmem_has_hw_drain**() will return false. Although it is
+  typically an administrative task to provide the correct platform
+  configuration for persistent memory, this function is provided for the
+  less common cases where an application needs to ensure this feature is
+  available. Note that the lack of this feature means that calling
+  **pmem_persist**() may not fully ensure stores are durable, without
+  additional platform features such as Asynchronous DRAM Refresh (ADR) or
+  something similar.
 
 ### COPYING TO PERSISTENT MEMORY
 
