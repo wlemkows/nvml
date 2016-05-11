@@ -121,26 +121,26 @@ functions described in this section to be the most commonly used.
   and the related functions below to make changes durable for that memory
   range.
 
-The implementation of **pmem_is_pmem**() requires a non-trivial amount
-of work to determine if the given range is entirely persistent memory.
-For this reason, it is better to call **pmem_is_pmem**() once when a
-range of memory is first encountered, save the result, and use the saved
-result to determine whether **pmem_persist**() or **msync**(2) is
-appropriate for flushing changes to persistence. Calling
-**pmem_is_pmem**() each time changes are flushed to persistence will
-not perform well.
+  The implementation of **pmem_is_pmem**() requires a non-trivial amount
+  of work to determine if the given range is entirely persistent memory.
+  For this reason, it is better to call **pmem_is_pmem**() once when a
+  range of memory is first encountered, save the result, and use the saved
+  result to determine whether **pmem_persist**() or **msync**(2) is
+  appropriate for flushing changes to persistence. Calling
+  **pmem_is_pmem**() each time changes are flushed to persistence will
+  not perform well.
 
-WARNING: Using **pmem_persist**() on a range where **pmem_is_pmem**()
+>WARNING: Using **pmem_persist**() on a range where **pmem_is_pmem**()
 returns false may not do anything useful – use **msync**(2) instead.
 
-void **pmem_persist**(const void \*addr, size_t len);
++ void **pmem_persist**(const void \*addr, size_t len);
 
-Force any changes in the range \[*addr*, *addr*+*len*) to be stored
-durably in persistent memory. This is equivalent to calling **msync**(2)
-but may be more optimal and will avoid calling into the kernel if
-possible. There are no alignment restrictions on the range described by
-*addr* and *len*, but **pmem_persist**() may expand the range as
-necessary to meet platform alignment requirements.
+  Force any changes in the range \[*addr*, *addr*+*len*) to be stored
+  durably in persistent memory. This is equivalent to calling **msync**(2)
+  but may be more optimal and will avoid calling into the kernel if
+  possible. There are no alignment restrictions on the range described by
+  *addr* and *len*, but **pmem_persist**() may expand the range as
+  necessary to meet platform alignment requirements.
 
 >WARNING: Like **msync**(2), there is nothing atomic or transactional
 about this call. Any unwritten stores in the given range will be
@@ -150,18 +150,18 @@ not depend on stores waiting until **pmem_persist**() is called to
 become persistent – they can become persistent at any time before
 **pmem_persist**() is called.
 
-int **pmem_msync**(const void \*addr, size_t len);
++ int **pmem_msync**(const void \*addr, size_t len);
 
-The function **pmem_msync**() is like **pmem_persist**() in that it
-forces any changes in the range \[*addr*, *addr*+*len*) to be stored
-durably. Since it calls **msync**(), this function works on either
-persistent memory or a memory mapped file on traditional storage.
-**pmem_msync**() takes steps to ensure the alignment of addresses and
-lengths passed to **msync**() meet the requirements of that system call.
-It calls **msync**() with the *MS_SYNC* flag as described in
-**msync**(2). Typically the application only checks for the existence of
-persistent memory once, and then uses that result throughout the
-program, for example:
+  The function **pmem_msync**() is like **pmem_persist**() in that it
+  forces any changes in the range \[*addr*, *addr*+*len*) to be stored
+  durably. Since it calls **msync**(), this function works on either
+  persistent memory or a memory mapped file on traditional storage.
+  **pmem_msync**() takes steps to ensure the alignment of addresses and
+  lengths passed to **msync**() meet the requirements of that system call.
+  It calls **msync**() with the *MS_SYNC* flag as described in
+  **msync**(2). Typically the application only checks for the existence of
+  persistent memory once, and then uses that result throughout the
+  program, for example:
 
 ```c
 /* do this call once, after the pmem is memory mapped */
@@ -182,40 +182,40 @@ The return value of **pmem_msync**() is the return value of
 **msync**(), which can return -1 and set errno to indicate an error.
 
 
-* void **\*pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
++ void **\*pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
 
-Given a *path*, **pmem_map_file**() function creates a new read/write
-mapping for the named file. It will map the file using **mmap**(2), but
-it also takes extra steps to make large page mappings more likely.
+  Given a *path*, **pmem_map_file**() function creates a new read/write
+  mapping for the named file. It will map the file using **mmap**(2), but
+  it also takes extra steps to make large page mappings more likely.
 
-On success, **pmem_map_file**() returns a pointer to mapped area. If
-*mapped_lenp* is not NULL, the length of the mapping is also stored at
-the address it points to. The *is_pmemp* argument, if non-NULL, points
-to a flag that **pmem_is_pmem**() sets to say if the mapped file is
-actual pmem, or if **msync**() must be used to flush writes for the
-mapped range. On error, NULL is returned, errno is set appropriately,
-and *mapped_lenp* and *is_pmemp* are left untouched.
+  On success, **pmem_map_file**() returns a pointer to mapped area. If
+  *mapped_lenp* is not NULL, the length of the mapping is also stored at
+  the address it points to. The *is_pmemp* argument, if non-NULL, points
+  to a flag that **pmem_is_pmem**() sets to say if the mapped file is
+  actual pmem, or if **msync**() must be used to flush writes for the
+  mapped range. On error, NULL is returned, errno is set appropriately,
+  and *mapped_lenp* and *is_pmemp* are left untouched.
 
-The *flags* argument can be 0 or bitwise OR of one or more of the
-following file creation flags:
+  The *flags* argument can be 0 or bitwise OR of one or more of the
+  following file creation flags:
 
-**PMEM_FILE_CREATE** - Create the named file if it does not exist.
++ **PMEM_FILE_CREATE** - Create the named file if it does not exist.
 *len* must be non-zero and specifies the size of the file to be created.
 *mode* has the same meaning as for **open**(2) and specifies the mode to
 use in case a new file is created. If neither **PMEM_FILE_CREATE** nor
-**PMEM_FILE_TMPFILE** is specified, then *mode* is ignored.
++ **PMEM_FILE_TMPFILE** is specified, then *mode* is ignored.
 
-**PMEM_FILE_EXCL** - Same meaning as **O_EXCL** on **open**(2) -
++ **PMEM_FILE_EXCL** - Same meaning as **O_EXCL** on **open**(2) -
 Ensure that this call creates the file. If this flag is specified in
 conjunction with **PMEM_FILE_CREATE**, and pathname already exists,
 then **pmem_map_file**() will fail.
 
-**PMEM_FILE_TMPFILE** - Same meaning as **O_TMPFILE** on **open**(2).
++ **PMEM_FILE_TMPFILE** - Same meaning as **O_TMPFILE** on **open**(2).
 Create a mapping for an unnamed temporary file. **PMEM_FILE_CREATE**
 and *len* must be specified and *path* must be an existing directory
 name.
 
-**PMEM_FILE_SPARSE** - When creating a file, create a sparse (holey)
++ **PMEM_FILE_SPARSE** - When creating a file, create a sparse (holey)
 file instead of calling **posix_fallocate**(2). Valid only if specified
 in conjunction with **PMEM_FILE_CREATE** or **PMEM_FILE_TMPFILE**,
 otherwise ignored.
@@ -229,15 +229,15 @@ To delete mappings created with **pmem_map_file**(), use
 **pmem_unmap**().
 
 
-int **pmem_unmap**(void \*addr, size_t len);
++ int **pmem_unmap**(void \*addr, size_t len);
 
-The **pmem_unmap**() function deletes all the mappings for the
-specified address range, and causes further references to addresses
-within the range to generate invalid memory references. It will use the
-address specified by the parameter *addr*, where *addr* must be a
-previously mapped region. **pmem_unmap**() will delete the mappings
-using the **munmap**(2), On success, **pmem_unmap**() returns zero. On
-error, -1 is returned, and errno is set appropriately.
+  The **pmem_unmap**() function deletes all the mappings for the
+  specified address range, and causes further references to addresses
+  within the range to generate invalid memory references. It will use the
+  address specified by the parameter *addr*, where *addr* must be a
+  previously mapped region. **pmem_unmap**() will delete the mappings
+  using the **munmap**(2), On success, **pmem_unmap**() returns zero. On
+  error, -1 is returned, and errno is set appropriately.
 
 ### PARTIAL FLUSHING OPERATIONS
 
