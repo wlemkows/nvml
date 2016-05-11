@@ -252,7 +252,7 @@ function described above.
   These functions provide partial versions of the **pmem_persist**()
   function described above. **pmem_persist**() can be thought of as this:
 
-```
+```c
 void pmem_persist(const void *addr, size_t len)
 {
   /* flush the processor caches */
@@ -307,7 +307,7 @@ memory.
   For example, the following code is functionally equivalent to
   **pmem_memmove_persist**():
 
-```
+```c
 void *
 pmem_memmove_persist(void *pmemdest, const void *src, size_t len)
 {
@@ -366,7 +366,7 @@ applications to work with an evolving API.
   the compile-time version information, supplied by defines in
   **<libpmem.h>**, like this:
 
-```
+```c
 reason = pmem_check_version(PMEM_MAJOR_VERSION, PMEM_MINOR_VERSION);
 if (reason != NULL)
 {
@@ -455,43 +455,43 @@ pmem for some reason.
 
 **PMEM_NO_PCOMMIT**=1
 
-  Setting this environment variable to 1 forces **libpmem** to never issue
-  the Intel PCOMMIT instruction. This can be used on platforms where the
-  hardware drain function is performed some other way, like automatic
-  flushing during a power failure.
+Setting this environment variable to 1 forces **libpmem** to never issue
+the Intel PCOMMIT instruction. This can be used on platforms where the
+hardware drain function is performed some other way, like automatic
+flushing during a power failure.
 
 >WARNING: Using this environment variable incorrectly may impact program
 correctness.
 
 **PMEM\_NO\_CLWB**=1
 
-  Setting this environment variable to 1 forces **libpmem** to never issue
-  the **CLWB** instruction on Intel hardware, falling back to other cache
-  flush instructions instead (**CLFLUSHOPT** or **CLFLUSH** on Intel
-  hardware). Without this environment variable, **libpmem** will always
-  use the **CLWB** instruction for flushing processor caches on platforms
-  that support the instruction. This variable is intended for use during
-  library testing but may be required for some rare cases where using
-  **CLWB** has a negative impact on performance.
+Setting this environment variable to 1 forces **libpmem** to never issue
+the **CLWB** instruction on Intel hardware, falling back to other cache
+flush instructions instead (**CLFLUSHOPT** or **CLFLUSH** on Intel
+hardware). Without this environment variable, **libpmem** will always
+use the **CLWB** instruction for flushing processor caches on platforms
+that support the instruction. This variable is intended for use during
+library testing but may be required for some rare cases where using
+**CLWB** has a negative impact on performance.
 
 **PMEM_NO_CLFLUSHOPT**=1
 
-  Setting this environment variable to 1 forces **libpmem** to never issue
-  the **CLFLUSHOPT** instruction on Intel hardware, falling back to the
-  **CLFLUSH** instructions instead. Without this environment variable,
-  **libpmem** will always use the **CLFLUSHOPT** instruction for flushing
-  processor caches on platforms that support the instruction, but where
-  **CLWB** is not available. This variable is intended for use during
-  library testing.
+Setting this environment variable to 1 forces **libpmem** to never issue
+the **CLFLUSHOPT** instruction on Intel hardware, falling back to the
+**CLFLUSH** instructions instead. Without this environment variable,
+**libpmem** will always use the **CLFLUSHOPT** instruction for flushing
+processor caches on platforms that support the instruction, but where
+**CLWB** is not available. This variable is intended for use during
+library testing.
 
 **PMEM_NO_MOVNT**=1
 
-  Setting this environment variable to 1 forces **libpmem** to never use
-  the *non-temporal* move instructions on Intel hardware. Without this
-  environment variable, **libpmem** will use the non-temporal instructions
-  for copying larger ranges to persistent memory on platforms that support
-  the instructions. This variable is intended for use during library
-  testing.
+Setting this environment variable to 1 forces **libpmem** to never use
+the *non-temporal* move instructions on Intel hardware. Without this
+environment variable, **libpmem** will use the non-temporal instructions
+for copying larger ranges to persistent memory on platforms that support
+the instructions. This variable is intended for use during library
+testing.
 
 **PMEM_MOVNT_THRESHOLD**=val
 
@@ -504,6 +504,7 @@ available. It has no effect if **PMEM_NO_MOVNT** variable is set to 1.
 This variable is intended for use during library testing.
 
 **PMEM_MMAP_HINT**=val
+
 This environment variable allows overriding
 the hint address used by **pmem_map_file**(). If set, it also disables
 mapping address randomization. This variable is intended for use during
@@ -526,254 +527,64 @@ direct pointer to the object.
 The following example uses **libpmem** to flush changes made to raw,
 memory-mapped persistent memory.
 
-WARNING: there is nothing transactional about the **pmem\_persist**() or
-**pmem\_msync**() calls in this example. Interrupting the program may
+>WARNING: there is nothing transactional about the **pmem_persist**() or
+**pmem_msync**() calls in this example. Interrupting the program may
 result in a partial write to pmem. Use a transactional library such as
 **libpmemobj**(3) to avoid torn updates.
 
-\#include &lt;sys/types.h&gt;\
-\#include &lt;sys/stat.h&gt;\
-\#include &lt;fcntl.h&gt;\
-\#include &lt;stdio.h&gt;\
-\#include &lt;errno.h&gt;\
-\#include &lt;stdlib.h&gt;\
-\#include &lt;unistd.h&gt;\
-\#include &lt;string.h&gt;\
-\#include &lt;libpmem.h&gt;
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <libpmem.h>
 
-/\* using 4k of pmem for this example \*/
+/* using 4k of pmem for this example */
 
-<table>
-<colgroup>
-<col width="20%" />
-<col width="20%" />
-<col width="20%" />
-<col width="20%" />
-<col width="20%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>#define</p></td>
-<td align="left"><p>PMEM_LEN 4096</p></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>#define</p></td>
-<td align="left"><p>PATH “/pmem-fs/myfile”</p></td>
-</tr>
-</tbody>
-</table>
+#define PMEM_LEN 4096
+#define PATH "/pmem-fs/myfile"
 
-int\
-main(int argc, char \*argv\[\])\
+int main(int argc, char *argv[])
 {
+  char *pmemaddr;		
+  size_t mapped_len;
+  int is_pmem;
 
-<table style="width:100%;">
-<colgroup>
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-<col width="16%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>char *pmemaddr;</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>size_t mapped_len;</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>int is_pmem;</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>/* create a pmem file and memory map it */</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>if ((pmemaddr = pmem_map_file(PATH, PMEM_LEN, PMEM_FILE_CREATE,</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>0666, &amp;mapped_len, &amp;is_pmem)) == NULL) {</p></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>perror(“pmem_map_file”);</p></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>exit(1);</p></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>}</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>/* store a string to the persistent memory */</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>strcpy(pmemaddr, “hello, persistent memory”);</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>/* flush above strcpy to persistence */</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>if (is_pmem)</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>pmem_persist(pmemaddr, mapped_len);</p></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>else</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>pmem_msync(pmemaddr, mapped_len);</p></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>/*</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>* Delete the mappings. The region is also</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>* automatically unmapped when the process is</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>* terminated.</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>*/</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"><p>pmem_unmap(pmemaddr, mapped_len);</p></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-</tbody>
-</table>
+  /* create a pmem file and memory map it */
 
+  if ((pmemaddr = pmem_map_file(PATH, PMEM_LEN, PMEM_FILE_CREATE,
+  0666, &mapped_len, &is_pmem)) == NULL)
+  {
+    perror("pmem_map_file");
+    exit(1);
+  }				
+
+  /* store a string to the persistent memory */
+
+  strcpy(pmemaddr, "hello, persistent memory");
+
+  /* flush above strcpy to persistence */
+
+  if (is_pmem)
+    pmem_persist(pmemaddr, mapped_len);
+  else
+    pmem_msync(pmemaddr, mapped_len);
+
+  /*
+  * Delete the mappings. The region is also
+  * automatically unmapped when the process is
+  * terminated.
+  */
+
+  pmem_unmap(pmemaddr, mapped_len);
 }
+```
 
-See http://pmem.io/nvml/libpmem for more examples using the **libpmem**
-API.
+See http://pmem.io/nvml/libpmem for more examples using the **libpmem** API.
 
 
 ### ACKNOWLEDGEMENTS
