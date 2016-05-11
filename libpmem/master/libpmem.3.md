@@ -596,10 +596,10 @@ recommended by the SNIA NVM Programming Technical Work Group:
 
 ### SEE ALSO
 
-[**libpmemobj**(3)](libpmemobj.3.html),
-[**libpmemblk**(3)](libpmemblk.3.hmtl),
-[**libpmemlog**(3)](libpmemlog.3.html),
-[**libvmem**(3)](libvmem.3.html),
+[**libpmemobj**(3)](libpmemobj.3.md),
+[**libpmemblk**(3)](libpmemblk.3.md),
+[**libpmemlog**(3)](libpmemlog.3md),
+[**libvmem**(3)](libvmem.3.md),
 **open**(2),
 **mmap**(2),
 **munmap**(2),
