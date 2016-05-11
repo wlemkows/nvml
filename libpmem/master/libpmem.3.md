@@ -37,37 +37,35 @@ title: libpmem
 
 : int **pmem_is_pmem**(const void \*addr, size_t len);
 
-  **void pmem_persist(const void \****addr***, size\_t* **len***);
+  void **pmem_persist**(const void \*addr, size_t len);
 
-  **int pmem\_msync(const void \****addr***, size\_t* **len***);
+  int **pmem_msync**(const void \*addr, size_t len);
 
-  void \*pmem\_map\_file(const char \****path***, size\_t***len***, int**
-*flags***,\
-mode\_t** *mode***, size\_t \****mapped\_lenp***, int
-\****is\_pmemp***);
+  void \***pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
 
-  int pmem\_unmap(void \****addr***, size\_t***len***);**
+  int **pmem_unmap**(void \*addr, size_t len);
 
 **Partial flushing operations:**
 
-**void pmem\_flush(const void \****addr***, size\_t** *len***);\
-void pmem\_drain(void);\
-int pmem\_has\_hw\_drain(void);**
+: void **pmem_flush**(const void \*addr, size_t len);
+
+  void **pmem_drain**(void);
+
+  int **pmem_has_hw_drain**(void);
 
 **Copying to persistent memory:**
 
-**void \*pmem\_memmove\_persist(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memcpy\_persist(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memset\_persist(void \****pmemdest***, int** *c***,
-size\_t** *len***);\
-void \*pmem\_memmove\_nodrain(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memcpy\_nodrain(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memset\_nodrain(void \****pmemdest***, int** *c***,
-size\_t** *len***);**
+: void \***pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
+
+  void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
+
+  void \* **pmem_memset_persist**(void \*pmemdest, int c, size_t len);
+
+  void \*pmem_memmove_nodrain(void \*pmemdest, const void \*src, size_t len);
+
+  void \*pmem\_memcpy\_nodrain(void \****pmemdest***, const void \*src, size_t len);
+
+  void \*pmem_memset_nodrain(void \*pmemdest, int c, size_t len);
 
 **Library API versioning:**
 
