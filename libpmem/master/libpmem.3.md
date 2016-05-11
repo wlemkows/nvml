@@ -163,28 +163,25 @@ It calls **msync**() with the *MS_SYNC* flag as described in
 persistent memory once, and then uses that result throughout the
 program, for example:
 
-/\* do this call once, after the pmem is memory mapped \*/\
-
 ```c
-  int is_pmem = pmem_is_pmem(rangeaddr, rangelen);
-```
-/\* … make changes to a range of pmem … \*/
+/* do this call once, after the pmem is memory mapped */
+int is_pmem = pmem_is_pmem(rangeaddr, rangelen);
+/* … make changes to a range of pmem … */
 
-/\* make the changes durable \*/\
-```c
+/* make the changes durable */
 if (is_pmem)
   pmem_persist(subrangeaddr, subrangelen);
 else
   pmem_msync(subrangeaddr, subrangelen);
-```
 
 /\* … \*/
+```
 
 The return value of **pmem_msync**() is the return value of
 **msync**(), which can return -1 and set errno to indicate an error.
 
 
-void **\*pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
+* void **\*pmem_map_file**(const char \*path, size_t len, int flags, mode_t mode, size_t \*mapped_lenp, int \*is_pmemp);
 
 Given a *path*, **pmem_map_file**() function creates a new read/write
 mapping for the named file. It will map the file using **mmap**(2), but
