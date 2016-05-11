@@ -344,9 +344,7 @@ these functions might be used to avoid multiple calls to
 /* … write several ranges to pmem … */
 pmem_memcpy_nodrain(pmemdest1, src1, len1);
 pmem_memcpy_nodrain(pmemdest2, src2, len2);
-
 /* … */
-
 /* wait for any pmem stores to drain from HW buffers */
 pmem_drain();
 ```
