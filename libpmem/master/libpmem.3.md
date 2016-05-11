@@ -252,12 +252,12 @@ function described above.
   These functions provide partial versions of the **pmem_persist**()
   function described above. **pmem_persist**() can be thought of as this:
 
-```c
-void pmem_persist(const void \*addr, size_t len)
+```
+void pmem_persist(const void *addr, size_t len)
 {
-  /* flush the processor caches \*/
+  /* flush the processor caches */
     pmem_flush(addr, len);
-  /* wait for any pmem stores to drain from HW buffers \*/
+  /* wait for any pmem stores to drain from HW buffers */
     pmem_drain();
 }
 ```
@@ -296,11 +296,9 @@ the **PMEM_NO_PCOMMIT** environment variable as described in the
 The functions in this section provide optimized copying to persistent
 memory.
 
-void **\*pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
-
-void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
-
-void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
+* void **\*pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
+* void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
+* void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
 
 The **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
 **pmem_memset_persist**(), functions provide the same memory copying
@@ -328,36 +326,34 @@ fact that *pmemdest* is persistent memory and use instructions such as
 >WARNING: Using these functions where **pmem_is_pmem**() returns false
 may not do anything useful. Use the normal libc functions in that case.
 
-**void \*pmem\_memmove\_nodrain(void \****pmemdest***, const void
-\****src***,\
-size\_t** *len***);\
-void \*pmem\_memcpy\_nodrain(void \****pmemdest***, const void
-\****src***, size\_t** *len***);\
-void \*pmem\_memset\_nodrain(void \****pmemdest***, int** *c***,
-size\_t** *len***);**
+* void **\*pmem_memmove_nodrain**(void \*pmemdest, const void \*src, size_t len);
+* void **\*pmem_memcpy_nodrain**(void \*pmemdest, const void \*src, size_t len);
+* void **\*pmem_memset_nodrain**(void \*pmemdest, int c, size_t len);
 
-The **pmem\_memmove\_nodrain**(), **pmem\_memcpy\_nodrain**() and
-**pmem\_memset\_nodrain**() functions are similar to
-**pmem\_memmove\_persist**(), **pmem\_memcpy\_persist**(), and
-**pmem\_memset\_persist**() described above, except they skip the final
-**pmem\_drain**() step. This allows applications to optimize cases where
+The **pmem_memmove_nodrain**(), **pmem_memcpy_nodrain**() and
+**pmem_memset_nodrain**() functions are similar to
+**pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
+**pmem_memset_persist**() described above, except they skip the final
+**pmem_drain**() step. This allows applications to optimize cases where
 several ranges are being copied to persistent memory, followed by a
-single call to **pmem\_drain**(). The following example illustrates how
+single call to **pmem_drain**(). The following example illustrates how
 these functions might be used to avoid multiple calls to
-**pmem\_drain**() when copying several ranges of memory to pmem:
+**pmem_drain**() when copying several ranges of memory to pmem:
 
-/\* … write several ranges to pmem … \*/\
-pmem\_memcpy\_nodrain(pmemdest1, src1, len1);\
-pmem\_memcpy\_nodrain(pmemdest2, src2, len2);
+```c
+/* … write several ranges to pmem … */
+pmem_memcpy_nodrain(pmemdest1, src1, len1);
+pmem_memcpy_nodrain(pmemdest2, src2, len2);
 
-/\* … \*/
+/* … */
 
-/\* wait for any pmem stores to drain from HW buffers \*/\
-pmem\_drain();
+/* wait for any pmem stores to drain from HW buffers */
+pmem_drain();
+```
 
-WARNING: Using **pmem\_memmove\_nodrain**(), **pmem\_memcpy\_nodrain**()
-or **pmem\_memset\_nodrain**() on a destination where
-**pmem\_is\_pmem**() returns false may not do anything useful.
+>WARNING: Using **pmem_memmove_nodrain**(), **pmem_memcpy_nodrain**()
+or **pmem_memset_nodrain**() on a destination where
+**pmem_is_pmem**() returns false may not do anything useful.
 
 ## LIBRARY API VERSIONING
 
