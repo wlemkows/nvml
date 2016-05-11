@@ -592,12 +592,10 @@ See http://pmem.io/nvml/libpmem for more examples using the **libpmem** API.
 **libpmem** builds on the persistent memory programming model
 recommended by the SNIA NVM Programming Technical Work Group:
 
-[SNIA NVM](http://snia.org/nvmp)
+[http://snia.org/nvmp](http://snia.org/nvmp)
 
 ### SEE ALSO
 
 **open**(2), **mmap**(2), **munmap**(2), **msync**(2), **strerror**(3),
 **libpmemobj**(3), **libpmemblk**(3), **libpmemlog**(3), **libvmem**(3)
-and **[http://pmem.io](http://pmem.io)**.
-
-------------------------------------------------------------------------
+and **[http://pmem.io](http://pmem.io)**
