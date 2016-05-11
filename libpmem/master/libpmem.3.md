@@ -55,57 +55,54 @@ title: libpmem
 
 **Copying to persistent memory:**
 
-: void \***pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
+: void **\*pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
 
   void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
 
-  void \* **pmem_memset_persist**(void \*pmemdest, int c, size_t len);
+  void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
 
-  void \*pmem_memmove_nodrain(void \*pmemdest, const void \*src, size_t len);
+  void **\*pmem_memmove_nodrain**(void \*pmemdest, const void \*src, size_t len);
 
-  void \*pmem\_memcpy\_nodrain(void \****pmemdest***, const void \*src, size_t len);
+  void **\*pmem_memcpy_nodrain**(void \****pmemdest***, const void \*src, size_t len);
 
-  void \*pmem_memset_nodrain(void \*pmemdest, int c, size_t len);
+  void **\*pmem_memset_nodrain**(void \*pmemdest, int c, size_t len);
 
 **Library API versioning:**
 
-**const char \*pmem\_check\_version(\
-unsigned** *major\_required***,\
-unsigned** *minor\_required***);**
+: const char **\*pmem_check_version**(unsigned major_required, unsigned minor_required);
 
 **Error handling:**
-
-**const char \*pmem\_errormsg(void);**
+: const char **\*pmem_errormsg**(void);
 
 ### DESCRIPTION
 
+**libpmem**
+: provides low-level *persistent memory* (pmem) support for
+  applications using direct access storage (DAX), which is storage that
+  supports load/store access without paging blocks from a block storage
+  device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
+  type of byte addressable access to storage. A *persistent memory aware
+  file system* is typically used to expose the direct access to
+  applications. Memory mapping a file from this type of file system
+  results in the load/store, non-paged access to pmem.
 
-**libpmem** provides low-level *persistent memory* (pmem) support for
-applications using direct access storage (DAX), which is storage that
-supports load/store access without paging blocks from a block storage
-device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
-type of byte addressable access to storage. A *persistent memory aware
-file system* is typically used to expose the direct access to
-applications. Memory mapping a file from this type of file system
-results in the load/store, non-paged access to pmem.
+  This library is for applications that use persistent memory directly,
+  without the help of any library-supplied transactions or memory
+  allocation. Higher-level libraries that build on **libpmem** are
+  available and are recommended for most applications, see:
 
-This library is for applications that use persistent memory directly,
-without the help of any library-supplied transactions or memory
-allocation. Higher-level libraries that build on **libpmem** are
-available and are recommended for most applications, see:
-
-**libpmemobj**(3), a general use persistent memory API, providing memory
+* **libpmemobj**(3), a general use persistent memory API, providing memory
 allocation and transactional operations on variable-sized objects.
 
-**libpmemblk**(3), providing pmem-resident arrays of fixed-sized blocks
+* **libpmemblk**(3), providing pmem-resident arrays of fixed-sized blocks
 with atomic updates.
 
-**libpmemlog**(3), providing a pmem-resident log file.
+* **libpmemlog**(3), providing a pmem-resident log file.
 
-Under normal usage, **libpmem** will never print messages or
-intentionally cause the process to exit. The only exception to this is
-the debugging information, when enabled, as described under **DEBUGGING
-AND ERROR HANDLING** below.
+: Under normal usage, **libpmem** will never print messages or
+  intentionally cause the process to exit. The only exception to this is
+  the debugging information, when enabled, as described under **DEBUGGING
+  AND ERROR HANDLING** below.
 
 ### MOST COMMONLY USED FUNCTIONS
 
