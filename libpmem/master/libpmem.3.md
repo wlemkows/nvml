@@ -300,12 +300,12 @@ memory.
 * void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
 * void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
 
-The **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
-**pmem_memset_persist**(), functions provide the same memory copying
-as their namesakes **memmove**(3) **memcpy**(3), and **memset**(3), and
-ensure that the result has been flushed to persistence before returning.
-For example, the following code is functionally equivalent to
-**pmem_memmove_persist**():
+  The **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
+  **pmem_memset_persist**(), functions provide the same memory copying
+  as their namesakes **memmove**(3) **memcpy**(3), and **memset**(3), and
+  ensure that the result has been flushed to persistence before returning.
+  For example, the following code is functionally equivalent to
+  **pmem_memmove_persist**():
 
 ```
 void *
@@ -330,15 +330,15 @@ may not do anything useful. Use the normal libc functions in that case.
 * void **\*pmem_memcpy_nodrain**(void \*pmemdest, const void \*src, size_t len);
 * void **\*pmem_memset_nodrain**(void \*pmemdest, int c, size_t len);
 
-The **pmem_memmove_nodrain**(), **pmem_memcpy_nodrain**() and
-**pmem_memset_nodrain**() functions are similar to
-**pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
-**pmem_memset_persist**() described above, except they skip the final
-**pmem_drain**() step. This allows applications to optimize cases where
-several ranges are being copied to persistent memory, followed by a
-single call to **pmem_drain**(). The following example illustrates how
-these functions might be used to avoid multiple calls to
-**pmem_drain**() when copying several ranges of memory to pmem:
+  The **pmem_memmove_nodrain**(), **pmem_memcpy_nodrain**() and
+  **pmem_memset_nodrain**() functions are similar to
+  **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
+  **pmem_memset_persist**() described above, except they skip the final
+  **pmem_drain**() step. This allows applications to optimize cases where
+  several ranges are being copied to persistent memory, followed by a
+  single call to **pmem_drain**(). The following example illustrates how
+  these functions might be used to avoid multiple calls to
+  **pmem_drain**() when copying several ranges of memory to pmem:
 
 ```c
 /* … write several ranges to pmem … */
@@ -358,22 +358,21 @@ or **pmem_memset_nodrain**() on a destination where
 This section describes how the library API is versioned, allowing
 applications to work with an evolving API.
 
-**const char \*pmem\_check\_version(\
-unsigned** *major\_required***,\
-unsigned** *minor\_required***);**
+* const char **\*pmem_check_version**(unsigned major_required, unsigned minor_required);
 
-The **pmem\_check\_version**() function is used to see if the installed
-**libpmem** supports the version of the library API required by an
-application. The easiest way to do this is for the application to supply
-the compile-time version information, supplied by defines in
-**&lt;libpmem.h&gt;**, like this:
+  The **pmem_check_version**() function is used to see if the installed
+  **libpmem** supports the version of the library API required by an
+  application. The easiest way to do this is for the application to supply
+  the compile-time version information, supplied by defines in
+  **<libpmem.h>**, like this:
 
-reason = pmem\_check\_version(PMEM\_MAJOR\_VERSION,\
-PMEM\_MINOR\_VERSION);\
-if (reason != NULL) {\
-/\* version check failed, reason string tells you why \*/\
+```
+reason = pmem_check_version(PMEM_MAJOR_VERSION, PMEM_MINOR_VERSION);
+if (reason != NULL)
+{
+  /* version check failed, reason string tells you why */
 }
-
+```
 Any mismatch in the major version number is considered a failure, but a
 library with a newer minor version number will pass this check since
 increasing minor versions imply backwards compatibility.
@@ -386,10 +385,10 @@ in version 1.0 of the library. Interfaces added after version 1.0 will
 contain the text *introduced in version x.y* in the section of this
 manual describing the feature.
 
-When the version check performed by **pmem\_check\_version**() is
+When the version check performed by **pmem_check_version**() is
 successful, the return value is NULL. Otherwise the return value is a
 static string describing the reason for failing the version check. The
-string returned by **pmem\_check\_version**() must not be modified or
+string returned by **pmem_check_version**() must not be modified or
 freed.
 
 ## DEBUGGING AND ERROR HANDLING
@@ -402,77 +401,42 @@ performs any run-time assertions. If an error is detected during the
 call to **libpmem** function, an application may retrieve an error
 message describing the reason of failure using the following function:
 
-**const char \*pmem\_errormsg(void);**
+* const char **\*pmem_errormsg**(void);
 
-The **pmem\_errormsg**() function returns a pointer to a static buffer
-containing the last error message logged for current thread. The error
-message may include description of the corresponding error code (if
-errno was set), as returned by **strerror**(3). The error message buffer
-is thread-local; errors encountered in one thread do not affect its
-value in other threads. The buffer is never cleared by any library
-function; its content is significant only when the return value of the
-immediately preceding call to **libpmem** function indicated an error,
-or if errno was set. The application must not modify or free the error
-message string, but it may be modified by subsequent calls to other
-library functions.
+  The **pmem_errormsg**() function returns a pointer to a static buffer
+  containing the last error message logged for current thread. The error
+  message may include description of the corresponding error code (if
+  errno was set), as returned by **strerror**(3). The error message buffer
+  is thread-local; errors encountered in one thread do not affect its
+  value in other threads. The buffer is never cleared by any library
+  function; its content is significant only when the return value of the
+  immediately preceding call to **libpmem** function indicated an error,
+  or if errno was set. The application must not modify or free the error
+  message string, but it may be modified by subsequent calls to other
+  library functions.
 
 A second version of **libpmem**, accessed when a program uses the
-libraries under **/usr/lib/nvml\_debug**, contains run-time assertions
+libraries under **/usr/lib/nvml_debug**, contains run-time assertions
 and trace points. The typical way to access the debug version is to set
-the environment variable **LD\_LIBRARY\_PATH** to
-**/usr/lib/nvml\_debug** or **/usr/lib64/nvml\_debug** depending on
+the environment variable **LD_LIBRARY_PATH** to
+**/usr/lib/nvml_debug** or **/usr/lib64/nvml_debug** depending on
 where the debug libraries are installed on the system. The trace points
 in the debug version of the library are enabled using the environment
-variable **PMEM\_LOG\_LEVEL**, which can be set to the following values:
+variable **PMEM_LOG_LEVEL**, which can be set to the following values:
 
-<table>
-<colgroup>
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-<col width="25%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>0</p></td>
-<td align="left"></td>
-<td align="left"><p>This is the default level when <strong>PMEM_LOG_LEVEL</strong> is not set. No log messages are emitted at this level.</p></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"><p>1</p></td>
-<td align="left"></td>
-<td align="left"><p>Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using <strong>pmem_errormsg</strong>().</p></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>2</p></td>
-<td align="left"></td>
-<td align="left"><p>A trace of basic operations is logged.</p></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left"><p>3</p></td>
-<td align="left"></td>
-<td align="left"><p>This level enables a very verbose amount of function call tracing in the library.</p></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>4</p></td>
-<td align="left"></td>
-<td align="left"><p>This level enables voluminous and fairly obscure tracing information that is likely only useful to the <strong>libpmem</strong> developers.</p></td>
-</tr>
-</tbody>
-</table>
+0. This is the default level when <strong>PMEM_LOG_LEVEL</strong> is not set. No log messages are emitted at this level.</p></td>
+1. Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
+2. A trace of basic operations is logged.
+3. This level enables a very verbose amount of function call tracing in the library.
+4. This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
 
-The environment variable **PMEM\_LOG\_FILE** specifies a file name where
+The environment variable **PMEM_LOG_FILE** specifies a file name where
 all logging information should be written. If the last character in the
 name is “-”, the PID of the current process will be appended to the file
-name when the log file is created. If **PMEM\_LOG\_FILE** is not set,
+name when the log file is created. If **PMEM_LOG_FILE** is not set,
 the logging output goes to stderr.
 
-Setting the environment variable **PMEM\_LOG\_LEVEL** has no effect on
+Setting the environment variable **PMEM_LOG_LEVEL** has no effect on
 the non-debug version of **libpmem**.
 
 ### ENVIRONMENT VARIABLES
@@ -481,78 +445,80 @@ the non-debug version of **libpmem**.
 environment variables. These are largely intended for testing and are
 not normally required.
 
-**PMEM\_IS\_PMEM\_FORCE=***val*
+**PMEM_IS_PMEM_FORCE**=val
 
-If *val* is 0 (zero), then **pmem\_is\_pmem**() will always return
-false. Setting *val* to 1 causes **pmem\_is\_pmem**() to always return
-true. This variable is mostly used for testing but can be used to force
-pmem behavior on a system where a range of pmem is not detectable as
-pmem for some reason.
+  If *val* is 0 (zero), then **pmem_is_pmem**() will always return
+  false. Setting *val* to 1 causes **pmem_is_pmem**() to always return
+  true. This variable is mostly used for testing but can be used to force
+  pmem behavior on a system where a range of pmem is not detectable as
+  pmem for some reason.
 
-**PMEM\_NO\_PCOMMIT=1**
+**PMEM_NO_PCOMMIT**=1
 
-Setting this environment variable to 1 forces **libpmem** to never issue
-the Intel PCOMMIT instruction. This can be used on platforms where the
-hardware drain function is performed some other way, like automatic
-flushing during a power failure.
+  Setting this environment variable to 1 forces **libpmem** to never issue
+  the Intel PCOMMIT instruction. This can be used on platforms where the
+  hardware drain function is performed some other way, like automatic
+  flushing during a power failure.
 
-WARNING: Using this environment variable incorrectly may impact program
+>WARNING: Using this environment variable incorrectly may impact program
 correctness.
 
-**PMEM\_NO\_CLWB=1**
+**PMEM\_NO\_CLWB**=1
 
-Setting this environment variable to 1 forces **libpmem** to never issue
-the **CLWB** instruction on Intel hardware, falling back to other cache
-flush instructions instead (**CLFLUSHOPT** or **CLFLUSH** on Intel
-hardware). Without this environment variable, **libpmem** will always
-use the **CLWB** instruction for flushing processor caches on platforms
-that support the instruction. This variable is intended for use during
-library testing but may be required for some rare cases where using
-**CLWB** has a negative impact on performance.
+  Setting this environment variable to 1 forces **libpmem** to never issue
+  the **CLWB** instruction on Intel hardware, falling back to other cache
+  flush instructions instead (**CLFLUSHOPT** or **CLFLUSH** on Intel
+  hardware). Without this environment variable, **libpmem** will always
+  use the **CLWB** instruction for flushing processor caches on platforms
+  that support the instruction. This variable is intended for use during
+  library testing but may be required for some rare cases where using
+  **CLWB** has a negative impact on performance.
 
-**PMEM\_NO\_CLFLUSHOPT=1**
+**PMEM_NO_CLFLUSHOPT=1**
 
-Setting this environment variable to 1 forces **libpmem** to never issue
-the **CLFLUSHOPT** instruction on Intel hardware, falling back to the
-**CLFLUSH** instructions instead. Without this environment variable,
-**libpmem** will always use the **CLFLUSHOPT** instruction for flushing
-processor caches on platforms that support the instruction, but where
-**CLWB** is not available. This variable is intended for use during
-library testing.
+  Setting this environment variable to 1 forces **libpmem** to never issue
+  the **CLFLUSHOPT** instruction on Intel hardware, falling back to the
+  **CLFLUSH** instructions instead. Without this environment variable,
+  **libpmem** will always use the **CLFLUSHOPT** instruction for flushing
+  processor caches on platforms that support the instruction, but where
+  **CLWB** is not available. This variable is intended for use during
+  library testing.
 
-**PMEM\_NO\_MOVNT=1**
+**PMEM_NO_MOVNT**=1
 
-Setting this environment variable to 1 forces **libpmem** to never use
-the *non-temporal* move instructions on Intel hardware. Without this
-environment variable, **libpmem** will use the non-temporal instructions
-for copying larger ranges to persistent memory on platforms that support
-the instructions. This variable is intended for use during library
-testing.
+  Setting this environment variable to 1 forces **libpmem** to never use
+  the *non-temporal* move instructions on Intel hardware. Without this
+  environment variable, **libpmem** will use the non-temporal instructions
+  for copying larger ranges to persistent memory on platforms that support
+  the instructions. This variable is intended for use during library
+  testing.
 
-**PMEM\_MOVNT\_THRESHOLD=***val*
+**PMEM_MOVNT_THRESHOLD**=val
 
-This environment variable allows overriding the minimal length of
-**pmem\_memcpy\_\***(), **pmem\_memmove\_\***() or
-**pmem\_memset\_\***() operations, for which **libpmem** uses
-*non-temporal* move instructions. Setting this environment variable to 0
-forces **libpmem** to always use the *non-temporal* move instructions if
-available. It has no effect if **PMEM\_NO\_MOVNT** variable is set to 1.
-This variable is intended for use during library testing.
+  This environment variable allows overriding the minimal length of
+  **pmem_memcpy_**\*(), **pmem_memmove_**\*() or
+  **pmem_memset_**\*() operations, for which **libpmem** uses
+  *non-temporal* move instructions. Setting this environment variable to 0
+  forces **libpmem** to always use the *non-temporal* move instructions if
+  available. It has no effect if **PMEM_NO_MOVNT** variable is set to 1.
+  This variable is intended for use during library testing.
 
-**PMEM\_MMAP\_HINT=***val* This environment variable allows overriding
-the hint address used by **pmem\_map\_file**(). If set, it also disables
-mapping address randomization. This variable is intended for use during
-library testing and debugging. Setting it to some fairly large value
-(i.e. 0x10000000000) will very likely result in mapping the file at the
-specified address (if not used) or at the first unused region above
-given address, without adding any random offset. When debugging, this
-makes it easier to calculate the actual address of the persistent memory
-block, based on its offset in the file. In case of **libpmemobj** it
-simplifies conversion of a persistent object identifier (OID) into a
-direct pointer to the object. **NOTE: Setting this environment variable
-affects all the NVM libraries,** disabling mapping address randomization
-and causing the specified address to be used as a hint about where to
-place the mapping.
+**PMEM_MMAP_HINT**=val
+
+  This environment variable allows overriding
+  the hint address used by **pmem_map_file**(). If set, it also disables
+  mapping address randomization. This variable is intended for use during
+  library testing and debugging. Setting it to some fairly large value
+  (i.e. 0x10000000000) will very likely result in mapping the file at the
+  specified address (if not used) or at the first unused region above
+  given address, without adding any random offset. When debugging, this
+  makes it easier to calculate the actual address of the persistent memory
+  block, based on its offset in the file. In case of **libpmemobj** it
+  simplifies conversion of a persistent object identifier (OID) into a
+  direct pointer to the object. **NOTE: Setting this environment variable
+  affects all the NVM libraries,** disabling mapping address randomization
+  and causing the specified address to be used as a hint about where to
+  place the mapping.
 
 ### EXAMPLES
 
