@@ -596,6 +596,13 @@ recommended by the SNIA NVM Programming Technical Work Group:
 
 ### SEE ALSO
 
-**open**(2), **mmap**(2), **munmap**(2), **msync**(2), **strerror**(3),
-**libpmemobj**(3), **libpmemblk**(3), **libpmemlog**(3), **libvmem**(3)
+[`**open**`(2)](master/libpmemobj.3.html),
+**mmap**(2),
+**munmap**(2),
+**msync**(2),
+**strerror**(3),
+**libpmemobj**(3),
+**libpmemblk**(3),
+**libpmemlog**(3),
+**libvmem**(3)
 and **[http://pmem.io](http://pmem.io)**
