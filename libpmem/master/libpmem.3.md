@@ -113,13 +113,13 @@ persistence directly (via **mmap**(2)) and that wish to take on the
 responsibility for flushing stores to persistence will find the
 functions described in this section to be the most commonly used.
 
-int **pmem_is_pmem**(const void \*addr, size_t len);
++ int **pmem_is_pmem**(const void \*addr, size_t len);
 
-The **pmem_is_pmem**() function returns true only if the entire range
-\[*addr*, *addr*+*len*) consists of persistent memory. A true return
-from **pmem_is_pmem**() means it is safe to use **pmem_persist**()
-and the related functions below to make changes durable for that memory
-range.
+  The **pmem_is_pmem**() function returns true only if the entire range
+  \[*addr*, *addr*+*len*) consists of persistent memory. A true return
+  from **pmem_is_pmem**() means it is safe to use **pmem_persist**()
+  and the related functions below to make changes durable for that memory
+  range.
 
 The implementation of **pmem_is_pmem**() requires a non-trivial amount
 of work to determine if the given range is entirely persistent memory.
@@ -166,6 +166,7 @@ program, for example:
 ```c
 /* do this call once, after the pmem is memory mapped */
 int is_pmem = pmem_is_pmem(rangeaddr, rangelen);
+
 /* … make changes to a range of pmem … */
 
 /* make the changes durable */
@@ -174,7 +175,7 @@ if (is_pmem)
 else
   pmem_msync(subrangeaddr, subrangelen);
 
-/\* … \*/
+/* … */
 ```
 
 The return value of **pmem_msync**() is the return value of
