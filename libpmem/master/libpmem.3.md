@@ -297,7 +297,9 @@ The functions in this section provide optimized copying to persistent
 memory.
 
 void **\*pmem_memmove_persist**(void \*pmemdest, const void \*src, size_t len);
+
 void **\*pmem_memcpy_persist**(void \*pmemdest, const void \*src, size_t len);
+
 void **\*pmem_memset_persist**(void \*pmemdest, int c, size_t len);
 
 The **pmem_memmove_persist**(), **pmem_memcpy_persist**(), and
@@ -307,7 +309,7 @@ ensure that the result has been flushed to persistence before returning.
 For example, the following code is functionally equivalent to
 **pmem_memmove_persist**():
 
-```c
+```
 void *
 pmem_memmove_persist(void *pmemdest, const void *src, size_t len)
 {
