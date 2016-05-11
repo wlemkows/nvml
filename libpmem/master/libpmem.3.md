@@ -72,6 +72,7 @@ title: libpmem
 : const char **\*pmem_check_version**(unsigned major_required, unsigned minor_required);
 
 **Error handling:**
+
 : const char **\*pmem_errormsg**(void);
 
 ### DESCRIPTION
@@ -84,25 +85,24 @@ title: libpmem
   type of byte addressable access to storage. A *persistent memory aware
   file system* is typically used to expose the direct access to
   applications. Memory mapping a file from this type of file system
-  results in the load/store, non-paged access to pmem.
-
+  results in the load/store, non-paged access to pmem.<br />
   This library is for applications that use persistent memory directly,
   without the help of any library-supplied transactions or memory
   allocation. Higher-level libraries that build on **libpmem** are
   available and are recommended for most applications, see:
 
-* **libpmemobj**(3), a general use persistent memory API, providing memory
+ + **libpmemobj**(3), a general use persistent memory API, providing memory
 allocation and transactional operations on variable-sized objects.
 
-* **libpmemblk**(3), providing pmem-resident arrays of fixed-sized blocks
+ + **libpmemblk**(3), providing pmem-resident arrays of fixed-sized blocks
 with atomic updates.
 
-* **libpmemlog**(3), providing a pmem-resident log file.
+ + **libpmemlog**(3), providing a pmem-resident log file.
 
-: Under normal usage, **libpmem** will never print messages or
-  intentionally cause the process to exit. The only exception to this is
-  the debugging information, when enabled, as described under **DEBUGGING
-  AND ERROR HANDLING** below.
+ Under normal usage, **libpmem** will never print messages or
+ intentionally cause the process to exit.
+ The only exception to this is the debugging information, when enabled,
+ as described under **DEBUGGING AND ERROR HANDLING** below.
 
 ### MOST COMMONLY USED FUNCTIONS
 
