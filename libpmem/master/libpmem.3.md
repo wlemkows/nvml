@@ -424,27 +424,13 @@ where the debug libraries are installed on the system. The trace points
 in the debug version of the library are enabled using the environment
 variable **PMEM_LOG_LEVEL**, which can be set to the following values:
 
-PMEM_LOG_LEVEL  |  VALUE
+PMEM_LOG_LEVEL  |
 --|--
 **0** |  This is the default level when **PMEM_LOG_LEVEL** is not set. No log messages are emitted at this level.
-**1** |  
-**2** |  
-**3** |  
-**4** |
-
-
-**0** - This is the default level when **PMEM_LOG_LEVEL** is not set.
-   No log messages are emitted at this level.
-
-**1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual).
-   The same information may be retrieved using **pmem_errormsg**.
-
-**2** - A trace of basic operations is logged.
-
-**3** - This level enables a very verbose amount of function call tracing in the library.
-
-**4** - This level enables voluminous and fairly obscure tracing information
-   that is likely only useful to the **libpmem** developers.
+**1** |  Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmem_errormsg**.
+**2** |  A trace of basic operations is logged.
+**3** |  This level enables a very verbose amount of function call tracing in the library.
+**4** | This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmem** developers.
 
 The environment variable **PMEM_LOG_FILE** specifies a file name where
 all logging information should be written. If the last character in the
