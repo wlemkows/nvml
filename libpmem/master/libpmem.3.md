@@ -81,6 +81,7 @@ title: libpmem
 
 >provides low-level *persistent memory* (pmem) support for
 applications using direct access storage (DAX), which is storage that
+
 >>supports load/store access without paging blocks from a block storage
 device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
 type of byte addressable access to storage. A *persistent memory aware
