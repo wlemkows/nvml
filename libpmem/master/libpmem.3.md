@@ -584,7 +584,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-See http://pmem.io/nvml/libpmem for more examples using the **libpmem** API.
+See [http://pmem.io/nvml/libpmem](http://pmem.io/nvml/libpmem) for more examples using the **libpmem** API.
 
 
 ### ACKNOWLEDGEMENTS
