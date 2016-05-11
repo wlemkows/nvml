@@ -597,9 +597,9 @@ recommended by the SNIA NVM Programming Technical Work Group:
 ### SEE ALSO
 
 [**libpmemobj**(3)](../../libpmemobj/master/libpmemobj.3.html),
-[**libpmemblk**(3)](libpmemblk.3.md),
-[**libpmemlog**(3)](libpmemlog.3md),
-[**libvmem**(3)](libvmem.3.md),
+[**libpmemblk**(3)](../../libpmemblk/master/libpmemblk.3.html),
+[**libpmemlog**(3)](../../libpmemlog/master/libpmemlog.3.html),
+[**libvmem**(3)](../../libvmem/master/libvmem.3.html),
 **open**(2),
 **mmap**(2),
 **munmap**(2),
