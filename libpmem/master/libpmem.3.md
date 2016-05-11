@@ -353,7 +353,7 @@ pmem_drain();
 or **pmem_memset_nodrain**() on a destination where
 **pmem_is_pmem**() returns false may not do anything useful.
 
-## LIBRARY API VERSIONING
+### LIBRARY API VERSIONING
 
 This section describes how the library API is versioned, allowing
 applications to work with an evolving API.
@@ -391,7 +391,7 @@ static string describing the reason for failing the version check. The
 string returned by **pmem_check_version**() must not be modified or
 freed.
 
-## DEBUGGING AND ERROR HANDLING
+### DEBUGGING AND ERROR HANDLING
 
 Two versions of **libpmem** are typically available on a development
 system. The normal version, accessed when a program is linked using the
