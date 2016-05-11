@@ -78,18 +78,18 @@ title: libpmem
 ### DESCRIPTION
 
 **libpmem**
-: provides low-level *persistent memory* (pmem) support for
-  applications using direct access storage (DAX), which is storage that
-  supports load/store access without paging blocks from a block storage
-  device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
-  type of byte addressable access to storage. A *persistent memory aware
-  file system* is typically used to expose the direct access to
-  applications. Memory mapping a file from this type of file system
-  results in the load/store, non-paged access to pmem.<br />
+provides low-level *persistent memory* (pmem) support for
+applications using direct access storage (DAX), which is storage that
+supports load/store access without paging blocks from a block storage
+device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
+type of byte addressable access to storage. A *persistent memory aware
+file system* is typically used to expose the direct access to
+applications. Memory mapping a file from this type of file system
+results in the load/store, non-paged access to pmem.<br />
   This library is for applications that use persistent memory directly,
-  without the help of any library-supplied transactions or memory
-  allocation. Higher-level libraries that build on **libpmem** are
-  available and are recommended for most applications, see:
+without the help of any library-supplied transactions or memory
+allocation. Higher-level libraries that build on **libpmem** are
+available and are recommended for most applications, see:
 
  + **libpmemobj**(3), a general use persistent memory API, providing memory
 allocation and transactional operations on variable-sized objects.
@@ -99,10 +99,10 @@ with atomic updates.
 
  + **libpmemlog**(3), providing a pmem-resident log file.
 
- Under normal usage, **libpmem** will never print messages or
- intentionally cause the process to exit.
- The only exception to this is the debugging information, when enabled,
- as described under **DEBUGGING AND ERROR HANDLING** below.
+>Under normal usage, **libpmem** will never print messages or
+intentionally cause the process to exit.
+The only exception to this is the debugging information, when enabled,
+as described under **DEBUGGING AND ERROR HANDLING** below.
 
 ### MOST COMMONLY USED FUNCTIONS
 
