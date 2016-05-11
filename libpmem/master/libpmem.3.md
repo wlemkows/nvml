@@ -4,9 +4,7 @@ Content-Style: 'text/css'
 generator: 'groff -Thtml, see www.gnu.org'
 title: libpmem
 ...
-# libpmem
-
-### TABLE OF CONTENT
+## libpmem
 
 [NAME](#name)<br />
 [SYNOPSI](#synopsis)<br />
