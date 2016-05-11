@@ -424,6 +424,15 @@ where the debug libraries are installed on the system. The trace points
 in the debug version of the library are enabled using the environment
 variable **PMEM_LOG_LEVEL**, which can be set to the following values:
 
+PMEM_LOG_LEVEL  |  VALUE
+--|--
+**0** |  This is the default level when **PMEM_LOG_LEVEL** is not set. No log messages are emitted at this level.
+**1** |  
+**2** |  
+**3** |  
+**4** |
+
+
 **0** - This is the default level when **PMEM_LOG_LEVEL** is not set.
    No log messages are emitted at this level.
 
