@@ -307,9 +307,9 @@ ensure that the result has been flushed to persistence before returning.
 For example, the following code is functionally equivalent to
 **pmem_memmove_persist**():
 
-```
+```c
 void *
-pmem_memmove_persist(void *pmemdest, const void *src, size\_t len)
+pmem_memmove_persist(void *pmemdest, const void *src, size_t len)
 {
   void *retval = memmove(pmemdest, src, len);
   pmem_persist(pmemdest, len);
