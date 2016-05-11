@@ -203,22 +203,22 @@ else
     *len* must be non-zero and specifies the size of the file to be created.
     *mode* has the same meaning as for **open**(2) and specifies the mode to
     use in case a new file is created. If neither **PMEM_FILE_CREATE** nor
-    + **PMEM_FILE_TMPFILE** is specified, then *mode* is ignored.
+    **PMEM_FILE_TMPFILE** is specified, then *mode* is ignored.
 
   + **PMEM_FILE_EXCL** - Same meaning as **O_EXCL** on **open**(2) -
-    Ensure that this call creates the file. If this flag is specified in
-    conjunction with **PMEM_FILE_CREATE**, and pathname already exists,
-    then **pmem_map_file**() will fail.
+  Ensure that this call creates the file. If this flag is specified in
+  conjunction with **PMEM_FILE_CREATE**, and pathname already exists,
+  then **pmem_map_file**() will fail.
 
   + **PMEM_FILE_TMPFILE** - Same meaning as **O_TMPFILE** on **open**(2).
-    Create a mapping for an unnamed temporary file. **PMEM_FILE_CREATE**
-    and *len* must be specified and *path* must be an existing directory
-    name.
+  Create a mapping for an unnamed temporary file. **PMEM_FILE_CREATE**
+  and *len* must be specified and *path* must be an existing directory
+  name.
 
   + **PMEM_FILE_SPARSE** - When creating a file, create a sparse (holey)
-    file instead of calling **posix_fallocate**(2). Valid only if specified
-    in conjunction with **PMEM_FILE_CREATE** or **PMEM_FILE_TMPFILE**,
-    otherwise ignored.
+  file instead of calling **posix_fallocate**(2). Valid only if specified
+  in conjunction with **PMEM_FILE_CREATE** or **PMEM_FILE_TMPFILE**,
+  otherwise ignored.
 
   If creation flags are not supplied, then **pmem_map_file**() creates a
   mapping for an existing file. In such case, *len* should be zero. The
