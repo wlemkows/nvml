@@ -38,6 +38,8 @@ or
 $ cc [ flag... ] file... -lvmmalloc [ library... ]
 ```
 
+**Most commonly used functions:**
+
 : void **\*malloc**(size_t size);
 
   void **free**(void \*ptr);
@@ -82,10 +84,9 @@ Under normal usage, **libvmmalloc** will never print messages or intentionally c
 
 There are two configuration variables that **must** be set to make **libvmmalloc** work properly. If any of them is not specified, or if their values are not valid, the library prints the appropriate error message and terminates the process.
 
-
 **VMMALLOC_POOL_DIR**
 
-: Specifies a path to directory where the memory pool file should be created. The directory must exist and be writable.</p></td>
+: Specifies a path to directory where the memory pool file should be created. The directory must exist and be writable.
 
 **VMMALLOC_POOL_SIZE**
 
