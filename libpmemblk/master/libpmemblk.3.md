@@ -28,9 +28,8 @@ title: libpmemblk
 #include <ibpmemblk.h>
 ```
 
-```bash
 cc ... -lpmemblk -lpmem
-```
+
 
 **Most commonly used functions:**
 
