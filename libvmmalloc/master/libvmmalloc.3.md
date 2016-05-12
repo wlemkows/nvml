@@ -37,7 +37,7 @@ or
 ```
 $ cc [ flag... ] file... -lvmmalloc [ library... ]
 ```
-#
+<br />
 **Most commonly used functions:**
 
 : void **\*malloc**(size_t size);
