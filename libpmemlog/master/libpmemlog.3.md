@@ -180,10 +180,10 @@ When the version check performed by **pmemlog_check_version**() is successful, t
 The library entry points described in this section are less commonly used than the previous sections.
 
 * void **pmemlog_set_funcs**(<br />
-  void *(****malloc_func***)(size_t** *size***),<br />
-  void (****free_func***)(void ****ptr***),<br />
-  void *(****realloc_func***)(void ****ptr***, size_t** *size***),<br />
-  char *(****strdup_func***)(const char ****s***));
+  void \*(\*malloc_func)(size_t size),<br />
+  void (\*free_func)(void \*ptr),<br />
+  void \*(\*realloc_func)(void \*ptr, size_t size),<br />
+  char \*(\*strdup_func)(const char \*s));
 
   The **pmemlog_set_funcs**() function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
@@ -277,7 +277,7 @@ main(int argc, char *argv[])
     }
 
    /* print the log contents */
-    printf"log contains:");
+    printf("log contains:");
     pmemlog_walk(plp, 0, printit, NULL);
 
    pmemlog_close(plp);

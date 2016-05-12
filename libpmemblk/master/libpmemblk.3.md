@@ -260,7 +260,7 @@ main(int argc, char *argv[])
 
    /* how many elements fit into the file? */
     nelements = pmemblk_nblock(pbp);
-    printf("file holds %zu elements0, nelements);
+    printf("file holds %zu elements", nelements);
 
    /* store a block at index 5 */
     strcpy(buf, "hello, world");
