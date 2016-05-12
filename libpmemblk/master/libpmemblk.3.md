@@ -297,8 +297,8 @@ Unlike **libpmemobj**, data replication is not supported in **libpmemblk**. Thus
 
 **libpmemblk** builds on the persistent memory programming model recommended by the SNIA NVM Programming Technical Work Group:
 
-http://snia.org/nvmp
+[http://snia.org/nvmp](http://snia.org/nvmp)
 
 ### SEE ALSO
 
-**mmap**(2), **munmap**(2), **msync**(2), **strerror**(3), **libpmemobj**(3), **libpmemlog**(3), **libpmem**(3), **libvmem**(3) and **http://pmem.io**
+**mmap**(2), **munmap**(2), **msync**(2), **strerror**(3), **libpmemobj**(3), **libpmemlog**(3), **libpmem**(3), **libvmem**(3) and **[http://pmem.io](http://pmem.io)**
