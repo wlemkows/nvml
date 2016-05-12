@@ -89,7 +89,7 @@ To use the atomic block arrays supplied by **libpmemblk**, a *memory pool* is fi
 
 * PMEMblkpool **\*pmemblk_create**(const char \*path, size_t bsize, size_t poolsize, mode_t mode);
 
-  The **pmemblk_create**() function creates a block memory pool with the given total *poolsize* divided up into as many elements of size *bsize* as will fit in the pool. Since the transactional nature of a block memory pool requires some space overhead in the memory pool, the resulting number of available blocks is less than *poolsize / bsize*, and is made available to the caller via the **pmemblk_nblock**() function described below. Given the specifics of the implementation, the number of available blocks for the user cannot be less than 256. This translates to at least 512 internal blocks. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemblk_create**() and then specifying *poolsize* as zero. In this case **pmemblk_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a block pool is defined in **&lt;libpmemblk.h&gt;** as **PMEMBLK_MIN_POOL**. *bsize* can be any non-zero value, however **libpmemblk** will silently round up the given size to **PMEMBLK_MIN_BLK**, as defined in **<libpmemblk.h>**.
+  The **pmemblk_create**() function creates a block memory pool with the given total *poolsize* divided up into as many elements of size *bsize* as will fit in the pool. Since the transactional nature of a block memory pool requires some space overhead in the memory pool, the resulting number of available blocks is less than *poolsize / bsize*, and is made available to the caller via the **pmemblk_nblock**() function described below. Given the specifics of the implementation, the number of available blocks for the user cannot be less than 256. This translates to at least 512 internal blocks. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemblk_create**() and then specifying *poolsize* as zero. In this case **pmemblk_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a block pool is defined in **<libpmemblk.h>** as **PMEMBLK_MIN_POOL**. *bsize* can be any non-zero value, however **libpmemblk** will silently round up the given size to **PMEMBLK_MIN_BLK**, as defined in **<libpmemblk.h>**.
 
 
 Depending on the configuration of the system, the available space of non-volatile memory space may be divided into multiple memory devices. In such case, the maximum size of the pmemblk memory pool could be limited by the capacity of a single memory device. The **libpmemblk** allows building persistent memory resident array spanning multiple memory devices by creation of persistent memory pools consisting of multiple files, where each part of such a *pool set* may be stored on different pmem-aware filesystem.
@@ -104,7 +104,7 @@ The set file is a plain text file, which must start with the line containing a *
 
 Here is the example “myblkpool.set” file:
 
-```bash
+```
 PMEMPOOLSET
 100G /mountpoint0/myfile.part0
 200G /mountpoint1/myfile.part1
@@ -113,7 +113,7 @@ PMEMPOOLSET
 
 The files in the set may be created by running the following command:
 
-```bash
+```
 pmempool create blk <bsize> --from-set=myblkpool.set
 ```
 
@@ -166,7 +166,7 @@ This section describes how the library API is versioned, allowing applications t
 
   The **pmemblk_check_version**() function is used to see if the installed **libpmemblk** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **<ibpmemblk.h>**, like this:
 
-```
+```c
 reason = pmemblk_check_version(PMEMBLK_MAJOR_VERSION,
                                PMEMBLK_MINOR_VERSION);
 if (reason != NULL)
@@ -234,7 +234,7 @@ The following example illustrates how the **libpmemblk** API is used.
 #include <libpmemblk.h>
 
 /* size of the pmemblk pool -- 1 GB */
-#define POOL_SIZE ((size_t)(1 &lt;&lt; 30))
+#define POOL_SIZE ((size_t)(1 << 30))
 
 /* size of each element in the pmem pool */
 #define ELEMENT_SIZE 1024
@@ -242,7 +242,7 @@ The following example illustrates how the **libpmemblk** API is used.
 int
 main(int argc, char *argv[])
 {
-    const char path[] = &quot;/pmem-fs/myfile&quot;;
+    const char path[] = "/pmem-fs/myfile";
     PMEMblkpool *pbp;
     size_t nelements;
     char buf[ELEMENT_SIZE];
@@ -260,24 +260,24 @@ main(int argc, char *argv[])
 
    /* how many elements fit into the file? */
     nelements = pmemblk_nblock(pbp);
-    printf(&quot;file holds %zu elements0, nelements);
+    printf("file holds %zu elements0, nelements);
 
    /* store a block at index 5 */
-    strcpy(buf, &quot;hello, world&quot;);
-    if (pmemblk_write(pbp, buf, 5) &lt; 0) {
-        perror(&quot;pmemblk_write&quot;);
+    strcpy(buf, "hello, world");
+    if (pmemblk_write(pbp, buf, 5) < 0) {
+        perror("pmemblk_write");
         exit(1);
     }
 
    /* read the block at index 10 (reads as zeros initially) */
-    if (pmemblk_read(pbp, buf, 10) &lt; 0) {
-        perror(&quot;pmemblk_read&quot;);
+    if (pmemblk_read(pbp, buf, 10) < 0) {
+        perror("pmemblk_read");
         exit(1);
     }
 
    /* zero out the block at index 5 */
-    if (pmemblk_set_zero(pbp, 5) &lt; 0) {
-        perror(&quot;pmemblk_set_zero&quot;);
+    if (pmemblk_set_zero(pbp, 5) < 0) {
+        perror("pmemblk_set_zero");
         exit(1);
     }
 
