@@ -101,11 +101,11 @@ When creating the pool set consisting of multiple files, the *path* argument pas
 
 When opening the pool set consisting of multiple files, the *path* argument passed to **pmemblk_open**() must not point to the pmemblk memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file **pmemblk_open**() returns NULL and sets errno appropriately.
 
-The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a block pool consisting of one file. It is defined in **&lt;libpmemblk.h&gt;** as **PMEMBLK_MIN_POOL**. Lines starting with “#” character are ignored.
+The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a block pool consisting of one file. It is defined in **<libpmemblk.h>** as **PMEMBLK_MIN_POOL**. Lines starting with “#” character are ignored.
 
 Here is the example “myblkpool.set” file:
 
-```
+```bash
 PMEMPOOLSET
 100G /mountpoint0/myfile.part0
 200G /mountpoint1/myfile.part1
@@ -114,11 +114,11 @@ PMEMPOOLSET
 
 The files in the set may be created by running the following command:
 
-```
-pmempool create blk &lt;bsize&gt; --from-set=myblkpool.set
+```bash
+pmempool create blk <bsize> --from-set=myblkpool.set
 ```
 
-* void **pmemblk_close**(PMEMblkpool \*pbp*);
+* void **pmemblk_close**(PMEMblkpool \*pbp);
 
   The **pmemblk_close**() function closes the memory pool indicated by *pbp* and deletes the memory pool handle.
   The block memory pool itself lives on in the file that contains it and may be re-opened at a later time using **pmemblk_open**() as described above.
@@ -211,13 +211,11 @@ Two versions of **libpmemblk** are typically available on a development system. 
 
 A second version of **libpmemblk**, accessed when a program uses the libraries under **/usr/lib/nvml_debug**, contains run-time assertions and trace points. The typical way to access the debug version is to set the environment variable **LD_LIBRARY_PATH** to **/usr/lib/nvml_debug** or **/usr/lib64/nvml_debug** depending on where the debug libraries are installed on the system. The trace points in the debug version of the library are enabled using the environment variable **PMEMBLK_LOG_LEVEL**, which can be set to the following values:
 
-PMEMBLK_LOG_LEVEL  |  
---|--
-**0**  |  This is the default level when **PMEMBLK_LOG_LEVEL** is not set. No log messages are emitted at this level.
-**1**  |  Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmemblk_errormsg**().
-**2**  |  A trace of basic operations is logged.
-**3**  |  This level enables a very verbose amount of function call tracing in the library.
-**4**  |  This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmemblk** developers.
++ **0** - This is the default level when **PMEMBLK_LOG_LEVEL** is not set. No log messages are emitted at this level.
++ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmemblk_errormsg**().
++ **2** - A trace of basic operations is logged.
++ **3** - This level enables a very verbose amount of function call tracing in the library.
++ **4** - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmemblk** developers.
 
 The environment variable **PMEMBLK_LOG_FILE** specifies a file name where all logging information should be written. If the last character in the name is “-”, the PID of the current process will be appended to the file name when the log file is created. If **PMEMBLK_LOG_FILE** is not set, the logging output goes to stderr.
 
@@ -226,34 +224,15 @@ Setting the environment variable **PMEMBLK_LOG_LEVEL** has no effect on the non-
 
 ### EXAMPLES
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>The following example illustrates how the **libpmemblk** API is used.</p></td>
-</tr>
-</tbody>
-</table>
+The following example illustrates how the **libpmemblk** API is used.
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><pre><code>#include &lt;stdio.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;string.h&gt;
-#include &lt;libpmemblk.h&gt;
+```c
+#include <fcntl.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <libpmemblk.h>
 
 /* size of the pmemblk pool -- 1 GB */
 #define POOL_SIZE ((size_t)(1 &lt;&lt; 30))
@@ -306,80 +285,20 @@ main(int argc, char *argv[])
    /* ... */
 
    pmemblk_close(pbp);
-}</code></pre></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>See http://pmem.io/nvml/libpmemblk for more examples using the **libpmemblk** API.</p></td>
-</tr>
-</tbody>
-</table>
-
+}
+```
+See http://pmem.io/nvml/libpmemblk for more examples using the **libpmemblk** API.
 
 ### BUGS
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>Unlike **libpmemobj**, data replication is not supported in **libpmemblk**. Thus, it is not allowed to specify replica sections in pool set files.</p></td>
-</tr>
-</tbody>
-</table>
+Unlike **libpmemobj**, data replication is not supported in **libpmemblk**. Thus, it is not allowed to specify replica sections in pool set files.
 
 ### ACKNOWLEDGEMENTS
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>**libpmemblk** builds on the persistent memory programming model recommended by the SNIA NVM Programming Technical Work Group:</p></td>
-</tr>
-</tbody>
-</table>
+**libpmemblk** builds on the persistent memory programming model recommended by the SNIA NVM Programming Technical Work Group:
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>http://snia.org/nvmp</p></td>
-</tr>
-</tbody>
-</table>
-
+http://snia.org/nvmp
 
 ### SEE ALSO
 
-<table>
-<colgroup>
-<col width="50%" />
-<col width="50%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td align="left"></td>
-<td align="left"><p>**mmap**(2), **munmap**(2), **msync**(2), **strerror**(3), **libpmemobj**(3), **libpmemlog**(3), **libpmem**(3), **libvmem**(3) and **http://pmem.io**.</p></td>
-</tr>
-</tbody>
-</table>
+**mmap**(2), **munmap**(2), **msync**(2), **strerror**(3), **libpmemobj**(3), **libpmemlog**(3), **libpmem**(3), **libvmem**(3) and **http://pmem.io**
