@@ -71,7 +71,7 @@ The typical usage of **libvmmalloc** does not require any modification of the ta
 
 **libvmmalloc** may be also linked to the program, by providing the **-lvmmalloc** argument to the linker. Then it becomes the default memory allocator for given program.
 
->NOTE: Due to the fact the library operates on a memory-mapped file, **it may not work properly with the programs that perform fork**(3) **not followed by exec**(3).</p>
+>NOTE: Due to the fact the library operates on a memory-mapped file, **it may not work properly with the programs that perform fork**(3) **not followed by exec**(3).
 There are two variants of experimental fork() support available in libvmmalloc. The desired library behavior may be selected by setting VMMALLOC_FORK environment variable. By default variant #1 is enabled. See ENVIRONMENT section for more details.
 
 **libvmmalloc** uses the **mmap**(2) system call to create a pool of volatile memory. The library is most useful when used with *Direct Access* storage (DAX), which is memory-addressable persistent storage that supports load/store access without being paged via the system page cache. A Persistent Memory-aware file system is typically used to provide this type of access. Memory-mapping a file from a Persistent Memory-aware file system provides the raw memory pools, and this library supplies the traditional *malloc* interfaces on top of those pools.
@@ -100,7 +100,9 @@ Setting the **VMMALLOC_FORK** configuration variable is optional. It controls th
 
 + **1** - The memory pool file is remapped with MAP_PRIVATE flag before the fork completes. From this moment, any access to memory that modifies the heap pages, both in the parent and in the child process, will trigger creation of a copy of those pages in RAM (copy-on-write). The benefit of such approach is that it does not significantly increase the time of fork operation, and does not require additional space on the file system. However, all the subsequent memory allocations and modifications of the memory allocated before fork, will consume system memory resources instead of the memory pool.
 
-+ **2** - A copy of the entire memory pool file is created for the use of the child process. This requires additional space on the file system, but both the parent and the child process may still operate on their memory pools, not consuming the system memory resources. NOTE: In case of large memory pools, creating a copy of the pool file may stall the fork operation for a quite long time.
++ **2** - A copy of the entire memory pool file is created for the use of the child process. This requires additional space on the file system, but both the parent and the child process may still operate on their memory pools, not consuming the system memory resources.
+
+>NOTE: In case of large memory pools, creating a copy of the pool file may stall the fork operation for a quite long time.
 
 + **3** - The library first attempts to create a copy of the memory pool (as for option #2), but if it fails (i.e. because of insufficient amount of free space on the file system), it will fall back to option #1.
 
