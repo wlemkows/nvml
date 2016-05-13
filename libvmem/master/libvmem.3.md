@@ -20,7 +20,7 @@ title: libvmem
 
 ### NAME
 
-**libvmem** − volatile memory allocation library</p></td>
+**libvmem** − volatile memory allocation library
 
 ### SYNOPSIS
 
@@ -90,7 +90,7 @@ Once created, a memory pool is represented by an opaque pool handle, of type *VM
 
 * VMEM **\*vmem_create**(const char \*dir, size_t size);
 
-  The **vmem_create**() function creates a memory pool. The resulting pool is then used with functions like **vmem_malloc**() and **vmem_free**() to provide the familiar *malloc-like* programming model for the memory pool. **vmem_create**() creates the pool by allocating a temporary file in the given directory *dir*. The file is created in a fashion similar to **tmpfile**(3), so that the file name does not appear when the directory is listed and the space is automatically freed when the program terminates. *size* bytes are allocated and the resulting space is memory-mapped. The minimum *size* value allowed by the library is defined in **<libvmem.h>** as **VMEM_MIN_POOL**. Calling **vmem_create**() with a size smaller than that will return an error. The maximum allowed size is not limited by **libvmem**, but by the file system specified by the *dir* argument. The *size* passed in is the raw size of the memory pool and **libvmem** will use some of that space for its own metadata. **vmem_create**() returns an opaque memory pool handle or NULL if an error occurred (in which case *errno* is set appropriately). The opaque memory pool handle is then used with the other functions described in this man page that operate on a specific memory pool.
+  The **vmem_create**() function creates a memory pool. The resulting pool is then used with functions like **vmem_malloc**() and **vmem_free**() to provide the familiar *malloc-like* programming model for the memory pool. **vmem_create**() creates the pool by allocating a temporary file in the given directory *dir*. The file is created in a fashion similar to **tmpfile**(3), so that the file name does not appear when the directory is listed and the space is automatically freed when the program terminates. *size* bytes are allocated and the resulting space is memory-mapped. The minimum *size* value allowed by the library is defined in **\<libvmem.h\>** as **VMEM_MIN_POOL**. Calling **vmem_create**() with a size smaller than that will return an error. The maximum allowed size is not limited by **libvmem**, but by the file system specified by the *dir* argument. The *size* passed in is the raw size of the memory pool and **libvmem** will use some of that space for its own metadata. **vmem_create**() returns an opaque memory pool handle or NULL if an error occurred (in which case *errno* is set appropriately). The opaque memory pool handle is then used with the other functions described in this man page that operate on a specific memory pool.
 
 * VMEM **\*vmem_create_in_region**(void \*addr, size_t size);
 
@@ -145,7 +145,7 @@ The library entry points described in this section are less commonly used than t
 
 * const char **\*vmem_check_version**(unsigned major_required, unsigned minor_required);
 
-  The **vmem_check_version**() function is used to see if the installed **libvmem** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **<libvmem.h>**, like this:
+  The **vmem_check_version**() function is used to see if the installed **libvmem** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libvmem.h\>**, like this:
 
 ```c
 reason = vmem_check_version(VMEM_MAJOR_VERSION,

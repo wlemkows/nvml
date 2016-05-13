@@ -83,8 +83,9 @@ device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this
 type of byte addressable access to storage. A *persistent memory aware
 file system* is typically used to expose the direct access to
 applications. Memory mapping a file from this type of file system
-results in the load/store, non-paged access to pmem.<br />
-  This library is for applications that use persistent memory directly,
+results in the load/store, non-paged access to pmem.
+
+This library is for applications that use persistent memory directly,
 without the help of any library-supplied transactions or memory
 allocation. Higher-level libraries that build on **libpmem** are
 available and are recommended for most applications, see:
@@ -362,7 +363,7 @@ applications to work with an evolving API.
   **libpmem** supports the version of the library API required by an
   application. The easiest way to do this is for the application to supply
   the compile-time version information, supplied by defines in
-  **<libpmem.h>**, like this:
+  **\<libpmem.h\>**, like this:
 
 ```c
 reason = pmem_check_version(PMEM_MAJOR_VERSION, PMEM_MINOR_VERSION);
