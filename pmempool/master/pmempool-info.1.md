@@ -4,7 +4,7 @@ Content-Style: 'text/css'
 title: pmempool-info
 ...
 
-# pmempool-dump
+# pmempool-info
 
 [NAME](#name)<br />
 [SYNOPSIS](#synopsis)<br />
@@ -18,7 +18,7 @@ title: pmempool-info
 
 ### NAME
 
-**pmempool-info** − Print basic information about Persistent Memory Pool file
+**pmempool-info** − print basic information about Persistent Memory Pool file
 
 
 ### SYNOPSIS
@@ -33,7 +33,7 @@ The **pmempool** invoked with **info** command analyzes an existing pool created
 
 The **pmempool** with **info** command analyzes pool file as long as it is possible regarding *correctness* of internal meta-data (correct offsets, sizes etc.). If it is *not* possible to analyze the rest of the file, **pmempool** exits with error code and prints appropriate error message.
 
-<p>Currently there is lack of interprocess synchronization for pool files, so the **info** command should be invoked off-line. Using **pmempool** on pool file which may be modified by another process may lead to unexpected errors in pool file.
+Currently there is lack of interprocess synchronization for pool files, so the **info** command should be invoked off-line. Using **pmempool** on pool file which may be modified by another process may lead to unexpected errors in pool file.
 
 **pmempool info** opens pool file in *read-only* mode so the file will remain untouched after processing.
 
