@@ -140,7 +140,7 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
 **Layout declaration:**
 
-  **POBJ_LAYOUT_BEGIN**(layout)
+: **POBJ_LAYOUT_BEGIN**(layout)
 
   **POBJ_LAYOUT_TOID**(layout, TYPE)
 
@@ -407,9 +407,9 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   int **pmemobj_check**(const char \*path, const char \*layout);
 
-  **Error handling:**
+**Error handling:**
 
-  const char **\*pmemobj_errormsg**(void);
+: const char **\*pmemobj_errormsg**(void);
 
 
 ### DESCRIPTION
