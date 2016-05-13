@@ -90,7 +90,7 @@ There are two configuration variables that **must** be set to make **libvmmalloc
 
 **VMMALLOC_POOL_SIZE**
 
-: Defines the desired size (in bytes) of the memory pool file. It must be not less than the minimum allowed size **VMMALLOC_MIN_POOL** as defined in **<libvmmalloc.h>.**
+: Defines the desired size (in bytes) of the memory pool file. It must be not less than the minimum allowed size **VMMALLOC_MIN_POOL** as defined in **\<libvmmalloc.h\>.**
 
 >NOTE that due to the fact the library adds some metadata to the memory pool, the amount of actual usable space is typically less than the size of the memory pool file.
 
