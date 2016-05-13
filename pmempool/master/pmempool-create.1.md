@@ -20,7 +20,9 @@ title: pmempool-create
 
 ### SYNOPSIS
 
-**pmempool create** [<options>] [<type>] [<bsize>] <file>
+```
+pmempool create [<options>] [<type>] [<bsize>] <file>
+```
 
 ### DESCRIPTION
 
