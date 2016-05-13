@@ -107,6 +107,6 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 
 **libpmemblk(3) libpmemlog(3) pmempool(1)**
 
-###PMEMPOOL
+### PMEMPOOL
 
 Part of the **pmempool(1)** suite.
