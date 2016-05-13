@@ -47,7 +47,7 @@ By default the **info** command of **pmempool** prints information about the mos
 
 To force processing specified file(s) as desired pool type use **-f** option with appropriate name of pool type. The valid names off pool types are *blk , log* or *obj.* This option may be useful when the pool header is corrupted and automatic recognition of pool type fails.
 
-**-f, –force** blk|log|obj
+**-f, –force** blk\|log\|obj
 
 : Force parsing pool as specified pool type.
 
@@ -137,7 +137,7 @@ By default the **info** command displays pool header and **pmem obj** pool descr
 
 **-O, –object-store**
 
-Print information about all allocated objects.
+: Print information about all allocated objects.
 
 **-t, –types** \<range\>
 
@@ -211,7 +211,7 @@ You can specify multiple ranges separated by commas.
 
 Below is the description of statistical measures for specific pool types.
 
-+ **PMEMLOG**
+**PMEMLOG**
 
   **Total**
 
@@ -226,7 +226,7 @@ Below is the description of statistical measures for specific pool types.
   : Size and percentage of used space.
 
 
-+ **PMEMBLK**
+**PMEMBLK**
 
   **Total blocks**
 
@@ -250,7 +250,7 @@ Below is the description of statistical measures for specific pool types.
 * *skipped* types of blocks ( **-z, -e, -u** options).
 
 
-+ **PMEMOBJ**
+**PMEMOBJ**
 
 * **Object store**
 
