@@ -30,7 +30,7 @@ The **pmempool** invoked with **create** command creates a pool file of specifie
 
 Valid pool types are: **blk**, **log** and **obj** which stands for *pmem*blk*, pmem*log and *pmem*obj pools respectively. By default the pool file is created with *minimum* allowed size for specified pool type. The minimum sizes for **blk**, **log** and **obj** pool types are **PMEMBLK_MIN_POOL**, **PMEMLOG_MIN_POOL** and **PMEMOBJ_MIN_POOL** respectively. See **libpmemblk**(3)**, libpmemlog**(3) and **libpmemobj**(3) for details.
 
-For *pmemblk* pool type block size **<bsize>** is a required argument.
+For *pmemblk* pool type block size **\<bsize\>** is a required argument.
 
 In order to set custom size of pool use **-s** option, or use **-M** option to create a pool of maximum available size on underlying file system.
 
@@ -46,11 +46,11 @@ The *size* argument may be passed in format that permits only the upper-case cha
 
 : Set size of pool to available space of underlying file system.
 
-**-m, –mode** <octal>
+**-m, –mode** \<octal\>
 
-: Set permissions to <octal> (the default is 0664).
+: Set permissions to \<octal\> (the default is 0664).
 
-**-i, –inherit** <file>
+**-i, –inherit** \<fil\e>
 
 : Create a new pool of the same size and other properties as **<file>.**
 
@@ -105,7 +105,7 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 
 ### SEE ALSO
 
-**libpmemblk(3) libpmemlog(3) pmempool(1)**
+**libpmemblk(3)**, **libpmemlog(3)**, **pmempool(1)**
 
 ### PMEMPOOL
 
