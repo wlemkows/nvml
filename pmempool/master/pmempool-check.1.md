@@ -20,7 +20,7 @@ title: pmempool-check
 ### SYNOPSIS
 
 ```
-**pmempool check** [<options>] <file>
+pmempool check [<options>] <file>
 ```
 
 ### DESCRIPTION
@@ -79,7 +79,7 @@ It is possible to try to fix encountered problems using **-r** option. In order 
 
 ### SEE ALSO
 
-**libpmemblk(3) libpmemlog(3) pmempool(1)**
+**libpmemblk(3)**, **libpmemlog(3)**, **pmempool(1)**
 
 ### PMEMPOOL
 
