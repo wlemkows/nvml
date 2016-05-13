@@ -94,7 +94,7 @@ Once created, the memory pool is represented by an opaque handle, of type *PMEMl
 
 * PMEMlogpool **\*pmemlog_create**(const char \*path, size_t poolsize, mode_t mode);
 
-  The **pmemlog_create**() function creates a log memory pool with the given total *poolsize*. Since the transactional nature of a log memory pool requires some space overhead in the memory pool, the resulting available log size is less than *poolsize*, and is made available to the caller via the **pmemlog_nbyte**() function described below. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemlog_create**() and then specifying *poolsize* as zero. In this case **pmemlog_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a log pool is defined in **<libpmemlog.h>** as **PMEMLOG_MIN_POOL**.
+  The **pmemlog_create**() function creates a log memory pool with the given total *poolsize*. Since the transactional nature of a log memory pool requires some space overhead in the memory pool, the resulting available log size is less than *poolsize*, and is made available to the caller via the **pmemlog_nbyte**() function described below. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemlog_create**() and then specifying *poolsize* as zero. In this case **pmemlog_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a log pool is defined in **\<libpmemlog.h\>** as **PMEMLOG_MIN_POOL**.
 
 
 
@@ -106,7 +106,7 @@ When creating the pool set consisting of multiple files, the *path* argument pas
 
 When opening the pool set consisting of multiple files, the *path* argument passed to **pmemlog_open**() must not point to the pmemlog memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file **pmemlog_open**() returns NULL and sets errno appropriately.
 
-The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a log pool consisting of one file. It is defined in **<libpmemlog.h>** as **PMEMLOG_MIN_POOL**. Lines starting with “#” character are ignored.
+The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a log pool consisting of one file. It is defined in **\<libpmemlog.h\>** as **PMEMLOG_MIN_POOL**. Lines starting with “#” character are ignored.
 
 Here is the example “mylogpool.set” file:
 
@@ -158,7 +158,7 @@ This section describes how the library API is versioned, allowing applications t
 
 * const char **\*pmemlog_check_version**(unsigned major_required, unsigned minor_required);
 
-  The **pmemlog_check_version**() function is used to see if the installed **libpmemlog** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **<libpmemlog.h>**, like this:
+  The **pmemlog_check_version**() function is used to see if the installed **libpmemlog** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libpmemlog.h\>**, like this:
 
 ```c
 reason = pmemblk_check_version(PMEMLOG_MAJOR_VERSION,
