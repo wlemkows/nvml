@@ -19,7 +19,7 @@ title: pmempool
 ### SYNOPSIS
 
 ```
-**pmempool [–help] [–version] <command> [<args>]**
+pmempool [–help] [–version] <command> [<args>]
 ```
 
 ### DESCRIPTION
