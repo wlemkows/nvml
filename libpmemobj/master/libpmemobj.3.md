@@ -325,10 +325,8 @@ const char **\*pmemobj_errormsg**(void);
 Under normal usage, **libpmemobj** will never print messages or intentionally cause the process to exit. The only exception to this is the debugging information, when enabled, as described under **DEBUGGING AND ERROR HANDLING** below.</p></td>
 
 
-[]()
+### MOST COMMONLY USED FUNCTIONS
 
-MOST COMMONLY USED FUNCTIONS
-----------------------------
 
 To use the pmem-resident transactional object store provided by **libpmemobj**, a *memory pool* is first created. This is done with the **pmemobj_create**() function described in this section. The other functions described in this section then operate on the resulting memory pool.</p>
 <p>Once created, the memory pool is represented by an opaque handle, of type *PMEMobjpool **, which is passed to most of the other functions in this section. Internally, **libpmemobj** will use either **pmem_persist**() or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the obj memory API provided by **libpmemobj**.</p>
@@ -351,10 +349,7 @@ The **pmemobj_create**() function creates a transactional object store with the 
 The **pmemobj_close**() function closes the memory pool indicated by *pop* and deletes the memory pool handle. The object store itself lives on in the file that contains it and may be re-opened at a later time using **pmemobj_open**() as described above.</p></td>
 
 
-[]()
-
-LOW-LEVEL MEMORY MANIPULATION
------------------------------
+### LOW-LEVEL MEMORY MANIPULATION
 
 The **libpmemobj** specific low-level memory manipulation functions leverage the knowledge of the additional configuration options available for **libpmemobj** pools, such as replication. They also take advantage of the type of storage behind the pool and use appropriate flush/drain functions. It is advised to use these functions in conjunction with **libpmemobj** objects, instead of using low-level memory manipulations functions from **libpmem**.</p>
 <p>**void pmemobj_persist(PMEMobjpool ****pop***, const void ****addr***, size_t** *len***);**</p></td>
