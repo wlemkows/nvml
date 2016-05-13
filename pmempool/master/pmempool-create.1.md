@@ -38,7 +38,7 @@ The *size* argument may be passed in format that permits only the upper-case cha
 
 **Available options:**
 
-**-s, –size** <size>
+**-s, –size** \<size\>
 
 : Size of pool file.
 
@@ -50,9 +50,9 @@ The *size* argument may be passed in format that permits only the upper-case cha
 
 : Set permissions to \<octal\> (the default is 0664).
 
-**-i, –inherit** \<fil\e>
+**-i, –inherit** \<file\>
 
-: Create a new pool of the same size and other properties as **<file>.**
+: Create a new pool of the same size and other properties as **\<file\>.**
 
 **-v, –verbose**
 
@@ -75,7 +75,7 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 
 : By default when creating a pmem **obj** pool, the layout name provided to the **libpmemobj** library is an empty string. Please refer to **libpmemobj**(3) for details.
 
-**-l, –layout <layout_name>**
+**-l, –layout \<layout\>**
 
 : Layout name of the **pmemobj** pool.
 

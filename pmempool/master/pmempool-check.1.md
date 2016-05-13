@@ -46,11 +46,11 @@ It is possible to try to fix encountered problems using **-r** option. In order 
 
 : Don’t execute, just show what would be done.
 
-**-b, –backup <file>**
+**-b, –backup \<file\>**
 
 : Create backup of a pool file before executing. Terminate if it is *not* possible to create a backup file. This option requires **-r** option.
 
-**-q, –quiet**<
+**-q, –quiet**
 
 : Be quiet and don’t print any messages.
 
@@ -67,7 +67,7 @@ It is possible to try to fix encountered problems using **-r** option. In order 
 
 *pmempool check pool.bin*
 
-: Check consistency of pool.bin pool file</p></td>
+: Check consistency of pool.bin pool file
 
 *pmempool check –repair –backup pool.bin.backup pool.bin*
 
