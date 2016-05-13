@@ -254,60 +254,60 @@ Below is the description of statistical measures for specific pool types.
 
 * **Object store**
 
-  **Number of objects**
+    **Number of objects**
 
-  : Total number of objects and number of objects per type number.
+    : Total number of objects and number of objects per type number.
 
-  **Number of bytes**
+    **Number of bytes**
 
-  : Total number of bytes and number of bytes per type number.
+    : Total number of bytes and number of bytes per type number.
 
 * **Heap**
 
-  **Number of zones**
+    **Number of zones**
 
-  : Total number of zones in the pool.
+    : Total number of zones in the pool.
 
-  **Number of used zones**
+    **Number of used zones**
 
-  : Number of used zones in the pool.
+    : Number of used zones in the pool.
 
 
 * **Zone** The zone’s statistics are presented for each zone separately and the aggregated results from all zones.
 
-  **Number of chunks**
+    **Number of chunks**
 
-  : Total number of chunks in the zone and number of chunks of specified type.
+    : Total number of chunks in the zone and number of chunks of specified type.
 
-  **Chunks size**
+    **Chunks size**
 
-  : Total size of all chunks in the zone and sum of sizes of chunks of specified type.
+    : Total size of all chunks in the zone and sum of sizes of chunks of specified type.
 
-  **Allocation classes**
+    **Allocation classes**
 
-  **Units**
+    **Units**
 
-  : Total number of units of specified class.
+    : Total number of units of specified class.
 
-  **Used units**
+    **Used units**
 
-  : Number of used units of specified class.
+    : Number of used units of specified class.
 
-  **Bytes**
+    **Bytes**
 
-  : Total number of bytes of specified class.
+    : Total number of bytes of specified class.
 
-  **Used bytes**
+    **Used bytes**
 
-  : Number of used bytes of specified class.
+    : Number of used bytes of specified class.
 
-  **Total bytes**
+    **Total bytes**
 
-  : Total number of bytes of all classes.
+    : Total number of bytes of all classes.
 
-  **Total used bytes**
+    **Total used bytes**
 
-  : Total number of used bytes of all classes.
+    : Total number of used bytes of all classes.
 
 
 ### EXAMPLES
