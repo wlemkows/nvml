@@ -799,7 +799,7 @@ The *libpmemobj* provides a mechanism allowing to iterate through the internal o
 
 * **POBJ_FIRST_TYPE_NUM**(PMEMobjpool \*pop, uint64_t type_num)  The **POBJ_FIRST_TYPE_NUM** macro returns the first object from the pool of the type specified by *type_num*.
 
-* **PMEMoid pmemobj_next(PMEMoid oid);
+* **PMEMoid pmemobj_next**(PMEMoid oid);
 
   The **pmemobj_next**() function returns the next object from the pool. If an object referenced by *oid* is the last object in the collection, or if the OID_NULL is passed as an argument, function returns OID_NULL.
 
