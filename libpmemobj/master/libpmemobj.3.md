@@ -937,7 +937,7 @@ The persistent atomic circular doubly linked lists support the following functio
 
 A list is headed by a *list_head* structure containing a single object handle of the first element on the list. The elements are doubly linked so that an arbitrary element can be removed without a need to traverse the list. New elements can be added to the list before or after an existing element, at the head of the list, or at the end of the list. A list may be traversed in either direction.
 
-The user-defined structure of each element must contain a field of type **list_entry** holding the object handles to the previous and next element on the list. Both the **list_head** and the **list_entry** structures are declared in **<libpmemobj.h>**.
+The user-defined structure of each element must contain a field of type **list_entry** holding the object handles to the previous and next element on the list. Both the **list_head** and the **list_entry** structures are declared in **\<libpmemobj.h\>**.
 
 The functions below are intended to be used outside transactions - transactional variants are described in section **TRANSACTIONAL OBJECT MANIPULATION**. Note that operations performed using this non-transactional API are independent from their transactional counterparts. If any non-transactional allocations or list manipulations are performed within an open transaction, the changes will not be rolled-back if such a transaction is aborted or interrupted.
 
@@ -1003,7 +1003,7 @@ struct
 
   The macro **POBJ_LIST_FIRST** returns the first element on the list referenced by *head*. If the list is empty OID_NULL is returned.
 
-** **POBJ_LIST_LAST**(POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_LAST**(POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
 
   The macro **POBJ_LIST_LAST** returns the last element on the list referenced by *head*. If the list is empty OID_NULL is returned.
 
@@ -1047,7 +1047,7 @@ struct
 
   The macro **POBJ_LIST_INSERT_NEW_HEAD** atomically allocates a new object of size *size* and inserts it at the head of the list referenced by *head*. The newly allocated object is also added to the internal object container associated with a type number which is retrieved from the typed OID of the first element on list.
 
-* **POBJ_LIST_INSERT_NEW_TAIL(PMEMobjpool \*pop***, POBJ_LIST_HEAD \*head,<br />
+* **POBJ_LIST_INSERT_NEW_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
 POBJ_LIST_ENTRY FIELD, size_t size,<br />
 pmemobj_constr constructor , void \*arg)
 
@@ -1222,22 +1222,21 @@ TX_BEGIN(Pop) {
 
   The **TX_BEGIN_LOCK**() and **TX_BEGIN**() macros start a new transaction in the same way as **pmemobj_tx_begin**(), except that instead of the environment buffer provided by a caller, they set up the local *jmp_buf* buffer and use it to catch the transaction abort. The **TX_BEGIN**() macro may be used in case when there is no need to grab any locks prior to starting a transaction (like for a single-threaded program). Each of those macros shall be followed by a block of code with all the operations that are to be performed atomically.
 
-**TX_ONABORT**
+* **TX_ONABORT**
 
   The **TX_ONABORT** macro starts a block of code that will be executed only if starting the transaction fails due to an error in **pmemobj_tx_begin**(), or if the transaction is aborted. This block is optional, but in practice it should not be omitted. If it’s desirable to crash the application when transaction aborts and there’s no **TX_ONABORT** section, application can define **POBJ_TX_CRASH_ON_NO_ONABORT** macro before inclusion of **<libpmemobj.h>**. It provides default **TX_ONABORT** section which just calls **abort**(3).
 
-**TX_ONCOMMIT**
+* **TX_ONCOMMIT**
 
   The **TX_ONCOMMIT** macro starts a block of code that will be executed only if the transaction is successfully committed, which means that the execution of code in **TX_BEGIN** block has not been interrupted by an error or by a call to **pmemobj_tx_abort**(). This block is optional.
 
-**TX_FINALLY**
+* **TX_FINALLY**
 
   The **TX_FINALLY** macro starts a block of code that will be executed regardless of whether the transaction is committed or aborted. This block is optional.
 
-**TX_END**
+* **TX_END**
 
   The **TX_END** macro cleans up and closes the transaction started by **TX_BEGIN**() or **TX_BEGIN_LOCK**() macro. It is mandatory to terminate each transaction with this macro. If the transaction was aborted, errno is set appropriately.
-
 
 Similarly to the macros controlling the transaction flow, the **libpmemobj** defines a set of macros that simplify the transactional operations on persistent objects. Note that those macros operate on typed object handles, thus eliminating the need to specify the size of the object, or the size and offset of the field in the user-defined structure that is to be modified.
 
@@ -1248,7 +1247,6 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 * **TX_ADD(TOID o)
 
   The **TX_ADD**() macro takes a “snapshot” of the entire object referenced by object handle *o* and saves it in the undo log. The object size is determined from its *TYPE*. The application is then free to directly modify the object. In case of a failure or abort, all the changes within the object will be rolled-back.
-
 
 * **TX_ADD_FIELD_DIRECT**(TYPE \*p, FIELD)
 
@@ -1270,7 +1268,7 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_MEMCPY** macro saves in the undo log the current content of *dest* buffer and then overwrites the first *num* bytes of its memory area with the data copied from the buffer pointed by *src*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_MEMSET(void \*dest, int c, size_t num)
+* **TX_MEMSET**(void \*dest, int c, size_t num)
 
   The **TX_MEMSET** macro saves in the undo log the current content of *dest* buffer and then fills the first *num* bytes of its memory area with the constant byte *c*. In case of a failure or abort, the saved value will be restored.
 
