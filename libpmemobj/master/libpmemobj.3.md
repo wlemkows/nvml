@@ -1224,7 +1224,7 @@ TX_BEGIN(Pop) {
 
 * **TX_ONABORT**
 
-  The **TX_ONABORT** macro starts a block of code that will be executed only if starting the transaction fails due to an error in **pmemobj_tx_begin**(), or if the transaction is aborted. This block is optional, but in practice it should not be omitted. If it’s desirable to crash the application when transaction aborts and there’s no **TX_ONABORT** section, application can define **POBJ_TX_CRASH_ON_NO_ONABORT** macro before inclusion of **<libpmemobj.h>**. It provides default **TX_ONABORT** section which just calls **abort**(3).
+  The **TX_ONABORT** macro starts a block of code that will be executed only if starting the transaction fails due to an error in **pmemobj_tx_begin**(), or if the transaction is aborted. This block is optional, but in practice it should not be omitted. If it’s desirable to crash the application when transaction aborts and there’s no **TX_ONABORT** section, application can define **POBJ_TX_CRASH_ON_NO_ONABORT** macro before inclusion of **\<libpmemobj.h\>**. It provides default **TX_ONABORT** section which just calls **abort**(3).
 
 * **TX_ONCOMMIT**
 
@@ -1394,7 +1394,7 @@ char \*(\*strdup_func)(const char \*s));
 
 ### DEBUGGING AND ERROR HANDLING
 
-Two versions of **libpmemobj** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemobj** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemobj** function, an application may retrieve an error message describing the reason of failure using the following function:<
+Two versions of **libpmemobj** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemobj** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemobj** function, an application may retrieve an error message describing the reason of failure using the following function:
 
 * const char **\*pmemobj_errormsg**(void);
 
