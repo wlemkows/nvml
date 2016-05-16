@@ -1280,7 +1280,7 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_ALLOC**() macro transactionally allocates a new object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is passed by *size* parameter. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ZNEW88**(TYPE)
+* **TX_ZNEW**(TYPE)
 
   The **TX_ZNEW**() macro transactionally allocates a new zeroed object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is determined from the size of the user-defined structure *TYPE*. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
