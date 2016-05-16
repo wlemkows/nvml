@@ -593,7 +593,7 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
 
   The **pmemobj_rwlock_wrlock**() function blocks until a write lock can be acquired against lock pointed by *rwlockp*. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
-* int pmemobj_rwlock_timedwrlock(PMEMobjpool \*pop,<br />
+* int **pmemobj_rwlock_timedwrlock**(PMEMobjpool \*pop,<br />
   PMEMrwlock \*restrict rwlockp,<br />
   const struct timespec \*restrict abs_timeout);
 
@@ -628,11 +628,12 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
 
 * int **pmemobj_cond_timedwait**(PMEMobjpool \*pop, PMEMcond \*restrict condp,<br />
   PMEMmutex \*restrict mutexp***,<br />
-  const struct timespec *restrict** *abs_timeout***);**</p>
-  <p>**int pmemobj_cond_wait(PMEMobjpool ****pop***, PMEMcond ****condp***,<br />
-  PMEMmutex *restrict** *mutexp***);**
+  const struct timespec \*restrict abs_timeout);
 
-  The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
+* **int pmemobj_cond_wait**(PMEMobjpool \*pop, PMEMcond \*condp,<br />
+  PMEMmutex \*restrict mutexp);
+
+The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
 
 
 ### PERSISTENT OBJECTS
