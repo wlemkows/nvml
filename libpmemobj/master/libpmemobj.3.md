@@ -625,9 +625,8 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
 
   The difference between **pmemobj_cond_broadcast**() and **pmemobj_cond_signal**() is that the former unblocks all threads waiting for the condition variable, whereas the latter blocks only one waiting thread. If no threads are waiting on *cond*, neither function has any effect. If more than one thread is blocked on a condition variable, the used scheduling policy determines the order in which threads are unblocked. The same mutex used for waiting must be held while calling either function. Although neither function strictly enforces this requirement, undefined behavior may follow if the mutex is not held.
 
-
 * int **pmemobj_cond_timedwait**(PMEMobjpool \*pop, PMEMcond \*restrict condp,<br />
-  PMEMmutex \*restrict mutexp***,<br />
+  PMEMmutex \*restrict mutexp,<br />
   const struct timespec \*restrict abs_timeout);
 
 * **int pmemobj_cond_wait**(PMEMobjpool \*pop, PMEMcond \*condp,<br />
@@ -1174,7 +1173,7 @@ Please see the **CAVEATS** section for known limitations of the transactional AP
 
 * **PMEMoid pmemobj_tx_realloc**(PMEMoid oid, size_t size, uint64_t type_num);
 
-  The **pmemobj_tx_realloc**() function transactionally resizes an existing object to the given *size* and changes its type to *type_num*. If *oid* is OID_NULL, then the call is equivalent to **pmemobj_tx_alloc(***pop***,** *size***,** *type_num***).** If *size* is equal to zero and *oid* is not OID_NULL, then the call is equivalent to **pmemobj_tx_free(***oid***).** If the new size is larger than the old size, the added memory will *not* be initialized. If successful, returns returns a handle to the resized object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. Note that the object handle value may change in result of reallocation. This function must be called during *TX_STAGE_WORK*.
+  The **pmemobj_tx_realloc**() function transactionally resizes an existing object to the given *size* and changes its type to *type_num*. If *oid* is OID_NULL, then the call is equivalent to **pmemobj_tx_alloc**(*pop*,*size*, *type_num*).** If *size* is equal to zero and *oid* is not OID_NULL, then the call is equivalent to **pmemobj_tx_free**(*oid*). If the new size is larger than the old size, the added memory will *not* be initialized. If successful, returns returns a handle to the resized object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. Note that the object handle value may change in result of reallocation. This function must be called during *TX_STAGE_WORK*.
 
 * **PMEMoid pmemobj_tx_zrealloc**(PMEMoid oid, size_t size, uint64_t type_num);
 
