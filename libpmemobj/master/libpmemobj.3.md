@@ -1124,7 +1124,6 @@ Please see the **CAVEATS** section for known limitations of the transactional AP
 
 * **int pmemobj_tx_begin**(PMEMobjpool \*pop, jmp_buf \*env, …);
 
-
   The **pmemobj_tx_begin**() function starts a new transaction in the current thread. If called within an open transaction, it starts a nested transaction. The caller may use *env* argument to provide a pointer to the information of a calling environment to be restored in case of transaction abort. This information must be filled by a caller, using **setjmp**(3) macro.
 
   Optionally, a list of pmem-resident locks may be provided as the last arguments. Each lock is specified by a pair of lock type ( *TX_LOCK_MUTEX* or *TX_LOCK_RWLOCK*) and the pointer to the lock of type *PMEMmutex* or *PMEMrwlock* respectively. The list must be terminated with *TX_LOCK_NONE*. In case of rwlocks, a write lock is acquired. It is guaranteed that **pmemobj_tx_begin**() will grab all the locks prior to successful completion and they will be held by the current thread until the transaction is finished. Locks are taken in the order from left to right. To avoid deadlocks, user must take care about the proper order of locks.
