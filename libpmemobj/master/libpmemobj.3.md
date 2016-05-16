@@ -1244,7 +1244,7 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_ADD_FIELD**() macro saves in the undo log the current value of given *FIELD* of the object referenced by a handle *o*. The application is then free to directly modify the specified *FIELD*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_ADD(TOID o)
+* **TX_ADD**(TOID o)
 
   The **TX_ADD**() macro takes a “snapshot” of the entire object referenced by object handle *o* and saves it in the undo log. The object size is determined from its *TYPE*. The application is then free to directly modify the object. In case of a failure or abort, all the changes within the object will be rolled-back.
 
@@ -1272,19 +1272,19 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_MEMSET** macro saves in the undo log the current content of *dest* buffer and then fills the first *num* bytes of its memory area with the constant byte *c*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_NEW(TYPE)
+* **TX_NEW**(TYPE)
 
   The **TX_NEW**() macro transactionally allocates a new object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is determined from the size of the user-defined structure *TYPE*. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ALLOC(TYPE, size_t size)
+* **TX_ALLOC**(TYPE, size_t size)
 
   The **TX_ALLOC**() macro transactionally allocates a new object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is passed by *size* parameter. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ZNEW88(TYPE)
+* **TX_ZNEW88**(TYPE)
 
   The **TX_ZNEW**() macro transactionally allocates a new zeroed object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is determined from the size of the user-defined structure *TYPE*. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ZALLOC(TYPE)
+* **TX_ZALLOC**(TYPE)
 
   The **TX_ZALLOC**() macro transactionally allocates a new zeroed object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is passed by *size* argument. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
