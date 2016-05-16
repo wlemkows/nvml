@@ -38,7 +38,7 @@ title: libpmemobj
 
 ### SYNOPSIS
 
-```
+```c
 #include <libpmemobj.h>
 ```
 
@@ -466,7 +466,7 @@ The **libpmemobj** specific low-level memory manipulation functions leverage the
 
   These functions provide partial versions of the **pmemobj_persist**() function described above. **pmemobj_persist**() can be thought of as this:
 
-```
+```c
 void
 pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len)
 {
@@ -486,7 +486,7 @@ These functions allow advanced programs to create their own variations of **pmem
 
   The **pmemobj_memcpy_persist**(), and **pmemobj_memset_persist**(), functions provide the same memory copying as their namesakes **memcpy**(3), and **memset**(3), and ensure that the result has been flushed to persistence before returning. For example, the following code is functionally equivalent to **pmemobj_memcpy_persist**():
 
-```
+```c
 void *
 pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest,
     const void *src, size_t len)
@@ -517,7 +517,7 @@ The minimum file size of each part of the pool set is the same as the minimum si
 
 Here is the example “myobjpool.set” file:
 
-```
+```c
 PMEMPOOLSET
 100G /mountpoint0/myfile.part0
 200G /mountpoint1/myfile.part1
@@ -530,7 +530,7 @@ REPLICA
 
 The files in the set may be created by running the following command:
 
-```
+```c
 pmempool create --layout="mylayout" obj myobjpool.set
 ```
 
@@ -754,7 +754,7 @@ The *libpmemobj* defines a set of macros for convenient declaration of pool’s 
 
 This is an example of layout declaration:
 
-```
+```c
 POBJ_LAYOUT_BEGIN(mylayout);
 POBJ_LAYOUT_ROOT(mylayout, struct root);
 POBJ_LAYOUT_TOID(mylayout, struct node);
@@ -762,7 +762,7 @@ POBJ_LAYOUT_TOID(mylayout, struct foo);
 POBJ_LAYOUT_END(mylayout);
 ```
 
-```
+```c
 struct root
 {
   TOID(struct node) node;
@@ -777,7 +777,7 @@ struct node
 
 The name of layout and the number of declared types can be retrieved using the following code:
 
-```
+```c
 const char *layout_name = POBJ_LAYOUT_NAME(mylayout);
 int num_of_types = POBJ_LAYOUT_TYPES_NUM(mylayout);
 ```
@@ -910,7 +910,7 @@ The allocations are always aligned to the cache-line boundary.
 
   The **POBJ_REALLOC** macro is a wrapper around the **pmemobj_realloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_realloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZREALLOC(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+* **POBJ_ZREALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
 
   The **POBJ_ZREALLOC** macro is a wrapper around the **pmemobj_zrealloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_zrealloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
@@ -1189,7 +1189,7 @@ Please see the **CAVEATS** section for known limitations of the transactional AP
 
 In addition to the above API, the **libpmemobj** offers a more intuitive method of building transactions using a set of macros described below. When using macros, the complete transaction flow looks like this:
 
-```
+```c
 TX_BEGIN(Pop) {
 
 /* the actual transaction code goes here… */
@@ -1312,7 +1312,7 @@ The transaction flow control is governed by the **setjmp**(3)/**longjmp**(3) mac
 
 The following example illustrates the issue described above.
 
-```
+```c
 int *bad_example_1 = NULL;
 int *bad_example_2 = NULL;
 int *bad_example_3 = NULL;
@@ -1360,7 +1360,7 @@ This section describes how the library API is versioned, allowing applications t
 
 The **pmemobj_check_version**() function is used to see if the installed **libpmemobj** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libpmemobj.h\>**, like this:
 
-```
+```c
 reason = pmemobj_check_version(PMEMOBJ_MAJOR_VERSION,
                             PMEMOBJ_MINOR_VERSION);
 if (reason != NULL)
@@ -1403,11 +1403,11 @@ Two versions of **libpmemobj** are typically available on a development system. 
 
 A second version of **libpmemobj**, accessed when a program uses the libraries under **/usr/lib/nvml_debug**, contains run-time assertions and trace points. The typical way to access the debug version is to set the environment variable **LD_LIBRARY_PATH** to **/usr/lib/nvml_debug** or **/usr/lib64/nvml_debug** depending on where the debug libraries are installed on the system. The trace points in the debug version of the library are enabled using the environment variable **PMEMOBJ_LOG_LEVEL**, which can be set to the following values:
 
-+ **0** - This is the default level when **PMEMOBJ_LOG_LEVEL** is not set. No log messages are emitted at this level.
-+ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmemobj_errormsg**().
-+ **2** - A trace of basic operations is logged.
-+ **3** - This level enables a very verbose amount of function call tracing in the library.
-+ **4** - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmemobj** developers.
+  + **0** - This is the default level when **PMEMOBJ_LOG_LEVEL** is not set. No log messages are emitted at this level.
+  + **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmemobj_errormsg**().
+  + **2** - A trace of basic operations is logged.
+  + **3** - This level enables a very verbose amount of function call tracing in the library.
+  + **4** - This level enables voluminous and fairly obscure tracing information that is likely only useful to the **libpmemobj** developers.
 
 The environment variable **PMEMOBJ_LOG_FILE** specifies a file name where all logging information should be written. If the last character in the name is “-”, the PID of the current process will be appended to the file name when the log file is created. If **PMEMOBJ_LOG_FILE** is not set, the logging output goes to stderr.
 
