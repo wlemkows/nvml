@@ -633,7 +633,7 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
 * **int pmemobj_cond_wait**(PMEMobjpool \*pop, PMEMcond \*condp,<br />
   PMEMmutex \*restrict mutexp);
 
-The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
+  The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
 
 
 ### PERSISTENT OBJECTS
@@ -700,7 +700,7 @@ Operating on untyped object handles, as well as on direct untyped object pointer
 
   The **OID_INSTANCEOF** macro checks whether the *oid* is of the type specified by argument *TYPE*.
 
-* **TOID_ASSIGN**(TOID o, VALU)
+* **TOID_ASSIGN**(TOID o, VALUE)
 
   The **TOID_ASSIGN** macro assigns an object handle specified by *VALUE* to the variable *o*.
 
@@ -790,11 +790,11 @@ All the objects in the persistent memory pool are assigned a *type number* and a
 The *libpmemobj* provides a mechanism allowing to iterate through the internal object collection, either looking for a specific object, or performing a specific operation on each object of given type. Software should not make any assumptions about the order of the objects in the internal object containers.
 
 * **PMEMoid pmemobj_first**(PMEMobjpool \*pop);
-*
+
   The **pmemobj_first**() function returns the first object from the pool. If the pool is empty, OID_NULL is returned.
 
 * **POBJ_FIRST**(PMEMobjpool \*pop, TYPE)
-*
+
   The **POBJ_FIRST** macro returns the first object from the pool of the type specified by *TYPE*.
 
 * **POBJ_FIRST_TYPE_NUM**(PMEMobjpool \*pop, uint64_t type_num)  The **POBJ_FIRST_TYPE_NUM** macro returns the first object from the pool of the type specified by *type_num*.
