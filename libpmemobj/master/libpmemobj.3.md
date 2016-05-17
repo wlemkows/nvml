@@ -46,97 +46,97 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
 **Most commonly used functions:**
 
-: PMEMobjpool **\*pmemobj_open**(const char \*path, const char \*layout);
+: **PMEMobjpool** **\*pmemobj_open**(**const char \***path, **const char \***layout);
 
-  PMEMobjpool **\*pmemobj_create**(const char \*path, const char \*layout, size_t poolsize, mode_t mode);
+  **PMEMobjpool** **\*pmemobj_create**(**const char \***path, **const char \***layout, **size_t** poolsize, **mode_t** mode);
 
-  void **pmemobj_close**(PMEMobjpool \*pop);
+  **void** **pmemobj_close**(**PMEMobjpool \***pop);
 
 **Low-level memory manipulation:**
 
-: void **\*pmemobj_memcpy_persist**(PMEMobjpool \*pop, void \*dest, const void \*src, size_t len);
+: **void** **\*pmemobj_memcpy_persist**(**PMEMobjpool \***pop, **void \***dest, **const void \***src, **size_t** len);
 
-  void **\*pmemobj_memset_persist**(PMEMobjpool \*pop, void \*dest, int c, size_t len);
+  **void** **\*pmemobj_memset_persist**(**PMEMobjpool \***pop, **void \***dest, **int** c, **size_t** len);
 
-  void **pmemobj_persist**(PMEMobjpool \*pop, const void \*addr, size_t len);
+  **void** **pmemobj_persist**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
 
-  void **pmemobj_flush**(PMEMobjpool \*pop, const void \*addr, size_t len);
+  **void** **pmemobj_flush**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
 
-  void **pmemobj_drain**(PMEMobjpool \*pop);
+  **void** **pmemobj_drain**(**PMEMobjpool \***pop);
 
 **Locking:**
 
-: void **pmemobj_mutex_zero**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+: **void** **pmemobj_mutex_zero**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  int **pmemobj_mutex_lock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+  **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  int **pmemobj_mutex_timedlock**(PMEMobjpool \*pop, PMEMmutex \*restrict mutexp, const struct timespec \*restrict abs_timeout);
+  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \***restrict mutexp, **const struct timespec \***restrict abs_timeout);
 
-  int **pmemobj_mutex_trylock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+  **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  int **pmemobj_mutex_unlock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+  **int** **pmemobj_mutex_unlock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  void **pmemobj_rwlock_zero**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **void** **pmemobj_rwlock_zero**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  int **pmemobj_rwlock_rdlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **int** **pmemobj_rwlock_rdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  int **pmemobj_rwlock_wrlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  int **pmemobj_rwlock_timedrdlock**(PMEMobjpool \*pop, PMEMrwlock \*restrict rwlockp, const struct timespec \*restrict abs_timeout);
+  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \***restrict abs_timeout);
 
-  int **pmemobj_rwlock_timedwrlock**(PMEMobjpool \*pop, PMEMrwlock \*restrict rwlockp, const struct timespec \*restrict abs_timeout);
+  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \***restrict abs_timeout);
 
-  int **pmemobj_rwlock_tryrdlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  int **pmemobj_rwlock_trywrlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **int** **pmemobj_rwlock_trywrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  int **pmemobj_rwlock_unlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+  **int** **pmemobj_rwlock_unlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  void **pmemobj_cond_zero**(PMEMobjpool \*pop, PMEMcond \*condp);
+  **void** **pmemobj_cond_zero**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-  int **pmemobj_cond_broadcast**(PMEMobjpool \*pop, PMEMcond \*condp);
+  **int** **pmemobj_cond_broadcast**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-  int **pmemobj_cond_signal**(PMEMobjpool \*pop, PMEMcond \*condp);
+  **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-  int **pmemobj_cond_timedwait**(PMEMobjpool \*pop, PMEMcond \*restrict condp, PMEMmutex \*restrict mutexp, const struct timespec \*restrict abs_timeout);
+  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \***restrict condp, **PMEMmutex \***restrict mutexp, **const struct timespec \***restrict abs_timeout);
 
-  int **pmemobj_cond_wait**(PMEMobjpool \*pop, PMEMcond \*condp, PMEMmutex \*restrict mutexp);
+  **int** **pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp, **PMEMmutex \***restrict mutexp);
 
 **Persistent object identifier:**
 
-: **OID_IS_NULL**(PMEMoid oid)
+: **OID_IS_NULL**(**PMEMoid** oid)
 
-  **OID_EQUALS**(PMEMoid lhs, PMEMoid rhs)
+  **OID_EQUALS**(**PMEMoid** lhs, **PMEMoid** rhs)
 
 **Type-safety:**
 
 : **TOID**(TYPE)
 
-  **TOID_DECLARE**(TYPE, uint64_t type_num)
+  **TOID_DECLARE**(TYPE, **uint64_t** type_num)
 
   **TOID_DECLARE_ROOT**(ROOT_TYPE)
 
   **TOID_TYPE_NUM**(TYPE)
 
-  **TOID_TYPE_NUM_OF**(TOID oid)
+  **TOID_TYPE_NUM_OF**(**TOID** oid)
 
-  **TOID_VALID**(TOID oid)
+  **TOID_VALID**(**TOID** oid)
 
-  **OID_INSTANCEOF**(PMEMoid oid, TYPE)
+  **OID_INSTANCEOF**(**PMEMoid** oid, TYPE)
 
-  **TOID_ASSIGN**(TOID oid, VALUE)
+  **TOID_ASSIGN**(**TOID** oid, VALUE)
 
-  **TOID_IS_NULL**(TOID oid)
+  **TOID_IS_NULL**(**TOID** oid)
 
-  **TOID_EQUALS**(TOID lhs, TOID rhs)
+  **TOID_EQUALS**(**TOID** lhs, **TOID** rhs)
 
-  **DIRECT_RW**(TOID oid)
+  **DIRECT_RW**(**TOID** oid)
 
-  **DIRECT_RO**(TOID oid)
+  **DIRECT_RO**(**TOID** oid)
 
-  **D_RW**(TOID oid)
+  **D_RW**(**TOID** oid)
 
-  **D_RO**(TOID oid)
+  **D_RO**(**TOID** oid)
 
 **Layout declaration:**
 
@@ -154,78 +154,78 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
 **Non-transactional atomic allocations:**
 
-: typedef int (\*pmemobj_constr)(PMEMobjpool \*pop, void \*ptr, void \*arg);
+: **typedef int** (\*pmemobj_constr)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg);
 
-  int **pmemobj_alloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num, pmemobj_constr constructor, void \*arg);
+  **int** **pmemobj_alloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num, **pmemobj_constr constructor**, **void \***arg);
 
-  int **pmemobj_zalloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+  **int** **pmemobj_zalloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
-  int **pmemobj_realloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+  **int** **pmemobj_realloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
-  int **pmemobj_zrealloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+  **int** **pmemobj_zrealloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
-  void **pmemobj_free**(PMEMoid \*oidp);
+  **void** **pmemobj_free**(**PMEMoid \***oidp);
 
-  int **pmemobj_strdup**(PMEMobjpool \*pop, PMEMoid \*oidp, const char \*s, uint64_t type_num);
+  **int** **pmemobj_strdup**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **const char \***s, **uint64_t** type_num);
 
-  size_t **pmemobj_alloc_usable_size**(PMEMoid oid);
+  **size_t** **pmemobj_alloc_usable_size**(**PMEMoid** oid);
 
-  PMEMobjpool **\*pmemobj_pool_by_oid**(PMEMoid oid);
+  **PMEMobjpool** **\*pmemobj_pool_by_oid**(**PMEMoid** oid);
 
-  PMEMobjpool **\*pmemobj_pool_by_ptr**(const void \*addr);
+  **PMEMobjpool** **\*pmemobj_pool_by_ptr**(**const void \***addr);
 
-  void **\*pmemobj_direct**(PMEMoid oid);
+  **void** **\*pmemobj_direct**(**PMEMoid** oid);
 
-  uint64_t **pmemobj_type_num**(PMEMoid oid);
+  **uint64_t** **pmemobj_type_num**(**PMEMoid** oid);
 
 
-: **POBJ_NEW**(PMEMobjpool \*pop, TOID \*oidp, TYPE, pmemobj_constr constructor, void \*arg)
+: **POBJ_NEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_ALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size, pmemobj_constr constructor, void \*arg)
+  **POBJ_ALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size, **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_ZNEW**(PMEMobjpool \*pop, TOID \*oidp, TYPE)
+  **POBJ_ZNEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE)
 
-  **POBJ_ZALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+  **POBJ_ZALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
-  **POBJ_REALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+  **POBJ_REALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
-  **POBJ_ZREALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+  **POBJ_ZREALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
-  **POBJ_FREE**(TOID \*oidp)
+  **POBJ_FREE**(**TOID \***oidp)
 
 
 **Root object management:**
 
-: PMEMoid **pmemobj_root**(PMEMobjpool \*pop, size_t size);
+: **PMEMoid** **pmemobj_root**(**PMEMobjpool \***pop, **size_t** size);
 
-  PMEMoid **pmemobj_root_construct**(PMEMobjpool \*pop, size_t size, pmemobj_constr constructor, void \*arg);
+  **PMEMoid** **pmemobj_root_construct**(**PMEMobjpool \***pop, **size_t** size, **pmemobj_constr** constructor, **void \***arg);
 
-  size_t **pmemobj_root_size**(PMEMobjpool \*pop);
+  **size_t** **pmemobj_root_size**(**PMEMobjpool \***pop);
 
-  **POBJ_ROOT**(PMEMobjpool \*pop, TYPE)
+  **POBJ_ROOT**(**PMEMobjpool \***pop, TYPE)
 
 
 **Object containers:**
 
-: PMEMoid **pmemobj_first**(PMEMobjpool \*pop);
+: **PMEMoid** **pmemobj_first**(**PMEMobjpool \***pop);
 
-  PMEMoid **pmemobj_next**(PMEMoid oid);
+  **PMEMoid** **pmemobj_next**(**PMEMoid** oid);
 
-  **POBJ_FIRST_TYPE_NUM**(PMEMobjpool \*pop, uint64_t type_num)
+  **POBJ_FIRST_TYPE_NUM**(**PMEMobjpool \***pop, **uint64_t** type_num)
 
-  **POBJ_FIRST**(PMEMobjpool \*pop, TYPE)
+  **POBJ_FIRST**(**PMEMobjpool \***pop, TYPE)
 
-  **POBJ_NEXT_TYPE_NUM**(PMEMoid oid)
+  **POBJ_NEXT_TYPE_NUM**(**PMEMoid** oid)
 
-  **POBJ_NEXT**(TOID oid)
+  **POBJ_NEXT**(**TOID** oid)
 
-  **POBJ_FOREACH**(PMEMobjpool \*pop, PMEMoid varoid)
+  **POBJ_FOREACH**(**PMEMobjpool \***pop, **PMEMoid** varoid)
 
-  **POBJ_FOREACH_SAFE**(PMEMobjpool \*pop, PMEMoid varoid, PMEMoid nvaroid)
+  **POBJ_FOREACH_SAFE**(**PMEMobjpool \***pop, **PMEMoid** varoid, **PMEMoid** nvaroid)
 
-  **POBJ_FOREACH_TYPE**(PMEMobjpool \*pop, TOID var)
+  **POBJ_FOREACH_TYPE**(**PMEMobjpool \***pop, **TOID** var)
 
-  **POBJ_FOREACH_SAFE_TYPE**(PMEMobjpool \*pop, TOID var, TOID nvar)
+  **POBJ_FOREACH_SAFE_TYPE**(**PMEMobjpool \***pop, **TOID** var, **TOID** nvar)
 
 
 **Non-transactional persistent atomic circular doubly-linked list:**
@@ -245,112 +245,112 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **POBJ_LIST_HEAD**(HEADNAME, TYPE)
 
-  **POBJ_LIST_FIRST**(POBJ_LIST_HEAD \*head)
+  **POBJ_LIST_FIRST**(**POBJ_LIST_HEAD \***head)
 
-  **POBJ_LIST_NEXT**(TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_NEXT**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_LAST**(POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_LAST**(**POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_PREV**(TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_PREV**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   **POBJ_LIST_DEST_TAIL**
 
-  **POBJ_LIST_EMPTY**(POBJ_LIST_HEAD \*head)
+  **POBJ_LIST_EMPTY**(**POBJ_LIST_HEAD \***head)
 
   **POBJ_LIST_DEST_HEAD**
 
-  **POBJ_LIST_FOREACH**(TOID var, POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_FOREACH**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_FOREACH_REVERSE**(TOID var, POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_FOREACH_REVERSE**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_INSERT_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_INSERT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_INSERT_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_INSERT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_INSERT_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_INSERT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_INSERT_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_INSERT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_INSERT_NEW_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_ENTRY FIELD, size_t size,<br />
-      pmemobj_constr constructor, void \*arg)
+  **POBJ_LIST_INSERT_NEW_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+      **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_LIST_INSERT_NEW_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_ENTRY FIELD, size_t size,<br />
-      void (\*constructor)(PMEMobjpool \*pop, void \*ptr, void \*arg),
-      void \*arg)
+  **POBJ_LIST_INSERT_NEW_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+      **void** (\*constructor)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg),
+      **void \***arg)
 
-  **POBJ_LIST_INSERT_NEW_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,<br />
-      pmemobj_constr constructor, void \*arg)
+  **POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+      **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_LIST_INSERT_NEW_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,<br />
-      pmemobj_constr constructor, void \*arg)
+  **POBJ_LIST_INSERT_NEW_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+      **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_LIST_REMOVE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_REMOVE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_REMOVE_FREE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      TOID elm, POBJ_LIST_ENTRY FIELD)
+  **POBJ_LIST_REMOVE_FREE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_MOVE_ELEMENT_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_HEAD \*head_new, TOID elm, POBJ_LIST_ENTRY FIELD,<br />
-      POBJ_LIST_ENTRY field_new)
+  **POBJ_LIST_MOVE_ELEMENT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+      **POBJ_LIST_ENTRY** field_new)
 
-  **POBJ_LIST_MOVE_ELEMENT_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_HEAD \*head_new, TOID elm, POBJ_LIST_ENTRY FIELD,<br />
-      POBJ_LIST_ENTRY field_new)
+  **POBJ_LIST_MOVE_ELEMENT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+      **POBJ_LIST_ENTRY** field_new)
 
-  **POBJ_LIST_MOVE_ELEMENT_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_HEAD \*head_new, TOID listelm, TOID elm,<br />
-      POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+  **POBJ_LIST_MOVE_ELEMENT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+      **POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
 
-  **POBJ_LIST_MOVE_ELEMENT_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-      POBJ_LIST_HEAD \*head_new, TOID listelm, TOID elm,<br />
-      POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+  **POBJ_LIST_MOVE_ELEMENT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+      **POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+      **POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
 
 **Transactional object manipulation:**
 
-: enum tx_stage **pmemobj_tx_stage**(void);
+: **enum tx_stage** **pmemobj_tx_stage**(**void**);
 
-  int **pmemobj_tx_begin**(PMEMobjpool \*pop, jmp_buf \*env, enum tx_lock, ...);
+  **int** **pmemobj_tx_begin**(**PMEMobjpool \***pop, **jmp_buf \***env, **enum** tx_lock, ...);
 
-  int **pmemobj_tx_lock**(enum tx_lock lock_type, void \*lockp);
+  **int** **pmemobj_tx_lock**(**enum tx_lock** lock_type, **void \***lockp);
 
-  void **pmemobj_tx_abort**(int errnum);
+  **void** **pmemobj_tx_abort**(**int** errnum);
 
-  void **pmemobj_tx_commit**(void);
+  **void** **pmemobj_tx_commit**(**void**);
 
-  int **pmemobj_tx_end**(void);
+  **int** **pmemobj_tx_end**(**void**);
 
-  int **pmemobj_tx_errno**(void);
+  **int** **pmemobj_tx_errno**(**void**);
 
-  void **pmemobj_tx_process**(void);
+  **void** **pmemobj_tx_process**(**void**);
 
-  int **pmemobj_tx_add_range**(PMEMoid oid, uint64_t off, size_t size);
+  **int** **pmemobj_tx_add_range**(**PMEMoid** oid, **uint64_t** off, **size_t** size);
 
-  int **pmemobj_tx_add_range_direct**(const void \*ptr, size_t size);
+  **int** **pmemobj_tx_add_range_direct**(**const void \***ptr, **size_t** size);
 
-  PMEMoid **pmemobj_tx_alloc**(size_t size, uint64_t type_num);
+  **PMEMoid** **pmemobj_tx_alloc**(**size_t** size, **uint64_t** type_num);
 
-  PMEMoid **pmemobj_tx_zalloc**(size_t size, uint64_t type_num);
+  **PMEMoid** **pmemobj_tx_zalloc**(**size_t** size, **uint64_t** type_num);
 
-  PMEMoid **pmemobj_tx_realloc**(PMEMoid oid, size_t size, uint64_t type_num);
+  **PMEMoid** **pmemobj_tx_realloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
 
-  PMEMoid **pmemobj_tx_zrealloc**(PMEMoid oid, size_t size, uint64_t type_num);
+  **PMEMoid** **pmemobj_tx_zrealloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
 
-  PMEMoid **pmemobj_tx_strdup**(const char \*s, uint64_t type_num);
+  **PMEMoid** **pmemobj_tx_strdup**(**const char \***s, **uint64_t** type_num);
 
-  int **pmemobj_tx_free**(PMEMoid oid);
+  **int** **pmemobj_tx_free**(**PMEMoid** oid);
 
-  **TX_BEGIN_LOCK**(PMEMobjpool \*pop, ...)
+  **TX_BEGIN_LOCK**(**PMEMobjpool \***pop, ...)
 
-  **TX_BEGIN**(PMEMobjpool \*pop)
+  **TX_BEGIN**(**PMEMobjpool \***pop)
 
   **TX_ONABORT**
 
@@ -360,56 +360,56 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **TX_END**
 
-  **TX_ADD**(TOID o)
+  **TX_ADD**(**TOID** o)
 
-  **TX_ADD_FIELD**(TOID o, FIELD)
+  **TX_ADD_FIELD**(**TOID** o, FIELD)
 
-  **TX_ADD_DIRECT**(TYPE \*p)
+  **TX_ADD_DIRECT**(**TYPE \***p)
 
-  **TX_ADD_FIELD_DIRECT**(TYPE \*p, FIELD)
+  **TX_ADD_FIELD_DIRECT**(**TYPE \***p, FIELD)
 
   **TX_NEW**(TYPE)
 
-  **TX_ALLOC**(TYPE, size_t size)
+  **TX_ALLOC**(TYPE, **size_t** size)
 
   **TX_ZNEW**(TYPE)
 
-  **TX_ZALLOC**(TYPE, size_t size)
+  **TX_ZALLOC**(TYPE, **size_t** size)
 
-  **TX_REALLOC**(TOID o, size_t size)
+  **TX_REALLOC**(**TOID** o, **size_t** size)
 
-  **TX_ZREALLOC**(TOID o, size_t size)
+  **TX_ZREALLOC**(**TOID** o, **size_t** size)
 
-  **TX_STRDUP**(const char \*s, uint64_t type_num)
+  **TX_STRDUP**(**const char \***s, **uint64_t** type_num)
 
-  **TX_FREE**(TOID o)
+  **TX_FREE**(**TOID** o)
 
-  **TX_SET**(TOID o, FIELD, VALUE)
+  **TX_SET**(**TOID** o, FIELD, VALUE)
 
-  **TX_SET_DIRECT**(TYPE \*p, FIELD, VALUE)
+  **TX_SET_DIRECT**(**TYPE \***p, FIELD, VALUE)
 
-  **TX_MEMCPY**(void \*dest, const void \*src, size_t num)
+  **TX_MEMCPY**(**void \***dest, **const void \***src, **size_t** num)
 
-  **TX_MEMSET**(void \*dest, int c, size_t num)
+  **TX_MEMSET**(**void \***dest, **int** c, **size_t** num)
 
   **Library API versioning:**
 
-  const char **\*pmemobj_check_version**(unsigned major_required, unsigned minor_required);
+  **const char** **\*pmemobj_check_version**(**unsigned** major_required, **unsigned** minor_required);
 
 
 **Managing library behavior:**
 
-: void **pmemobj_set_funcs**(
-      void \*(\*malloc_func)(size_t size),
-      void (\*free_func)(void \*ptr),
-      void \*(\*realloc_func)(void \*ptr, size_t size),
-      char \*(\*strdup_func)(const char \*s));
+: **void** **pmemobj_set_funcs**(
+      **void** \*(\*malloc_func)(**size_t** size),
+      **void** (\*free_func)(**void \***ptr),
+      **void \*(\*realloc_func)(**void \***ptr, **size_t** size),
+      **char \***(\*strdup_func)(**const char \***s));
 
-  int **pmemobj_check**(const char \*path, const char \*layout);
+  **int** **pmemobj_check**(**const char \***path, **const char \***layout);
 
 **Error handling:**
 
-: const char **\*pmemobj_errormsg**(void);
+: **const char** **\*pmemobj_errormsg**(**void**);
 
 
 ### DESCRIPTION
@@ -419,7 +419,6 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 This library is for applications that need a transactions and persistent memory management. The **libpmemobj** requires a **-std=gnu99** compilation flag to build properly. This library builds on the low-level pmem support provided by **libpmem**, handling the transactional updates, flushing changes to persistence, and recovery for the application.
 
 **libpmemobj** is one of a collection of persistent memory libraries available, the others are:
-
 
 + **libpmemblk**(3), providing pmem-resident arrays of fixed-sized blocks with atomic updates.
 
@@ -437,15 +436,15 @@ To use the pmem-resident transactional object store provided by **libpmemobj**, 
 
 Once created, the memory pool is represented by an opaque handle, of type *PMEMobjpool **, which is passed to most of the other functions in this section. Internally, **libpmemobj** will use either **pmem_persist**() or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the obj memory API provided by **libpmemobj**.
 
-* PMEMobjpool **\*pmemobj_open**(const char \*path, const char \*layout);
+* **PMEMobjpool** **\*pmemobj_open**(**const char \***path, **const char \***layout);
 
   The **pmemobj_open**() function opens an existing object store memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a pmemobj memory pool as created by **pmemobj_create**(). If *layout* is non-NULL, it is compared to the layout name provided to **pmemobj_create**() when the pool was first created. This can be used to verify the layout of the pool matches what was expected. The application must have permission to open the file and memory map it with read/write permissions. If an error prevents the pool from being opened, or if the given *layout* does not match the pool’s layout, **pmemobj_open**() returns NULL and sets errno appropriately.
 
-* PMEMobjpool **\*pmemobj_create**(const char \*path, const char \*layout, size_t poolsize, mode_t mode);
+* **PMEMobjpool** **\*pmemobj_create**(**const char \***path, **const char \***layout, **size_t** poolsize, **mode_t** mode);
 
   The **pmemobj_create**() function creates a transactional object store with the given total *poolsize*. *path* specifies the name of the memory pool file to be created. *layout* specifies the application’s layout type in the form of a string. The layout name is not interpreted by **libpmemobj**, but may be used as a check when **pmemobj_open**() is called. The layout name, including the null termination, cannot be longer than **PMEMOBJ_MAX_LAYOUT** as defined in **\<libpmemobj.h\>**. It is allowed to pass NULL as *layout*, which is equivalent for using an empty string as a layout name. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemobj_create**() and then specifying *poolsize* as zero. In this case **pmemobj_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a transactional object store is defined in **\<libpmemobj.h\>** as **PMEMOBJ_MIN_POOL**.
 
-* void **pmemobj_close**(PMEMobjpool \*pop);
+* **void** **pmemobj_close**(**PMEMobjpool \***pop);
 
   The **pmemobj_close**() function closes the memory pool indicated by *pop* and deletes the memory pool handle. The object store itself lives on in the file that contains it and may be re-opened at a later time using **pmemobj_open**() as described above.
 
@@ -454,15 +453,15 @@ Once created, the memory pool is represented by an opaque handle, of type *PMEMo
 
 The **libpmemobj** specific low-level memory manipulation functions leverage the knowledge of the additional configuration options available for **libpmemobj** pools, such as replication. They also take advantage of the type of storage behind the pool and use appropriate flush/drain functions. It is advised to use these functions in conjunction with **libpmemobj** objects, instead of using low-level memory manipulations functions from **libpmem**.
 
-* void **pmemobj_persist**(PMEMobjpool \*pop, const void \*addr, size_t len);
+* **void** **pmemobj_persist**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
 
   Forces any changes in the range [*addr*, *addr*+*len*) to be stored durably in persistent memory. Internally this may call either **pmem_msync**() or **pmem_persist**(). There are no alignment restrictions on the range described by *addr* and *len*, but **pmemobj_persist**() may expand the range as necessary to meet platform alignment requirements.
 
 >WARNING: Like **msync**(2), there is nothing atomic or transactional about this call. Any unwritten stores in the given range will be written, but some stores may have already been written by virtue of normal cache eviction/replacement policies. Correctly written code must not depend on stores waiting until **pmemobj_persist**() is called to become persistent – they can become persistent at any time before **pmemobj_persist**() is called.
 
 
-* void **pmemobj_flush**(PMEMobjpool \*pop, const void \*addr, size_t len);
-* void **pmemobj_drain**(PMEMobjpool \*pop);
+* **void** **pmemobj_flush**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
+* **void** **pmemobj_drain**(**PMEMobjpool \***pop);
 
   These functions provide partial versions of the **pmemobj_persist**() function described above. **pmemobj_persist**() can be thought of as this:
 
@@ -481,8 +480,8 @@ pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len)
 These functions allow advanced programs to create their own variations of **pmemobj_persist**(). For example, a program that needs to flush several discontiguous ranges can call **pmemobj_flush**() for each range and then follow up by calling **pmemobj_drain**() once. For more information on partial flushing operations see the **libpmem** manpage.
 
 
-* void **\*pmemobj_memcpy_persist**(PMEMobjpool \*pop, void \*dest, const void \*src, size_t len);
-* void **\*pmemobj_memset_persist**(PMEMobjpool \*pop, void \*dest, int c, size_t len);
+* **void** **\*pmemobj_memcpy_persist**(**PMEMobjpool \***pop, **void \***dest, **const void \***src, **size_t** len);
+* **void** **\*pmemobj_memset_persist**(**PMEMobjpool \***pop, **void \***dest, **int** c, **size_t** len);
 
   The **pmemobj_memcpy_persist**(), and **pmemobj_memset_persist**(), functions provide the same memory copying as their namesakes **memcpy**(3), and **memset**(3), and ensure that the result has been flushed to persistence before returning. For example, the following code is functionally equivalent to **pmemobj_memcpy_persist**():
 
@@ -545,43 +544,39 @@ The fundamental property of pmem-aware locks is their automatic reinitialization
 
 Pmem-aware mutexes, read/write locks and condition variables must be declared with one of the *PMEMmutex*, *PMEMrwlock*, or *PMEMcond* type respectively.
 
-* void **pmemobj_mutex_zero**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+* **void** **pmemobj_mutex_zero**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
   The **pmemobj_mutex_zero**() function explicitly initializes pmem-aware mutex pointed by *mutexp* by zeroing it. Initialization is not necessary if the object containing the mutex has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
 
-
-* int **pmemobj_mutex_lock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+* **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
   The **pmemobj_mutex_lock**() function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, the calling thread will block until the mutex becomes available. If this is the first use of the mutex since opening of the pool *pop*, the mutex is automatically reinitialized and then locked.
 
-
-* int **pmemobj_mutex_timedlock**(PMEMobjpool \*pop,<br />
-  PMEMmutex \*restrict mutexp,<br />
-  const struct timespec \*restrict abs_timeout);
+* **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop,<br />
+  **PMEMmutex \***restrict mutexp,<br />
+  **const struct timespec** \*restrict abs_timeout);
 
   The **pmemobj_mutex_timedlock**() performs the same action as **pmemobj_mutex_lock**(), but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
-* int **pmemobj_mutex_trylock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+* **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
   The **pmemobj_mutex_trylock**() function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, **pthread_mutex_trylock**() will not block waiting for the mutex, but will return an error condition. If this is the first use of the mutex since opening of the pool *pop* the mutex is automatically reinitialized and then locked.
 
-
-* int **pmemobj_mutex_unlock**(PMEMobjpool \*pop, PMEMmutex \*mutexp);
+* **int** **pmemobj_mutex_unlock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
   The **pmemobj_mutex_unlock**() function unlocks an acquired pmem-aware mutex pointed by *mutexp*. Undefined behavior follows if a thread tries to unlock a mutex that has not been locked by it, or if a thread tries to release a mutex that is already unlocked or not initialized.
 
-* void **pmemobj_rwlock_zero**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **void** **pmemobj_rwlock_zero**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_zero**() function is used to explicitly initialize pmem-aware read/write lock pointed by *rwlockp* by zeroing it. Initialization is not necessary if the object containing the lock has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
 
-
-* int **pmemobj_rwlock_rdlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **int** **pmemobj_rwlock_rdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_rdlock**() function acquires a read lock on *rwlockp* provided that lock is not presently held for writing and no writer threads are presently blocked on the lock. If the read lock cannot be immediately acquired, the calling thread blocks until it can acquire the lock. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
-* int **pmemobj_rwlock_timedrdlock**(PMEMobjpool \*pop, <br />
-  PMEMrwlock \*restrict rwlockp,<br />
-  const struct timespec \*restrict abs_timeout);
+* **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, <br />
+  **PMEMrwlock \*restrict** rwlockp,<br />
+  **const struct timespec \*restrict** abs_timeout);
 
   The **pmemobj_rwlock_timedrdlock**() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
@@ -589,48 +584,46 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
 
   The results of acquiring a read lock while the calling thread holds a write lock are undefined.
 
-* int **pmemobj_rwlock_wrlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_wrlock**() function blocks until a write lock can be acquired against lock pointed by *rwlockp*. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
-* int **pmemobj_rwlock_timedwrlock**(PMEMobjpool \*pop,<br />
-  PMEMrwlock \*restrict rwlockp,<br />
-  const struct timespec \*restrict abs_timeout);
+* **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop,<br />
+  **PMEMrwlock \*restrict** rwlockp,<br />
+  **const struct timespec \*restrict** abs_timeout);
 
   The **pmemobj_rwlock_timedwrlock**() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
-* int pmemobj_rwlock_tryrdlock(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_tryrdlock**() function performs the same action as **pmemobj_rwlock_rdlock**(), but does not block if the lock cannot be immediately obtained.
   The results are undefined if the calling thread already holds the lock at the time the call is made.
 
-
-* int **pmemobj_rwlock_trywrlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **int** **pmemobj_rwlock_trywrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_trywrlock**() function performs the same action as **pmemobj_rwlock_wrlock**(), but does not block if the lock cannot be immediately obtained.
   The results are undefined if the calling thread already holds the lock at the time the call is made.
 
-* int **pmemobj_rwlock_unlock**(PMEMobjpool \*pop, PMEMrwlock \*rwlockp);
+* **int** **pmemobj_rwlock_unlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
   The **pmemobj_rwlock_unlock**() function is used to release the read/write lock previously obtained by **pmemobj_rwlock_rdlock**(), **pmemobj_rwlock_wrlock**(), **pthread_rwlock_tryrdlock**(), or **pmemobj_rwlock_trywrlock**().
 
-* **void pmemobj_cond_zero**(PMEMobjpool \*pop, PMEMcond \*condp);
+* **void pmemobj_cond_zero**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
   The **pmemobj_cond_zero**() function explicitly initializes pmem-aware condition variable by zeroing it. Initialization is not necessary if the object containing the condition variable has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
 
-* int **pmemobj_cond_broadcast**(PMEMobjpool \*pop, PMEMcond \*condp);
+* **int** **pmemobj_cond_broadcast**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-* int **pmemobj_cond_signal**(PMEMobjpool \*pop, PMEMcond \*condp);
-
+* **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
   The difference between **pmemobj_cond_broadcast**() and **pmemobj_cond_signal**() is that the former unblocks all threads waiting for the condition variable, whereas the latter blocks only one waiting thread. If no threads are waiting on *cond*, neither function has any effect. If more than one thread is blocked on a condition variable, the used scheduling policy determines the order in which threads are unblocked. The same mutex used for waiting must be held while calling either function. Although neither function strictly enforces this requirement, undefined behavior may follow if the mutex is not held.
 
-* int **pmemobj_cond_timedwait**(PMEMobjpool \*pop, PMEMcond \*restrict condp,<br />
-  PMEMmutex \*restrict mutexp,<br />
-  const struct timespec \*restrict abs_timeout);
+* **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp,<br />
+  **PMEMmutex \*restrict** mutexp,<br />
+  **const struct timespec \*restrict** abs_timeout);
 
-* **int pmemobj_cond_wait**(PMEMobjpool \*pop, PMEMcond \*condp,<br />
-  PMEMmutex \*restrict mutexp);
+* **int pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp,<br />
+  **PMEMmutex \*restrict** mutexp);
 
   The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
 
@@ -643,19 +636,19 @@ An OID cannot be considered as a direct pointer to an object. Each time the prog
 
 In contrast to the memory address, the OID value for given object does not change during the life of an object (except for realloc operation), and remains valid after closing and reopening the pool. For this reason, if an object contains a reference to another persistent object - necessary to build some kind of a linked data structure - it shall never use memory address of an object, but its OID.
 
-* void **pmemobj_direct**(PMEMoid oid);
+* **void** **pmemobj_direct**(**PMEMoid** oid);
 
   The **pmemobj_direct**() function returns a pointer to an object represented by *oid*. If OID_NULL is passed as an argument, function returns NULL.
 
-* uint64_t **pmemobj_type_num**(PMEMoid oid);
+* **uint64_t** **pmemobj_type_num**(**PMEMoid** oid);
 
   The **pmemobj_type_num**() function returns a type number of the object represented by *oid*.
 
-* PMEMobjpool **\*pmemobj_pool_by_oid**(PMEMoid oid);
+* **PMEMobjpool** **\*pmemobj_pool_by_oid**(**PMEMoid** oid);
 
   The **pmemobj_pool_by_oid**() function returns a handle to the pool which contains the object represented by *oid*. If the pool is not open or OID_NULL is passed as an argument, function returns NULL.
 
-* PMEMobjpool **\*pmemobj_pool_by_ptr**(const void \*addr);
+* **PMEMobjpool** **\*pmemobj_pool_by_ptr**(**const void \***addr);
 
   The **pmemobj_pool_by_ptr**() function returns a handle to the pool which contains the address. If the address does not belong to any open pool, function returns NULL.
 
@@ -671,7 +664,7 @@ The **OID_EQUALS** macro compares two *PMEMoid* objects.
 
 Operating on untyped object handles, as well as on direct untyped object pointers (void \*) may be confusing and error prone. To facilitate implementation of type safety mechanism, **libpmemobj** defines a set of macros that provide a static type enforcement, catching potential errors at compile time. For example, a compile-time error is generated when an attempt is made to assign a handle to an object of one type to the object handle variable of another type of object.
 
-* **TOID_DECLARE**(TYPE, uint64_t type_num)
+* **TOID_DECLARE**(TYPE, **uint64_t** type_num)
 
   The **TOID_DECLARE** macro declares a typed OID of user-defined type specified by argument *TYPE*, and with type number specified by argument *type_num*.
 
@@ -687,38 +680,38 @@ Operating on untyped object handles, as well as on direct untyped object pointer
 
   The **TOID_TYPE_NUM** macro returns a type number of the type specified by argument *TYPE*.
 
-* **TOID_TYPE_NUM_OF**(TOID oid)
+* **TOID_TYPE_NUM_OF**(**TOID** oid)
 
   The **TOID_TYPE_NUM_OF** macro returns a type number of the object specified by argument *oid*. The type number is read from the typed OID.
 
-* **TOID_VALID**(TOID oid)
+* **TOID_VALID**(**TOID** oid)
 
   The **TOID_VALID** macro validates whether the type number stored in object’s metadata is equal to the type number read from typed OID.
 
-* **OID_INSTANCEOF**(PMEMoid oid, TYPE)
+* **OID_INSTANCEOF**(**PMEMoid** oid, TYPE)
 
   The **OID_INSTANCEOF** macro checks whether the *oid* is of the type specified by argument *TYPE*.
 
-* **TOID_ASSIGN**(TOID o, VALUE)
+* **TOID_ASSIGN**(**TOID** o, VALUE)
 
   The **TOID_ASSIGN** macro assigns an object handle specified by *VALUE* to the variable *o*.
 
-* **TOID_IS_NULL**(TOID o)
+* **TOID_IS_NULL**(**TOID** o)
 
   The **TOID_IS_NULL** macro evaluates to true if the object handle represented by argument *o* has OID_NULL value.
 
-* **TOID_EQUALS**(TOID lhs, TOID rhs)
+* **TOID_EQUALS**(**TOID** lhs, **TOID** rhs)
 
   The **TOID_EQUALS** macro evaluates to true if both *lhs* and *rhs* object handles are referencing the same persistent object.
 
-* **DIRECT_RW**(TOID oid)
+* **DIRECT_RW**(**TOID** oid)
 
-* **D_RW**(TOID oid)
+* **D_RW**(**TOID** oid)
   The **DIRECT_RW**() macro and its shortened form **D_RW**() return a typed write pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
 
-* **DIRECT_RO**(TOID oid)
+* **DIRECT_RO**(**TOID** oid)
 
-* **D_RO**(TOID oid)
+* **D_RO**(**TOID** oid)
   The **DIRECT_RO**() macro and its shortened form **D_RO**() return a typed read-only (const) pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
 
 
@@ -788,41 +781,41 @@ All the objects in the persistent memory pool are assigned a *type number* and a
 
 The *libpmemobj* provides a mechanism allowing to iterate through the internal object collection, either looking for a specific object, or performing a specific operation on each object of given type. Software should not make any assumptions about the order of the objects in the internal object containers.
 
-* **PMEMoid pmemobj_first**(PMEMobjpool \*pop);
+* **PMEMoid pmemobj_first**(**PMEMobjpool \***pop);
 
   The **pmemobj_first**() function returns the first object from the pool. If the pool is empty, OID_NULL is returned.
 
-* **POBJ_FIRST**(PMEMobjpool \*pop, TYPE)
+* **POBJ_FIRST**(**PMEMobjpool \***pop, TYPE)
 
   The **POBJ_FIRST** macro returns the first object from the pool of the type specified by *TYPE*.
 
-* **POBJ_FIRST_TYPE_NUM**(PMEMobjpool \*pop, uint64_t type_num)  The **POBJ_FIRST_TYPE_NUM** macro returns the first object from the pool of the type specified by *type_num*.
+* **POBJ_FIRST_TYPE_NUM**(**PMEMobjpool \***pop, **uint64_t** type_num)  The **POBJ_FIRST_TYPE_NUM** macro returns the first object from the pool of the type specified by *type_num*.
 
-* **PMEMoid pmemobj_next**(PMEMoid oid);
+* **PMEMoid pmemobj_next**(**PMEMoid** oid);
 
   The **pmemobj_next**() function returns the next object from the pool. If an object referenced by *oid* is the last object in the collection, or if the OID_NULL is passed as an argument, function returns OID_NULL.
 
-* **POBJ_NEXT**(TOID oid)
+* **POBJ_NEXT**(**TOID** oid)
 
   The **POBJ_NEXT** macro returns the next object of the same type as the object referenced by *oid*.
 
-* **POBJ_NEXT_TYPE_NUM**(PMEMoid oid)
+* **POBJ_NEXT_TYPE_NUM**(**PMEMoid** oid)
 
   The **POBJ_NEXT_TYPE_NUM** macro returns the next object of the same type as the object referenced by *oid*.
 
 The following four macros provide more convenient way to iterate through the internal collections, performing a specific operation on each object.
 
-* **POBJ_FOREACH**(PMEMobjpool \*pop, PMEMoid varoid)
+* **POBJ_FOREACH**(**PMEMobjpool \***pop, **PMEMoid** varoid)
 
   The **POBJ_FOREACH**() macro allows to perform a specific operation on each allocated object stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects, assigning a handle to each element in turn to *varoid* variable.
 
-* **POBJ_FOREACH_TYPE**(PMEMobjpool \*pop, TOID var)
+* **POBJ_FOREACH_TYPE**(**PMEMobjpool \***pop, **TOID** var)
 
 * **POBJ_FOREACH_TYPE**() macro allows to perform a specific operation on each allocated object of the same type as object passed as *var* argument, stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects of the specified type, assigning a handle to each element in turn to *var* variable.
 
-* **POBJ_FOREACH_SAFE**(PMEMobjpool \*pop, PMEMoid varoid, PMEMoid nvaroid)
+* **POBJ_FOREACH_SAFE**(**PMEMobjpool \***pop, **PMEMoid** varoid, **PMEMoid** nvaroid)
 
-* **POBJ_FOREACH_SAFE_TYPE**(PMEMobjpool \*pop, TOID var, TOID nvar)
+* **POBJ_FOREACH_SAFE_TYPE**(**PMEMobjpool \***pop, **TOID** var, **TOID** nvar)
 
   The macros **POBJ_FOREACH_SAFE**() and **POBJ_FOREACH_SAFE_TYPE**() work in a similar fashion as **POBJ_FOREACH**() and **POBJ_FOREACH_TYPE**() except that prior to performing the operation on the object, they preserve a handle to the next object in the collection by assigning it to *nvaroid* or *nvar* variable. This allows safe deletion of selected objects while iterating through the collection.
 
@@ -831,21 +824,21 @@ The following four macros provide more convenient way to iterate through the int
 
 The root object of persistent memory pool is an entry point for all other persistent objects allocated using the *libpmemobj* API. In other words, every single object stored in persistent memory pool should have the root object at the end of its reference path. It may be assumed that for each persistent memory pool the root object always exists, and there is exactly one root object in each pool.
 
-* **PMEMoid pmemobj_root**(PMEMobjpool \*pop, size_t size);
+* **PMEMoid pmemobj_root**(**PMEMobjpool \***pop, **size_t** size);
 
   The **pmemobj_root**() function returns a handle to the root object associated with the persistent memory pool pointed by *pop*. If this is the first call to **pmemobj_root**() and the root object does not exists yet, it is implicitly allocated in a thread-safe manner, so if the function is called by more than one thread simultaneously (with identical *size* value), the same root object handle is returned in all the threads.
 
   The size of the root object is guaranteed to be not less than the requested *size*. If the requested size is larger than the current size, the root object is automatically resized. In such case, the old data is preserved and the extra space is zeroed. The **pmemobj_root**() function shall not fail, except for the case if the requested object size is larger than the maximum allocation size supported for given pool, or if there is not enough free space in the pool to satisfy the reallocation of the root object. In such case, OID_NULL is returned.
 
-* **PMEMoid pmemobj_root_construct**(PMEMobjpool \*pop, size_t size, pmemobj_constr constructor, void \*arg)
+* **PMEMoid pmemobj_root_construct**(**PMEMobjpool \***pop, **size_t** size, **pmemobj_constr** constructor, **void \***arg)
 
   The **pmemobj_root_construct**() performs the same actions as the **pmemobj_root**() function, but instead of zeroing the newly allocated object a *constructor* function is called. The constructor is also called on reallocations. If the constructor returns non-zero value the allocation is canceled, the **OID_NULL** value is returned from the caller and errno is set to **ECANCELED .** The **pmemobj_root_size**() can be used in the constructor to check whether it’s the first call to the constructor.
 
-* **POBJ_ROOT**(PMEMobjpool \*pop, TYPE)
+* **POBJ_ROOT**(**PMEMobjpool \***pop, TYPE)
 
   The **POBJ_ROOT** macro works the same way as the **pmemobj_root**() function except it returns a typed OID of type *TYPE* instead of **PMEMoid**.
 
-* **size_t pmemobj_root_size**(PMEMobjpool \*pop);
+* **size_t pmemobj_root_size**(**PMEMobjpool \***pop);
 
   The **pmemobj_root_size**() function returns the current size of the root object associated with the persistent memory pool pointed by *pop*. The returned size is the largest value requested by any of the earlier **pmemobj_root**() calls. 0 is returned if the root object has not been allocated yet.
 
@@ -858,63 +851,63 @@ All these functions can be used outside transactions. Note that operations perfo
 
 The allocations are always aligned to the cache-line boundary.
 
-* typedef int (\*pmemobj_constr)(PMEMobjpool \*pop, void \*ptr, void \*arg);
+* **typedef int** (\*pmemobj_constr)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg);
 
   The **pmemobj_constr** type represents a constructor for atomic allocation from persistent memory heap associated with memory pool *pop*. The *ptr* is a pointer to allocating memory area and the *arg* is an user-defined argument passed to an appropriate function.
 
-* int **pmemobj_alloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num, pmemobj_constr constructor , void \*arg);
+* **int** **pmemobj_alloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor , **void \***arg);
 
   The **pmemobj_alloc** function allocates a new object from the persistent memory heap associated with memory pool *pop*. The **PMEMoid** of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized, or if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then **pmemobj_alloc**() returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
 
-* int **pmemobj_zalloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+* **int** **pmemobj_zalloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
   The **pmemobj_zalloc**() function allocates a new zeroed object from the the persistent memory heap associated with memory pool *pop*. The **PMEMoid** of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then **pmemobj_zalloc**() returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
 
-* void **pmemobj_free**(PMEMoid \*oidp);
+* **void** **pmemobj_free**(**PMEMoid \***oidp);
 
   The **pmemobj_free**() function provides the same semantics as **free**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It frees the memory space represented by *oidp*, which must have been returned by a previous call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, no operation is performed. It sets the *oidp* to *OID_NULL* value after freeing the memory. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically.
 
-* int **pmemobj_realloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+* **int** **pmemobj_realloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
   The **pmemobj_realloc**() function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oidp*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will *not* be initialized. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to **pmemobj_alloc**(pop, size, type_num). If *size* is equal to zero, and *oidp* is not *OID_NULL*, then the call is equivalent to **pmemobj_free**(oid). Unless *oidp* is *OID_NULL*, it must have been returned by an earlier call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oid* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If **pmemobj_realloc**() is unable to satisfy the allocation request, a non-zero value is returned and errno is set appropriately.
 
-* int **pmemobj_zrealloc**(PMEMobjpool \*pop, PMEMoid \*oidp, size_t size, uint64_t type_num);
+* **int** **pmemobj_zrealloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
 
   The **pmemobj_zrealloc**() function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oid*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will be zeroed. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to **pmemobj_zalloc**(pop, size, type_num). If *size* is equal to zero, and *oidp* doesn’t point to *OID_NULL*, then the call is equivalent to **pmemobj_free**(pop, oid). Unless *oidp* points to *OID_NULL*, it must have been returned by an earlier call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oidp* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If **pmemobj_zrealloc**() is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
 
-* int **pmemobj_strdup**(PMEMobjpool \*pop, PMEMoid \*oidp, const char \*s, uint64_t type_num);
+* **int** **pmemobj_strdup**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **const char \***s, **uint64_t** type_num);
 
   The **pmemobj_strdup**() function provides the same semantics as **strdup**(3), but operates on the persistent memory heap associated with memory pool *pop*. It stores a handle to a new object in *oidp* which is a duplicate of the string *s*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. The allocated string object is also added to the internal container associated with given *type_num*. Memory for the new string is obtained with **pmemobj_alloc**(), on the given memory pool, and can be freed with **pmemobj_free**() on the same memory pool. If **pmemobj_strdup**() is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
 
-* size_t **pmemobj_alloc_usable_size**(PMEMoid oid);
+* **size_t** **pmemobj_alloc_usable_size**(**PMEMoid** oid);
 
   The **pmemobj_alloc_usable_size**() function provides the same semantics as **malloc_usable_size**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It returns the number of usable bytes in the object represented by *oid*, a handle to an object allocated by **pmemobj_alloc**() or a related function. If *oid* is OID_NULL, 0 is returned.
 
-* **POBJ_NEW**(PMEMobjpool \*pop, TOID \*oidp, TYPE, pmemobj_constr constructor, void \*arg)
+* **POBJ_NEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **pmemobj_constr** constructor, **void \***arg)
 
   The **POBJ_NEW** macro is a wrapper around the **pmemobj_alloc**() function which takes the type name **TYPE** and passes the size and type number to the **pmemobj_alloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size, pmemobj_constr constructor , void \*arg)
+* **POBJ_ALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size, **pmemobj_constr** constructor , **void \***arg)
 
   The **POBJ_ALLOC** macro is a wrapper around the **pmemobj_alloc**() function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the **pmemobj_alloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZNEW**(PMEMobjpool \*pop, TOID \*oidp, TYPE)
+* **POBJ_ZNEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE)
 
   The **POBJ_ZNEW** macro is a wrapper around the **pmemobj_zalloc**() function which takes the type name **TYPE** and passes the size and type number to the **pmemobj_zalloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+* **POBJ_ZALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
   The **POBJ_ZALLOC** macro is a wrapper around the **pmemobj_zalloc**() function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the **pmemobj_zalloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_REALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+* **POBJ_REALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
   The **POBJ_REALLOC** macro is a wrapper around the **pmemobj_realloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_realloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZREALLOC**(PMEMobjpool \*pop, TOID \*oidp, TYPE, size_t size)
+* **POBJ_ZREALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
 
   The **POBJ_ZREALLOC** macro is a wrapper around the **pmemobj_zrealloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_zrealloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_FREE**(TOID \*oidp)
+* **POBJ_FREE**(**TOID \***oidp)
 
 The **POBJ_FREE** macro is a wrapper around the **pmemobj_free**() function which takes pointer to typed OID *oidp* as an argument instead of **PMEMoid**.
 
@@ -940,26 +933,26 @@ The user-defined structure of each element must contain a field of type **list_e
 
 The functions below are intended to be used outside transactions - transactional variants are described in section **TRANSACTIONAL OBJECT MANIPULATION**. Note that operations performed using this non-transactional API are independent from their transactional counterparts. If any non-transactional allocations or list manipulations are performed within an open transaction, the changes will not be rolled-back if such a transaction is aborted or interrupted.
 
-* int **pmemobj_list_insert**(PMEMobjpool \*pop, size_t pe_offset,<br />
-void \*head, PMEMoid dest, int before, PMEMoid oid);
+* **int** **pmemobj_list_insert**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
+**void \***head, **PMEMoid** dest, **int** before, **PMEMoid** oid);
 
   The **pmemobj_list_insert** function inserts an element represented by object handle *oid* into the list referenced by *head*. Depending on the value of flag *before*, the object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. The *head* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* PMEMoid **pmemobj_list_insert_new**(PMEMobjpool \*pop, size_t pe_offset,<br />
-void \*head, PMEMoid dest, int before, size_t size,<br />
-uint64_t type_num, pmemobj_constr constructor, void arg);
+* **PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
+**void** \*head, **PMEMoid** dest, **int** before, **size_t** size,<br />
+**uint64_t** type_num, **pmemobj_constr** constructor, **void** arg);
 
   The **pmemobj_list_insert_new** function atomically allocates a new object of given *size* and type *type_num* and inserts it into the list referenced by *head*. Depending on the value of *before* flag, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* must point to the objects allocated from the same memory pool *pop*. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized or, if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *head* cannot be OID_NULL. The allocated object is also added to the internal container associated with given *type_num*. as described in section **OBJECT CONTAINERS**. On success, it returns a handle to the newly allocated object. On error, OID_NULL is returned and errno is set.
 
-* int **pmemobj_list_remove**(PMEMobjpool \*pop, size_t pe_offset,<br />
-void \*head, PMEMoid oid, int free);
+* **int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
+**void \***head, **PMEMoid** oid, **int** free);
 
   The **pmemobj_list_remove** function removes the object referenced by *oid* from the list pointed by *head*. If *free* flag is set, it also removes the object from the internal object container and frees the associated memory space. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. Both *head* and *oid* must point to the objects allocated from the same memory pool *pop* and cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* int **pmemobj_list_move**(PMEMobjpool \*pop,<br />
-size_t pe_old_offset, void \*head_old,<br />
-size_t pe_new_offset, void \*head_new,<br />
-PMEMoid dest, int before, PMEMoid oid);
+* **int** **pmemobj_list_move**(**PMEMobjpool** \*pop,<br />
+**size_t** pe_old_offset, **void** \*head_old,<br />
+**size_t** pe_new_offset, **void** \*head_new,<br />
+**PMEMoid** dest, **int** before, **PMEMoid** oid);
 
 
   The **pmemobj_list_move** function moves the object represented by *oid* from the list pointed by *head_old* to the list pointed by *head_new*. Depending on the value of flag *before*, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the second list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The arguments *pe_old_offset* and *pe_new_offset* declare the offsets of the structures that connects the elements in the old and new lists respectively. All the handles *head_old*, *head_new*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. *head_old*, *head_new* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
@@ -998,101 +991,101 @@ struct
 };
 ```
 
-* **POBJ_LIST_FIRST**(POBJ_LIST_HEAD \*head)
+* **POBJ_LIST_FIRST**(**POBJ_LIST_HEAD \***head)
 
   The macro **POBJ_LIST_FIRST** returns the first element on the list referenced by *head*. If the list is empty OID_NULL is returned.
 
-* **POBJ_LIST_LAST**(POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_LAST**(**POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_LAST** returns the last element on the list referenced by *head*. If the list is empty OID_NULL is returned.
 
-* **POBJ_LIST_EMPTY**(POBJ_LIST_HEAD \*head)
+* **POBJ_LIST_EMPTY**(**POBJ_LIST_HEAD \***head)
 
   The macro **POBJ_LIST_EMPTY** evaluates to 1 if the list referenced by *head* is empty. Otherwise, 0 is returned.
 
-* **POBJ_LIST_NEXT**(TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_NEXT**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_NEXT** returns the element next to the element *elm*.
 
-* **POBJ_LIST_PREV**(TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_PREV**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_PREV** returns the element preceding the element *elm*.
 
-* **POBJ_LIST_FOREACH**(TOID var, POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_FOREACH**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_FOREACH** traverses the list referenced by *head* assigning a handle to each element in turn to *var* variable.
 
-* **POBJ_LIST_FOREACH_REVERSE**(TOID var, POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_FOREACH_REVERSE**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_FOREACH_REVERSE** traverses the list referenced by *head* in reverse order, assigning a handle to each element in turn to *var* variable. The *field* argument is the name of the field of type *POBJ_LIST_ENTRY* in the element structure.
 
-* **POBJ_LIST_INSERT_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_INSERT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_INSERT_HEAD** inserts the element *elm* at the head of the list referenced by *head*.
 
-* **POBJ_LIST_INSERT_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_INSERT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_INSERT_TAIL** inserts the element *elm* at the end of the list referenced by *head*.
 
-* **POBJ_LIST_INSERT_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_INSERT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_INSERT_AFTER** inserts the element *elm* into the list referenced by *head* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list.
 
-* **POBJ_LIST_INSERT_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_INSERT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_INSERT_BEFORE** inserts the element *elm* into the list referenced by *head* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list.
 
-* **POBJ_LIST_INSERT_NEW_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, POBJ_LIST_ENTRY FIELD, size_t size, pmemobj_constr constructor , void \*arg)
+* **POBJ_LIST_INSERT_NEW_HEAD**(**PMEMobjpool** \*pop, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD, **size_t** size, **pmemobj_constr** constructor , **void \***arg)
 
   The macro **POBJ_LIST_INSERT_NEW_HEAD** atomically allocates a new object of size *size* and inserts it at the head of the list referenced by *head*. The newly allocated object is also added to the internal object container associated with a type number which is retrieved from the typed OID of the first element on list.
 
-* **POBJ_LIST_INSERT_NEW_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-POBJ_LIST_ENTRY FIELD, size_t size,<br />
-pmemobj_constr constructor , void \*arg)
+* **POBJ_LIST_INSERT_NEW_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor , **void \***arg)
 
   The macro **POBJ_LIST_INSERT_NEW_TAIL** atomically allocates a new object of size *size* and inserts it at the tail of the list referenced by *head*. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
-* **POBJ_LIST_INSERT_NEW_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,<br />
-pmemobj_constr constructor , void \*arg)
+* **POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor , **void \***arg)
 
   The macro **POBJ_LIST_INSERT_NEW_AFTER** atomically allocates a new object of size *size* and inserts it into the list referenced by *head* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
-* **POBJ_LIST_INSERT_NEW_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,<br />
-pmemobj_constr constructor, void \*arg)
+* **POBJ_LIST_INSERT_NEW_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor, **void \***arg)
 
   The macro **POBJ_LIST_INSERT_NEW_BEFORE** atomically allocates a new object of size *size* and inserts it into the list referenced by *head* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
-* **POBJ_LIST_REMOVE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_REMOVE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_REMOVE** removes the element *elm* from the list referenced by *head*.
 
-* **POBJ_LIST_REMOVE_FREE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head, TOID elm, POBJ_LIST_ENTRY FIELD)
+* **POBJ_LIST_REMOVE_FREE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
 
   The macro **POBJ_LIST_REMOVE_FREE** removes the element *elm* from the list referenced by *head* and frees the memory space represented by this element.
 
-* **POBJ_LIST_MOVE_ELEMENT_HEAD**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-POBJ_LIST_HEAD \*head_new, TOID elm, POBJ_LIST_ENTRY FIELD,<br />
-POBJ_LIST_ENTRY field_new)
+* **POBJ_LIST_MOVE_ELEMENT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+**POBJ_LIST_ENTRY** field_new)
 
   The macro **POBJ_LIST_MOVE_ELEMENT_HEAD** moves the element *elm* from the list referenced by *head* to the head of the list *head_new*. The *field* and *field_new* arguments are the names of the fields of type *POBJ_LIST_ENTRY* in the element structure that are used to connect the elements in both lists.
 
-* **POBJ_LIST_MOVE_ELEMENT_TAIL**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-POBJ_LIST_HEAD \*head_new, TOID elm, POBJ_LIST_ENTRY FIELD,<br />
-POBJ_LIST_ENTRY field_new)
+* **POBJ_LIST_MOVE_ELEMENT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+**POBJ_LIST_ENTRY** field_new)
 
   The macro **POBJ_LIST_MOVE_ELEMENT_TAIL** moves the element *elm* from the list referenced by *head* to the end of the list *head_new*. The *field* and *field_new* arguments are the names of the fields of type *POBJ_LIST_ENTRY* in the element structure that are used to connect the elements in both lists.
 
-* **POBJ_LIST_MOVE_ELEMENT_AFTER**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-POBJ_LIST_HEAD \*head_new, TOID listelm, TOID elm,<br />
-POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+* **POBJ_LIST_MOVE_ELEMENT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
 
   The macro **POBJ_LIST_MOVE_ELEMENT_AFTER** atomically removes the element *elm* from the list referenced by *head* and inserts it into the list referenced by *head_new* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list. The *field* and *field_new* arguments are the names of the fields of type *POBJ_LIST_ENTRY* in the element structure that are used to connect the elements in both lists.
 
-* **POBJ_LIST_MOVE_ELEMENT_BEFORE**(PMEMobjpool \*pop, POBJ_LIST_HEAD \*head,<br />
-POBJ_LIST_HEAD \*head_new, TOID listelm, TOID elm,<br />
-POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+* **POBJ_LIST_MOVE_ELEMENT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
 
   The macro **POBJ_LIST_MOVE_ELEMENT_BEFORE** atomically removes the element *elm* from the list referenced by *head* and inserts it into the list referenced by *head_new* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list. The *field* and *field_new* arguments are the names of the fields of type *POBJ_LIST_ENTRY* in the element structure that are used to connect the elements in both lists.
 
@@ -1111,7 +1104,7 @@ Nested transactions are supported but flattened. Committing the nested transacti
 
 Please see the **CAVEATS** section for known limitations of the transactional API.
 
-* **enum tx_stage pmemobj_tx_stage**(void);
+* **enum tx_stage pmemobj_tx_stage**(**void**);
 
   The **pmemobj_tx_stage**() function returns the stage of the current transaction stage for a thread. Stages are changed only by the *pmemobj_tx_** functions. The transaction stages are defined as follows:
 
@@ -1122,7 +1115,7 @@ Please see the **CAVEATS** section for known limitations of the transactional AP
     + **TX_STAGE_FINALLY** - ready for clean up
 
 
-* **int pmemobj_tx_begin**(PMEMobjpool \*pop, jmp_buf \*env, …);
+* **int pmemobj_tx_begin**(**PMEMobjpool \***pop, **jmp_buf \***env, …);
 
   The **pmemobj_tx_begin**() function starts a new transaction in the current thread. If called within an open transaction, it starts a nested transaction. The caller may use *env* argument to provide a pointer to the information of a calling environment to be restored in case of transaction abort. This information must be filled by a caller, using **setjmp**(3) macro.
 
@@ -1130,59 +1123,59 @@ Please see the **CAVEATS** section for known limitations of the transactional AP
 
   New transaction may be started only if the current stage is *TX_STAGE_NONE* or *TX_STAGE_WORK*. If successful, transaction stage changes to *TX_STAGE_WORK* and function returns zero. Otherwise, stage changes to *TX_STAGE_ONABORT* and an error number is returned.
 
-* **int pmemobj_tx_lock**(enum tx_lock lock_type, void \*lockp);
+* **int** **pmemobj_tx_lock**(**enum tx_lock** lock_type, **void \***lockp);
 
   The **pmemobj_tx_lock**() function grabs a lock pointed by *lockp* and adds it to the current transaction. The lock type is specified by *lock_type* ( *TX_LOCK_MUTEX* or *TX_LOCK_RWLOCK* ) and the pointer to the *lockp* of *PMEMmutex* or *PMEMrwlock* type. If successful, *lockp* is added to transaction, locked and function returns zero. Otherwise, stage changes to *TX_STAGE_ONABORT* and an error number is returned. In case of *PMEMrwlock lock_type* function acquires a write lock. This function must be called during *TX_STAGE_WORK*.
 
-* **void pmemobj_tx_abort**(int errnum);
+* **void** **pmemobj_tx_abort**(**int** errnum);
 
   The **pmemobj_tx_abort**() aborts the current transaction and causes transition to *TX_STAGE_ONABORT*. This function must be called during *TX_STAGE_WORK*. If the passed *errnum* is equal to zero, it shall be set to *ECANCELED*.
 
-* **void pmemobj_tx_commit**(void);
+* **void** **pmemobj_tx_commit**(**void**);
 
   The **pmemobj_tx_commit**() function commits the current open transaction and causes transition to *TX_STAGE_ONCOMMIT* stage. If called in context of the outer-most transaction, all the changes may be considered as durably written upon successful completion. This function must be called during *TX_STAGE_WORK*.
 
-* **int pmemobj_tx_end**(void);
+* **int** **pmemobj_tx_end**(**void**);
 
   The **pmemobj_tx_end**() function performs a clean up of a current transaction. If called in context of the outer-most transaction, it releases all the locks acquired by **pmemobj_tx_begin**() for outer and nested transactions. Then it causes the transition to *TX_STAGE_NONE*. In case of the nested transaction, it returns to the context of the outer transaction with *TX_STAGE_WORK* stage without releasing any locks. Must always be called for each **pmemobj_tx_begin**(), even if starting the transaction failed. This function must *not* be called during *TX_STAGE_WORK*. If transaction was successful, returns 0. Otherwise returns error code set by **pmemobj_tx_abort**(). Note that **pmemobj_tx_abort**() can be called internally by the library.
 
-* **int pmemobj_tx_errno**(void);
+* **int** **pmemobj_tx_errno**(**void**);
 
   The **pmemobj_tx_errno**() function returns the error code of the last transaction.
 
-* **void pmemobj_tx_process**(void);
+* **void** **pmemobj_tx_process**(**void**);
 
   The **pmemobj_tx_process**() function performs the actions associated with current stage of the transaction, and makes the transition to the next stage. It must be called in transaction. Current stage must always be obtained by a call to **pmemobj_tx_stage**().
 
-* **int pmemobj_tx_add_range**(PMEMoid oid, uint64_t off, size_t size);
+* **int** **pmemobj_tx_add_range**(**PMEMoid** oid, **uint64_t** off, **size_t** size);
 
   The **pmemobj_tx_add_range**() takes a “snapshot” of the memory block of given *size*, located at given offset *off* in the object specified by *oid* and saves it to the undo log. The application is then free to directly modify the object in that memory range. In case of a failure or abort, all the changes within this range will be rolled-back. The supplied block of memory has to be within the pool registered in the transaction. If successful, returns zero. Otherwise, state changes to *TX_STAGE_ONABORT* and an error number is returned. This function must be called during *TX_STAGE_WORK*.
 
-* **int pmemobj_tx_add_range_direct**(const void \*ptr, size_t size);
+* **int** **pmemobj_tx_add_range_direct**(**const void \***ptr, **size_t** size);
 
   The **pmemobj_tx_add_range_direct**() behaves the same as **pmemobj_tx_add_range**() with the exception that it operates on virtual memory addresses and not persistent memory objects. It takes a “snapshot” of a persistent memory block of given *size*, located at the given address *ptr* in the virtual memory space and saves it to the undo log. The application is then free to directly modify the object in that memory range. In case of a failure or abort, all the changes within this range will be rolled-back. The supplied block of memory has to be within the pool registered in the transaction. If successful, returns zero. Otherwise, state changes to *TX_STAGE_ONABORT* and an error number is returned. This function must be called during *TX_STAGE_WORK*.
 
-* **PMEMoid pmemobj_tx_alloc**(size_t size, uint64_t type_num);
+* **PMEMoid** **pmemobj_tx_alloc**(**size_t** size, **uint64_t** type_num);
 
   The **pmemobj_tx_alloc**() transactionally allocates a new object of given *size* and *type_num*. In contrast to the non-transactional allocations, the objects are added to the internal object containers of given *type_num* only after the transaction is committed, making the objects visible to the **POBJ_FOREACH_*** macros. If successful, returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. If *size* equals 0, OID_NULL is returned and errno is set appropriately. This function must be called during *TX_STAGE_WORK*.
 
-* **PMEMoid pmemobj_tx_zalloc**(size_t size, uint64_t type_num);
+* **PMEMoid** **pmemobj_tx_zalloc**(**size_t** size, **uint64_t** type_num);
 
   The pmemobj_tx_zalloc () function transactionally allocates new zeroed object of given *size* and *type_num*. If successful, returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. If *size* equals 0, OID_NULL is returned and errno is set appropriately. This function must be called during *TX_STAGE_WORK*.
 
-* **PMEMoid pmemobj_tx_realloc**(PMEMoid oid, size_t size, uint64_t type_num);
+* **PMEMoid** **pmemobj_tx_realloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
 
   The **pmemobj_tx_realloc**() function transactionally resizes an existing object to the given *size* and changes its type to *type_num*. If *oid* is OID_NULL, then the call is equivalent to **pmemobj_tx_alloc**(*pop*,*size*, *type_num*).** If *size* is equal to zero and *oid* is not OID_NULL, then the call is equivalent to **pmemobj_tx_free**(*oid*). If the new size is larger than the old size, the added memory will *not* be initialized. If successful, returns returns a handle to the resized object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. Note that the object handle value may change in result of reallocation. This function must be called during *TX_STAGE_WORK*.
 
-* **PMEMoid pmemobj_tx_zrealloc**(PMEMoid oid, size_t size, uint64_t type_num);
+* **PMEMoid** **pmemobj_tx_zrealloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
 
   The **pmemobj_tx_zrealloc**() function transactionally resizes an existing object to the given *size* and changes its type to *type_num*. If the new size is larger than the old size, the extended new space is zeroed. If successful, returns returns a handle to the resized object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. Note that the object handle value may change in result of reallocation. This function must be called during *TX_STAGE_WORK*.
 
-* **PMEMoid pmemobj_tx_strdup**(const char \*s, uint64_t type_num);
+* **PMEMoid** **pmemobj_tx_strdup**(**const char \***s, **uint64_t** type_num);
 
   The **pmemobj_tx_strdup**() function transactionally allocates a new object containing a duplicate of the string *s* and assigns it a type *type_num*. If successful, returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately. This function must be called during *TX_STAGE_WORK*.
 
-* **int pmemobj_tx_free**(PMEMoid oid);
+* **int** **pmemobj_tx_free**(**PMEMoid** oid);
 
   The **pmemobj_tx_free**() function transactionally frees an existing object referenced by *oid*. If successful, returns zero. Otherwise, stage changes to *TX_STAGE_ONABORT* and an error number is returned. This function must be called during *TX_STAGE_WORK*.
 
@@ -1216,7 +1209,7 @@ TX_BEGIN(Pop) {
 
 * **TX_BEGIN_LOCK**(PMEMobjpool \*pop, …)
 
-* **TX_BEGIN**(PMEMobjpool \*pop)
+* **TX_BEGIN**(**PMEMobjpool \***pop)
 
   The **TX_BEGIN_LOCK**() and **TX_BEGIN**() macros start a new transaction in the same way as **pmemobj_tx_begin**(), except that instead of the environment buffer provided by a caller, they set up the local *jmp_buf* buffer and use it to catch the transaction abort. The **TX_BEGIN**() macro may be used in case when there is no need to grab any locks prior to starting a transaction (like for a single-threaded program). Each of those macros shall be followed by a block of code with all the operations that are to be performed atomically.
 
@@ -1238,35 +1231,35 @@ TX_BEGIN(Pop) {
 
 Similarly to the macros controlling the transaction flow, the **libpmemobj** defines a set of macros that simplify the transactional operations on persistent objects. Note that those macros operate on typed object handles, thus eliminating the need to specify the size of the object, or the size and offset of the field in the user-defined structure that is to be modified.
 
-* **TX_ADD_FIELD**(TOID o, FIELD)
+* **TX_ADD_FIELD**(**TOID** o, FIELD)
 
   The **TX_ADD_FIELD**() macro saves in the undo log the current value of given *FIELD* of the object referenced by a handle *o*. The application is then free to directly modify the specified *FIELD*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_ADD**(TOID o)
+* **TX_ADD**(**TOID** o)
 
   The **TX_ADD**() macro takes a “snapshot” of the entire object referenced by object handle *o* and saves it in the undo log. The object size is determined from its *TYPE*. The application is then free to directly modify the object. In case of a failure or abort, all the changes within the object will be rolled-back.
 
-* **TX_ADD_FIELD_DIRECT**(TYPE \*p, FIELD)
+* **TX_ADD_FIELD_DIRECT**(**TYPE \***p, FIELD)
 
   The **TX_ADD_FIELD_DIRECT**() macro saves in the undo log the current value of given *FIELD* of the object referenced by (direct) pointer *p*. The application is then free to directly modify the specified *FIELD*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_ADD_DIRECT**(TYPE \*p)
+* **TX_ADD_DIRECT**(**TYPE \***p)
 
   The **TX_ADD_DIRECT**() macro takes a “snapshot” of the entire object referenced by (direct) pointer *p* and saves it in the undo log. The object size is determined from its *TYPE*. The application is then free to directly modify the object. In case of a failure or abort, all the changes within the object will be rolled-back.
 
-* **TX_SET**(TOID o, FIELD, VALUE)
+* **TX_SET**(**TOID** o, FIELD, VALUE)
 
   The **TX_SET** macro saves in the undo log the current value of given *FIELD* of the object referenced by a handle *o*, and then set its new *VALUE*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_SET_DIRECT**(TYPE \*p, FIELD, VALUE)
+* **TX_SET_DIRECT**(**TYPE \***p, FIELD, VALUE)
 
   The **TX_SET_DIRECT** macro saves in the undo log the current value of given *FIELD* of the object referenced by (direct) pointer *p*, and then set its new *VALUE*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_MEMCPY**(void \*dest, const void \*src, size_t num)
+* **TX_MEMCPY**(**void \***dest, **const void \***src, **size_t** num)
 
   The **TX_MEMCPY** macro saves in the undo log the current content of *dest* buffer and then overwrites the first *num* bytes of its memory area with the data copied from the buffer pointed by *src*. In case of a failure or abort, the saved value will be restored.
 
-* **TX_MEMSET**(void \*dest, int c, size_t num)
+* **TX_MEMSET**(**void \***dest, **int** c, **size_t** num)
 
   The **TX_MEMSET** macro saves in the undo log the current content of *dest* buffer and then fills the first *num* bytes of its memory area with the constant byte *c*. In case of a failure or abort, the saved value will be restored.
 
@@ -1274,7 +1267,7 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_NEW**() macro transactionally allocates a new object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is determined from the size of the user-defined structure *TYPE*. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ALLOC**(TYPE, size_t size)
+* **TX_ALLOC**(TYPE, **size_t** size)
 
   The **TX_ALLOC**() macro transactionally allocates a new object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is passed by *size* parameter. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
@@ -1286,19 +1279,19 @@ Similarly to the macros controlling the transaction flow, the **libpmemobj** def
 
   The **TX_ZALLOC**() macro transactionally allocates a new zeroed object of given *TYPE* and assigns it a type number read from the typed OID. The allocation size is passed by *size* argument. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_REALLOC**(TOID o, size_t size)
+* **TX_REALLOC**(**TOID** o, **size_t** size)
 
   The **TX_REALLOC**() macro transactionally resizes an existing object referenced by a handle *o* to the given *size*. If successful and called during *TX_STAGE_WORK* it returns a handle to the reallocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_ZREALLOC**(TOID o, size_t size)
+* **TX_ZREALLOC**(**TOID** o, **size_t** size)
 
   The **TX_ZREALLOC**() macro transactionally resizes an existing object referenced by a handle *o* to the given *size*. If the new size is larger than the old size, the extended new space is zeroed. If successful and called during *TX_STAGE_WORK* it returns a handle to the reallocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_STRDUP**(const char \*s, uint64_t type_num)
+* **TX_STRDUP**(**const char \***s, **uint64_t** type_num)
 
   The **TX_STRDUP**() macro transactionally allocates a new object containing a duplicate of the string *s* and assigns it a type *type_num*. If successful and called during *TX_STAGE_WORK* it returns a handle to the newly allocated object. Otherwise, stage changes to *TX_STAGE_ONABORT*, OID_NULL is returned, and errno is set appropriately.
 
-* **TX_FREE**(TOID o)
+* **TX_FREE**(**TOID** o)
 
   The **TX_FREE**() transactionally frees the memory space represented by an object handle *o*. If *o* is OID_NULL, no operation is performed. If successful and called during *TX_STAGE_WORK* it returns zero. Otherwise, stage changes to *TX_STAGE_ONABORT* and an error number is returned.
 
@@ -1353,7 +1346,7 @@ Objects which are not volatile-qualified, are of automatic storage duration and 
 
 This section describes how the library API is versioned, allowing applications to work with an evolving API.
 
-* const char **pmemobj_check_version**(unsigned major_required, unsigned minor_required);
+* **const char** **pmemobj_check_version**(**unsigned** major_required, **unsigned** minor_required);
 
 The **pmemobj_check_version**() function is used to see if the installed **libpmemobj** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libpmemobj.h\>**, like this:
 
@@ -1378,14 +1371,14 @@ When the version check performed by **pmemobj_check_version**() is successful, t
 The library entry points described in this section are less commonly used than the previous sections.
 
 * **void pmemobj_set_funcs**(<br />
-void \*(\*malloc_func)(size_t size),<br />
-void (\*free_func)(void \*ptr),<br />
-void \*(\*realloc_func)(void \*ptr, size_t size),
-char \*(\*strdup_func)(const char \*s));
+**void \***(\*malloc_func)(**size_t** size),<br />
+**void** (\*free_func)(**void \***ptr),<br />
+**void \***(\*realloc_func)(**void \***ptr, **size_t** size),
+**char \***(\*strdup_func)(**const char \***s));
 
   The **pmemobj_set_funcs**() function allows an application to override memory allocation calls used internally by **libpmemobj**. Passing in NULL for any of the handlers will cause the **libpmemobj** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
-* **int pmemobj_check**(const char \*path, const char \*layout);
+* **int** **pmemobj_check**(**const char \***path, **const char \***layout);
 
   The **pmemobj_check**() function performs a consistency check of the file indicated by *path* and returns 1 if the memory pool is found to be consistent. Any inconsistencies found will cause **pmemobj_check**() to return 0, in which case the use of the file with **libpmemobj** will result in undefined behavior. The debug version of **libpmemobj** will provide additional details on inconsistencies when **PMEMOBJ_LOG_LEVEL** is at least 1, as described in the **DEBUGGING AND ERROR HANDLING** section below. **pmemobj_check**() will return -1 and set errno if it cannot perform the consistency check due to other errors. **pmemobj_check**() opens the given *path* read-only so it never makes any changes to the file.
 
@@ -1394,7 +1387,7 @@ char \*(\*strdup_func)(const char \*s));
 
 Two versions of **libpmemobj** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemobj** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemobj** function, an application may retrieve an error message describing the reason of failure using the following function:
 
-* const char **\*pmemobj_errormsg**(void);
+* **const char** **\*pmemobj_errormsg**(**void**);
 
   The **pmemobj_errormsg**() function returns a pointer to a static buffer containing the last error message logged for current thread. The error message may include description of the corresponding error code (if errno was set), as returned by **strerror**(3). The error message buffer is thread-local; errors encountered in one thread do not affect its value in other threads. The buffer is never cleared by any library function; its content is significant only when the return value of the immediately preceding call to **libpmemobj** function indicated an error, or if errno was set. The application must not modify or free the error message string, but it may be modified by subsequent calls to other library functions.
 

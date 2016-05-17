@@ -31,46 +31,47 @@ cc ... -lvmem
 
 **Memory pool management:**
 
-: VMEM **\*vmem_create**(const char \*dir, size_t size);
+: **VMEM** **\*vmem_create**(**const char \***dir, **size_t** size);
 
-  VMEM **\*vmem_create_in_region**(void \*addr, size_t size);
+  **VMEM** **\*vmem_create_in_region**(**void \***addr, **size_t** size);
 
-  void **vmem_delete**(VMEM \*vmp);
+  **void** **vmem_delete**(**VMEM \***vmp);
 
-  int **vmem_check**(VMEM \*vmp);
+  **int** **vmem_check**(**VMEM \***vmp);
 
-  void **vmem_stats_print**(VMEM \*vmp, const char \*opts);
+  **void** **vmem_stats_print**(**VMEM \***vmp, **const char \***opts);
 
 **Memory allocation related functions:**
 
-: void **\*vmem_malloc**(VMEM \*vmp, size_t size);
+: **void** **\*vmem_malloc**(**VMEM \***vmp, **size_t** size);
 
-  void **vmem_free**(VMEM \*vmp, void \*ptr);
+  **void** **vmem_free**(**VMEM \***vmp, **void \***ptr);
 
-  void **\*vmem_calloc**(VMEM \*vmp, size_t nmemb, size_t size);
+  **void** **\*vmem_calloc**(**VMEM \***vmp, **size_t** nmemb, **size_t** size);
 
-  void **\*vmem_realloc**(VMEM \*vmp, void \*ptr, size_t size);
+  **void** **\*vmem_realloc**(**VMEM \***vmp, **void \***ptr, **size_t** size);
 
-  void **\*vmem_aligned_alloc**(VMEM \*vmp, size_t alignment, size_t size);
+  **void** **\*vmem_aligned_alloc**(**VMEM \***vmp, **size_t** alignment, **size_t** size);
 
-  char **\*vmem_strdup**(VMEM \*vmp, const char \*s);
+  **char** **\*vmem_strdup**(**VMEM \***vmp, **const char \***s);
 
-  size_t **vmem_malloc_usable_size**(VMEM \*vmp, void \*ptr);
+  **size_t** **vmem_malloc_usable_size**(**VMEM \***vmp, **void \***ptr);
+
 
 **Managing overall library behavior:**
 
-* const char **\*vmem_check_version**(unsigned major_required, unsigned minor_required);
+* **const** char **\*vmem_check_version**(**unsigned** major_required, **unsigned** minor_required);
 
-* void **vmem_set_funcs**(<br />
-           void \*(\*malloc_func)(size_t size),<br />
-           void (\*free_func)(void \*ptr),<br />
-           void \*(\*realloc_func)(void \*ptr, size_t size),<br />
-           char \*(\*strdup_func)(const char \*s),<br />
-           void (\*print_func)(const char \*s));
+* **void** **vmem_set_funcs**(<br />
+           **void** \*(\*malloc_func)(**size_t** size),<br />
+           **void** (\*free_func)(**void \***ptr),<br />
+           **void \***(\*realloc_func)(**void \***ptr, **size_t** size),<br />
+           **char \***(\*strdup_func)(**const char \***s),<br />
+           **void** (\*print_func)(**const char \***s));
 
 **Error handling:**
 
-* const char **\*vmem_errormsg**(void);
+* **const char** **\*vmem_errormsg**(**void**);
 
 ### DESCRIPTION
 
@@ -88,22 +89,22 @@ To use **libvmem**, a *memory pool* is first created. This is most commonly done
 
 Once created, a memory pool is represented by an opaque pool handle, of type *VMEM **, which is passed to the functions for memory allocation described in the next section.
 
-* VMEM **\*vmem_create**(const char \*dir, size_t size);
+* **VMEM** **\*vmem_create**(**const char \***dir, **size_t** size);
 
   The **vmem_create**() function creates a memory pool. The resulting pool is then used with functions like **vmem_malloc**() and **vmem_free**() to provide the familiar *malloc-like* programming model for the memory pool. **vmem_create**() creates the pool by allocating a temporary file in the given directory *dir*. The file is created in a fashion similar to **tmpfile**(3), so that the file name does not appear when the directory is listed and the space is automatically freed when the program terminates. *size* bytes are allocated and the resulting space is memory-mapped. The minimum *size* value allowed by the library is defined in **\<libvmem.h\>** as **VMEM_MIN_POOL**. Calling **vmem_create**() with a size smaller than that will return an error. The maximum allowed size is not limited by **libvmem**, but by the file system specified by the *dir* argument. The *size* passed in is the raw size of the memory pool and **libvmem** will use some of that space for its own metadata. **vmem_create**() returns an opaque memory pool handle or NULL if an error occurred (in which case *errno* is set appropriately). The opaque memory pool handle is then used with the other functions described in this man page that operate on a specific memory pool.
 
-* VMEM **\*vmem_create_in_region**(void \*addr, size_t size);
+* **VMEM** **\*vmem_create_in_region**(**void \***addr, **size_t** size);
 
   The **vmem_create_in_region**() is an alternate **libvmem** entry point for creating a memory pool. It is for the rare case where an application needs to create a memory pool from an already memory-mapped region. Instead of allocating space from a given file system, **vmem_create_in_region**() is given the memory region explicitly via the *addr* and *size* arguments. Any data in the region is lost by calling **vmem_create_in_region**(), which will immediately store its own data structures for managing the pool there. Like **vmem_create**() above, the minimum *size* allowed is defined as **VMEM_MIN_POOL**. The *addr* argument must be page aligned. **vmem_create_in_region**() returns an opaque memory pool handle or NULL if an error occurred (in which case *errno* is set appropriately). Undefined behavior occurs if *addr* does not point to the contiguous memory region in the virtual address space of the calling process, or if the *size* is larger than the actual size of the memory region pointed by *addr*.
 
-* void **vmem_delete**(VMEM \*vmp);
+* **void** **vmem_delete**(**VMEM \***vmp);
 
   The **vmem_delete**() function releases the memory pool *vmp*. If the memory pool was created using **vmem_create_pool**(), deleting it allows the space to be reclaimed.
 
-* int **vmem_check**(VMEM \*vmp);
+* **int** **vmem_check**(**VMEM \***vmp);
   The **vmem_check**() function performs an extensive consistency check of all **libvmem** internal data structures in memory pool *vmp*. It returns 1 if the memory pool during the check is found to be consistent and 0 otherwise. Cases where the check couldn’t be performed, are indicated by a return value of -1. Since an error return indicates memory pool corruption, applications should not continue to use a pool in this state. Additional details about errors found are logged when the log level is at least 1 (see **DEBUGGING AND ERROR HANDLING** below). During the consistency check performed by **vmem_check**(), other operations on the same memory pool are locked out. The checks are all read-only; **vmem_check**() never modifies the memory pool. This function is mostly useful for **libvmem** developers during testing/debugging.
 
-* void **vmem_stats_print**(VMEM \*vmp, const char \*opts);
+* **void** **vmem_stats_print**(**VMEM \***vmp, **const char \***opts);
   The **vmem_stats_print**() function produces messages containing statistics about the given memory pool. The output is printed using **libvmem**’s internal *print_func* function (see **vmem_set_funcs**() below). That means the output typically appears on **stderr** unless the caller supplies a replacement *print_func* or sets the environment variable **VMEM_LOG_FILE** to direct output elsewhere. The *opts* string can either be NULL or it can contain a list of options that change the stats printed. General information that never changes during execution can be omitted by specifying “g” as a character within the opts string. The characters “m” and “a” can be specified to omit merged arena and per arena statistics, respectively; “b” and “l” can be specified to omit per size class statistics for bins and large objects, respectively. Unrecognized characters are silently ignored. Note that thread caching may prevent some statistics from being completely up to date. See **jemalloc**(3) for more detail (the description of the available *opts* above was taken from that man page).
 
 ### MEMORY ALLOCATION
@@ -111,30 +112,30 @@ Once created, a memory pool is represented by an opaque pool handle, of type *VM
 This section describes the *malloc-like* API provided by **libvmem**. These functions provide the same semantics as their libc namesakes,
 but operate on the memory pools specified by their first arguments.
 
-* void **\*vmem_malloc**(VMEM \*vmp, size_t size);
+* **void** **\*vmem_malloc**(**VMEM \***vmp, **size_t** size);
 
   The **vmem_malloc**() function provides the same semantics as **malloc**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It allocates *size* bytes and returns a pointer to the allocated memory. *The memory is not initialized*. If *size* is 0, then **vmem_malloc**() returns either NULL, or a unique pointer value that can later be successfully passed to **vmem_free**(). If **vmem_malloc**() is unable to satisfy the allocation request, a NULL pointer is returned and errno is set appropriately.
 
-* void **vmem_free**(VMEM \*vmp, void \*ptr);
+* **void** **vmem_free**(**VMEM \***vmp, **void \***ptr);
   The **vmem_free**() function provides the same semantics as **free**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It frees the memory space pointed to by *ptr*, which must have been returned by a previous call to **vmem_malloc**(), **vmem_calloc**() or **vmem_realloc**() for *the same pool of memory*. Undefined behavior occurs if frees do not correspond to allocated memory from the same memory pool. If *ptr* is NULL, no operation is performed.
 
-* void **\*vmem_calloc**(VMEM \*vmp, size_t nmemb, size_t size);
+* **void** **\*vmem_calloc**(**VMEM \***vmp, **size_t** nmemb, **size_t** size);
 
   The **vmem_calloc**() function provides the same semantics as **calloc**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It allocates memory for an array of *nmemb* elements of *size* bytes each and returns a pointer to the allocated memory. The memory is set to zero. If *nmemb* or *size* is 0, then **vmem_calloc**() returns either NULL, or a unique pointer value that can later be successfully passed to **vmem_free**(). If **vmem_calloc**() is unable to satisfy the allocation request, a NULL pointer is returned and errno is set appropriately.
 
-* void **\*vmem_realloc**(VMEM \*vmp, void \*ptr, size_t size);
+* **void** **\*vmem_realloc**(**VMEM \***vmp, **void \***ptr, **size_t** size);
 
   The **vmem_realloc**() function provides the same semantics as **realloc**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It changes the size of the memory block pointed to by *ptr* to *size* bytes. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will *not* be initialized. If *ptr* is NULL, then the call is equivalent to *vmem_malloc(vmp, size)*, for all values of *size*; if *size* is equal to zero, and *ptr* is not NULL, then the call is equivalent to *vmem_free(vmp, ptr)*. Unless *ptr* is NULL, it must have been returned by an earlier call to **vmem_malloc**(), **vmem_calloc**() or **vmem_realloc**(). If the area pointed to was moved, a *vmem_free(vmp, ptr)* is done. If **vmem_realloc**() is unable to satisfy the allocation request, a NULL pointer is returned and errno is set appropriately.
 
-* void **\*vmem_aligned_alloc**(VMEM \*vmp, size_t alignment, size_t size);
+* **void** **\*vmem_aligned_alloc**(**VMEM \***vmp, **size_t** alignment, **size_t** size);
 
   The **vmem_aligned_alloc**() function provides the same semantics as **aligned_alloc**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It allocates *size* bytes from the memory pool and returns a pointer to the allocated memory. The memory address will be a multiple of *alignment*, which must be a power of two. If **vmem_aligned_alloc**() is unable to satisfy the allocation request, a NULL pointer is returned and errno is set appropriately.
 
-* char **\*vmem_strdup**(VMEM \*vmp, const char \*s);
+* **char** **\*vmem_strdup**(**VMEM \***vmp, **const char \***s);
 
   The **vmem_strdup**() function provides the same semantics as **strdup**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It returns a pointer to a new string which is a duplicate of the string *s*. Memory for the new string is obtained with **vmem_malloc**(), on the given memory pool, and can be freed with **vmem_free**() on the same memory pool. If **vmem_strdup**() is unable to satisfy the allocation request, a NULL pointer is returned and errno is set appropriately.
 
-* size_t **vmem_malloc_usable_size**(VMEM \*vmp, void \*ptr);
+* **size_t** **vmem_malloc_usable_size**(**VMEM \***vmp, **void \***ptr);
 
   The **vmem_malloc_usable_size**() function provides the same semantics as **malloc_usable_size**(3), but operates on the memory pool *vmp* instead of the process heap supplied by the system. It returns the number of usable bytes in the block of allocated memory pointed to by *ptr*, a pointer to a block of memory allocated by **vmem_malloc**() or a related function. If *ptr* is NULL, 0 is returned.
 
@@ -143,7 +144,7 @@ but operate on the memory pools specified by their first arguments.
 The library entry points described in this section are less commonly used than the previous section. These entry points expose library information or alter the default library behavior.
 
 
-* const char **\*vmem_check_version**(unsigned major_required, unsigned minor_required);
+* **const char** **\*vmem_check_version**(**unsigned** major_required, **unsigned** minor_required);
 
   The **vmem_check_version**() function is used to see if the installed **libvmem** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libvmem.h\>**, like this:
 
@@ -163,12 +164,12 @@ When the version check performed by **vmem_check_version**() is successful, the 
 
 
 
-* void **vmem_set_funcs**(<br />
-           void \*(\*malloc_func)(size_t size),<br />
-           void (\*free_func)(void \*ptr),<br />
-           void \*(\*realloc_func)(void \*ptr, size_t size),<br />
-           char \*(\*strdup_func)(const char \*s),<br />
-           void (\*print_func)(const char \*s));
+* **void** **vmem_set_funcs**(<br />
+           **void \***(\*malloc_func)(**size_t** size),<br />
+           **void** (\*free_func)(**void \***ptr),<br />
+           **void \***(\*realloc_func)(**void \***ptr, **size_t** size),<br />
+           **char \***(\*strdup_func)(**const char \***s),<br />
+           **void** (\*print_func)(**const char \***s));
 
 The **vmem_set_funcs**() function allows an application to override some interfaces used internally by **libvmem**. Passing in NULL for any of the handlers will cause the **libvmem** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use. The only functions in the malloc family used by the library are represented by the first four arguments to **vmem_set_funcs**(). The *print_func* function is called by **libvmem** when the **vmem_stats_print**() entry point is used, or when additional tracing is enabled in the debug version of the library as described in the **DEBUGGING AND ERROR HANDLING** section below. The default *print_func* used by the library prints to the file specified by the **VMEM_LOG_FILE** environment variable, or to **stderr** if that variable is not set.
 
@@ -177,7 +178,7 @@ The **vmem_set_funcs**() function allows an application to override some interfa
 
 Two versions of **libvmem** are typically available on a development system. The normal version, accessed when a program is linked using the **-lvmem** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libvmem** function, an application may retrieve an error message describing the reason of failure using the following function:
 
-* const char **\*vmem_errormsg**(void);
+* **const char** **\*vmem_errormsg**(**void**);
 
   The **vmem_errormsg**() function returns a pointer to a static buffer containing the last error message logged for current thread. The error message may include description of the corresponding error code (if errno was set), as returned by **strerror**(3). The error message buffer is thread-local; errors encountered in one thread do not affect its value in other threads. The buffer is never cleared by any library function; its content is significant only when the return value of the immediately preceding call to **libvmem** function indicated an error, or if errno was set. The application must not modify or free the error message string, but it may be modified by subsequent calls to other library functions.
 
