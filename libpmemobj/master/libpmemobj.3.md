@@ -236,7 +236,7 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** oid, **int** free);
 
-  **int** **pmemobj_list_move**(PMEMobjpool \***pop,<br />
+  **int** **pmemobj_list_move**(**PMEMobjpool \***pop,<br />
       **size_t** pe_old_offset, **void \***head_old,<br />
       **size_t** pe_new_offset, **void \***head_new,<br />
       **PMEMoid** dest, **int** before, **PMEMoid** oid);
