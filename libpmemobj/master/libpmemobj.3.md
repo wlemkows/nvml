@@ -70,7 +70,7 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \***restrict mutexp, **const struct timespec \***restrict abs_timeout);
+  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \***restrict mutexp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
@@ -82,9 +82,9 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \***restrict abs_timeout);
+  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \*restrict** abs_timeout);
 
-  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \***restrict abs_timeout);
+  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
@@ -98,9 +98,9 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \***restrict condp, **PMEMmutex \***restrict mutexp, **const struct timespec \***restrict abs_timeout);
+  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp, **PMEMmutex \***restrict mutexp, **const struct timespec \*restrict** abs_timeout);
 
-  **int** **pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp, **PMEMmutex \***restrict mutexp);
+  **int** **pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp, **PMEMmutex \*restrict** mutexp);
 
 **Persistent object identifier:**
 
@@ -230,16 +230,16 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
 **Non-transactional persistent atomic circular doubly-linked list:**
 
-: int **pmemobj_list_insert**(PMEMobjpool \*pop, size_t pe_offset, void \*head, PMEMoid dest, int before, PMEMoid oid);
+: **int** **pmemobj_list_insert**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **PMEMoid** oid);
 
-  PMEMoid **pmemobj_list_insert_new**(PMEMobjpool \*pop, size_t pe_offset, void \*head, PMEMoid dest, int before, size_t size, uint64_t type_num, pmemobj_constr constructor, void \*arg);
+  **PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor, **void \***arg);
 
-  int **pmemobj_list_remove**(PMEMobjpool \*pop, size_t pe_offset, void \*head, PMEMoid oid, int free);
+  **int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** oid, **int** free);
 
-  int **pmemobj_list_move**(PMEMobjpool \*pop,<br />
-      size_t pe_old_offset, void \*head_old,<br />
-      size_t pe_new_offset, void \*head_new,<br />
-      PMEMoid dest, int before, PMEMoid oid);
+  **int** **pmemobj_list_move**(PMEMobjpool \***pop,<br />
+      **size_t** pe_old_offset, **void \***head_old,<br />
+      **size_t** pe_new_offset, **void \***head_new,<br />
+      **PMEMoid** dest, **int** before, **PMEMoid** oid);
 
   **POBJ_LIST_ENTRY**(TYPE)
 
