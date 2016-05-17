@@ -70,7 +70,7 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
-  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \***restrict mutexp, **const struct timespec \*restrict** abs_timeout);
+  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \*restrict** mutexp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
 
@@ -82,9 +82,9 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
-  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \*restrict** abs_timeout);
+  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
 
-  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***restrict rwlockp, **const struct timespec \*restrict** abs_timeout);
+  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
 
@@ -98,7 +98,7 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 
   **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
 
-  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp, **PMEMmutex \***restrict mutexp, **const struct timespec \*restrict** abs_timeout);
+  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp, **PMEMmutex \*restrict** mutexp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp, **PMEMmutex \*restrict** mutexp);
 
@@ -553,8 +553,8 @@ Pmem-aware mutexes, read/write locks and condition variables must be declared wi
   The **pmemobj_mutex_lock**() function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, the calling thread will block until the mutex becomes available. If this is the first use of the mutex since opening of the pool *pop*, the mutex is automatically reinitialized and then locked.
 
 * **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop,<br />
-  **PMEMmutex \***restrict mutexp,<br />
-  **const struct timespec** \*restrict abs_timeout);
+  **PMEMmutex \*restrictrestrict mutexp,<br />
+  **const struct timespec \*restrict** abs_timeout);
 
   The **pmemobj_mutex_timedlock**() performs the same action as **pmemobj_mutex_lock**(), but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
