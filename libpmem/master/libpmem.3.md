@@ -7,7 +7,7 @@ title: libpmem
 # libpmem
 
 [NAME](#name)<br />
-[SYNOPSI](#synopsis)<br />
+[SYNOPSIS](#synopsis)<br />
 [DESCRIPTION](#description)<br />
 [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)<br />
 [PARTIAL FLUSHING OPERATIONS](#partial-flushing-operations)<br />
@@ -20,18 +20,18 @@ title: libpmem
 [SEE ALSO](#see-also)
 
 
-### NAME
+### NAME ###
 
 **libpmem** − persistent memory support library
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```c
 #include <libpmem.h>
 ```
 **cc … -lpmem**
 
-**Most commonly used functions:**
+#### Most commonly used functions: ####
 
 : **int** **pmem_is_pmem**(**const void \***addr, **size_t** len);
 
@@ -43,7 +43,7 @@ title: libpmem
 
   **int **pmem_unmap**(**void \***addr, **size_t** len);
 
-**Partial flushing operations:**
+##### Partial flushing operations: #####
 
 : **void** **pmem_flush**(**const void \***addr, **size_t** len);
 
