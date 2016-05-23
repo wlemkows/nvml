@@ -32,8 +32,9 @@ title: libpmem(3)
 #### Most commonly used functions: ####
 
 
-<pre>
+<code>
 <b>int pmem_is_pmem</b>(<b>const void</b> addr, **size_t** len);
+</code>
 
 **void pmem_persist**(**const void \***addr, **size_t** len);
 
@@ -42,7 +43,7 @@ title: libpmem(3)
 **void \*pmem_map_file**(**const char \***path, **size_t** len, **int** flags, **mode_t** mode, **size_t \***mapped_lenp, **int** \*is_pmemp);
 
 **int pmem_unmap**(**void \***addr, **size_t** len);
-</pre>
+
 
 ##### Partial flushing operations: #####
 
