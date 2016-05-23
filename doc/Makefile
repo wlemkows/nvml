@@ -36,14 +36,20 @@
 
 include ../src/common.inc
 
-MANPAGES_3 = libpmem.3 libpmemblk.3 libpmemlog.3 libpmemobj.3 libvmem.3 \
-	libvmmalloc.3
-MANPAGES_1 = pmempool.1 pmempool-info.1 pmempool-create.1 \
-	pmempool-check.1 pmempool-dump.1 pmempool-rm.1
+MANPAGES_3 = libpmem.3.md libpmemblk.3.md libpmemlog.3.md libpmemobj.3.md libvmem.3.md \
+	libvmmalloc.3.md
+MANPAGES_1 = pmempool.1.md pmempool-info.1.md pmempool-create.1.md \
+	pmempool-check.1.md pmempool-dump.1.md pmempool-rm.1.md
 MANPAGES_3_NOINSTALL = librpmem.3
 MANPAGES_1_NOINSTALL = rpmemd.1
 MANPAGES = $(MANPAGES_1) $(MANPAGES_3)\
 	   $(MANPAGES_1_NOINSTALL) $(MANPAGES_3_NOINSTALL)
+
+MANPAGES_MD_3 = $(MANPAGES_3)
+MANPAGES_MD_1 = $(MANPAGES_1)
+MANPAGES_GROFF_3 = $(MANPAGES_MD_3:.3.md=.3)
+MANPAGES_GROFF_1 = $(MANPAGES_MD_3=1:.1.md=.1)
+
 TXTFILES = $(MANPAGES:=.txt)
 HTMLFILES = $(MANPAGES:=.html)
 GZFILES_1 = $(MANPAGES_1:=.gz)
@@ -60,7 +66,7 @@ DOCS_DESTDIR = $(DESTDIR)$(docdir)
 CPP_DOC_DIR ?= libpmemobj++-dev
 CPP_DOCS_DESTDIR = $(DOCS_DESTDIR)/$(CPP_DOC_DIR)
 
-all: $(TXTFILES)
+all: $(TXTFILES) $(MANPAGES_MD_3) $(MANPAGES_MD_1)
 
 %.txt: %
 	man ./$< > $@
@@ -70,8 +76,14 @@ doxygen_docs:
 
 html: $(HTMLFILES) doxygen_docs
 
-%.html: %
-	groff -mandoc -Thtml ./$< > $@
+#%.html: %
+#	groff -mandoc -Thtml ./$< > $@
+
+%.3: %.3.md
+	pandoc -s -t man ./$< -o $@
+
+%.1: %.1.md
+	pandoc -s -t man ./$< -o $@
 
 compress: $(GZFILES)
 
