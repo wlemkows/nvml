@@ -87,7 +87,9 @@ void
 vmem_init(void)
 {
 	static bool initialized = false;
-	static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+	static pthread_mutex_t lock;
+	pthread_mutex_init(&lock, NULL);
+	int (*je_vmem_navsnprintf)(char *, size_t, const char *, va_list) = NULL;
 
 	if (initialized)
 		return;

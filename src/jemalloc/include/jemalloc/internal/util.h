@@ -120,7 +120,7 @@ void	malloc_printf(const char *format, ...)
 int	jemalloc_ffsl(long bitmap);
 int	jemalloc_ffs(int bitmap);
 size_t	pow2_ceil(size_t x);
-size_t	lg_floor(size_t x);
+unsigned	lg_floor(size_t x);
 void	set_errno(int errnum);
 int	get_errno(void);
 #endif
@@ -175,6 +175,21 @@ lg_floor(size_t x)
 	    : "r"(x)    // Inputs.
 	    );
 	return (ret);
+}
+#elif (defined(_MSC_VER))
+JEMALLOC_INLINE unsigned
+lg_floor(size_t x)
+{
+	unsigned long ret;
+
+#if (LG_SIZEOF_PTR == 3)
+	_BitScanReverse64(&ret, x);
+#elif (LG_SIZEOF_PTR == 2)
+	_BitScanReverse(&ret, x);
+#else
+#  error "Unsupported type size for lg_floor()"
+#endif
+	return ((unsigned)ret);
 }
 #elif (defined(JEMALLOC_HAVE_BUILTIN_CLZ))
 JEMALLOC_INLINE size_t

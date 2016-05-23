@@ -164,7 +164,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAs>CompileAsC</CompileAs>
-      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformation>false</BrowseInformation>
       <ForcedUsingFiles />
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <ExceptionHandling>false</ExceptionHandling>

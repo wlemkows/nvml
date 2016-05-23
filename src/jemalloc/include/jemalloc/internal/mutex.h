@@ -10,7 +10,7 @@ typedef struct malloc_rwlock_s malloc_rwlock_t;
 #endif
 
 #ifdef _WIN32
-#  define MALLOC_MUTEX_INITIALIZER
+#  define MALLOC_MUTEX_INITIALIZER {0}
 #elif (defined(JEMALLOC_OSSPIN))
 #  define MALLOC_MUTEX_INITIALIZER {0}
 #elif (defined(JEMALLOC_MUTEX_INIT_CB))
@@ -67,6 +67,7 @@ void	malloc_mutex_postfork_parent(malloc_mutex_t *mutex);
 void	malloc_mutex_postfork_child(malloc_mutex_t *mutex);
 bool	mutex_boot(void);
 #if (defined(_WIN32) || defined(JEMALLOC_OSSPIN) || defined(JEMALLOC_MUTEX_INIT_CB))
+#undef malloc_rwlock_init
 #define malloc_rwlock_init malloc_mutex_init
 #endif
 void	malloc_rwlock_prefork(malloc_rwlock_t *rwlock);
