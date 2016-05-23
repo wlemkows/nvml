@@ -33,15 +33,15 @@ title: libpmem
 
 #### Most commonly used functions: ####
 
-      **int** **pmem_is_pmem**(**const void \***addr, **size_t** len);
+      **int pmem_is_pmem**(**const void \***addr, **size_t** len);
 
-      **void** **pmem_persist**(**const void \***addr, **size_t** len);
+      **void pmem_persist**(**const void \***addr, **size_t** len);
 
-    **int** **pmem_msync**(**const void \***addr, **size_t** len);
+      **int pmem_msync**(**const void \***addr, **size_t** len);
 
-    **void** **\*pmem_map_file**(**const char \***path, **size_t** len, **int** flags, **mode_t** mode, **size_t \***mapped_lenp, **int** \*is_pmemp);
+      **void \*pmem_map_file**(**const char \***path, **size_t** len, **int** flags, **mode_t** mode, **size_t \***mapped_lenp, **int** \*is_pmemp);
 
-    **int **pmem_unmap**(**void \***addr, **size_t** len);
+      **int pmem_unmap**(**void \***addr, **size_t** len);
 
 ##### Partial flushing operations: #####
 
