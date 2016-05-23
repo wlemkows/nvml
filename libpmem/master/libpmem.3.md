@@ -1,7 +1,7 @@
 ---
 layout: manual
 Content-Style: 'text/css'
-title: libpmem
+title: libpmem(3)
 ...
 
 # libpmem
