@@ -32,9 +32,9 @@ title: libpmem(3)
 #### Most commonly used functions: ####
 
 
-<code>
-<b>int pmem_is_pmem</b>(<b>const void</b> addr, **size_t** len);
-</code>
+```c
+int pmem_is_pmem(const void addr, size_t len);
+```
 
 **void pmem_persist**(**const void \***addr, **size_t** len);
 
