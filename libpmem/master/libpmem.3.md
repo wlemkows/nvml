@@ -47,7 +47,7 @@ title: libpmem(3)
 ##### Partial flushing operations: #####
 
 
-**```void```** **pmem_flush**(**const void \***addr, **size_t** len);
+**```void pmem_flush```**```(```**const void \***addr, **size_t** len);
 
 **void** **pmem_drain**(**void**);
 
