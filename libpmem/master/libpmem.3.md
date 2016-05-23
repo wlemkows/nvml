@@ -47,14 +47,14 @@ title: libpmem(3)
 ##### Partial flushing operations: #####
 
 
-<pre>
+```
 
-**void** **pmem_flush**(**const void \***addr, **size_t** len);
+**```void```** **pmem_flush**(**const void \***addr, **size_t** len);
 
 **void** **pmem_drain**(**void**);
 
 **int** **pmem_has_hw_drain**(**void**);
-</pre>
+```
 
 
 **Copying to persistent memory:**
