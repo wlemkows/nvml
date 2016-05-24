@@ -55,6 +55,9 @@ void pmemobj_close(PMEMobjpool *pop);
 
 ##### Low-level memory manipulation: #####
 
+<pre>
+<b>void</b> *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
+</pre>
 ```c
   void *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
 
