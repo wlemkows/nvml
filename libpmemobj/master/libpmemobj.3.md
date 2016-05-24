@@ -45,11 +45,13 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 #### Most commonly used functions: ####
 
 ```c
+`one`**`two`**`three`
+
 MEMobjpool *pmemobj_open(const char *path, const char *layout);
 
 PMEMobjpool *pmemobj_create(const char *path, const char *layout, size_t poolsize, mode_t mode);
 
-void <b>pmemobj_close</b>(PMEMobjpool *pop);
+void pmemobj_close<(PMEMobjpool *pop);
 ```
 
 ##### Low-level memory manipulation: #####
