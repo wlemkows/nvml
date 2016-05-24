@@ -4,6 +4,7 @@ Content-Style: 'text/css'
 title: libpmem(3)
 ...
 
+
 [NAME](#name)<br />
 [SYNOPSIS](#synopsis)<br />
 [DESCRIPTION](#description)<br />
@@ -27,7 +28,6 @@ title: libpmem(3)
 ```c
 #include <libpmem.h>
 ```
-
 **cc … -lpmem**
 
 **Most commonly used functions:**
