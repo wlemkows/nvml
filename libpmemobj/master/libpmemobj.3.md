@@ -450,7 +450,7 @@ Once created, the memory pool is represented by an opaque handle, of type *PMEMo
 
   The **pmemobj_create**() function creates a transactional object store with the given total *poolsize*. *path* specifies the name of the memory pool file to be created. *layout* specifies the application’s layout type in the form of a string. The layout name is not interpreted by **libpmemobj**, but may be used as a check when **pmemobj_open**() is called. The layout name, including the null termination, cannot be longer than **PMEMOBJ_MAX_LAYOUT** as defined in **\<libpmemobj.h\>**. It is allowed to pass NULL as *layout*, which is equivalent for using an empty string as a layout name. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemobj_create**() and then specifying *poolsize* as zero. In this case **pmemobj_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a transactional object store is defined in **\<libpmemobj.h\>** as **PMEMOBJ_MIN_POOL**.
 
-* **void** **pmemobj_close**(**PMEMobjpool \***pop);
+* ```void pmemobj_close(PMEMobjpool *pop);```
 
   The **pmemobj_close**() function closes the memory pool indicated by *pop* and deletes the memory pool handle. The object store itself lives on in the file that contains it and may be re-opened at a later time using **pmemobj_open**() as described above.
 
