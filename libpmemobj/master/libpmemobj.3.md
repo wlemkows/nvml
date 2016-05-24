@@ -49,7 +49,7 @@ MEMobjpool *pmemobj_open(const char *path, const char *layout);
 
 PMEMobjpool *pmemobj_create(const char *path, const char *layout, size_t poolsize, mode_t mode);
 
-void `**`pmemobj_close`**`(PMEMobjpool *pop);
+void <b>pmemobj_close</b>(PMEMobjpool *pop);
 ```
 
 ##### Low-level memory manipulation: #####
