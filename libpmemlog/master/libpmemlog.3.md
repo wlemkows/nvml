@@ -97,7 +97,10 @@ To use the pmem-resident log file provided by **libpmemlog**, a *memory pool* is
 
 Once created, the memory pool is represented by an opaque handle, of type *PMEMlogpool**, which is passed to most of the other functions in this section. Internally, **libpmemlog** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the log memory API provided by **libpmemlog**.
 
-* `PMEMlogpool *pmemlog_open(const char *path);`
+* `c
+PMEMlogpool *pmemlog_open(const char *path);
+`
+
   The `pmemlog_open()` function opens an existing log memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a log memory pool as created by `pmemlog_create()`. The application must have permission to open the file and memory map it with read/write permissions. If an error prevents the pool from being opened, `pmemlog_open()` returns NULL and sets errno appropriately.
 
 * `PMEMlogpool *pmemlog_create(const char *path, size_t poolsize, mode_t mode);`
