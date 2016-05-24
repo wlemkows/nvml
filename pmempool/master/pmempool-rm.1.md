@@ -1,10 +1,8 @@
 ---
 layout: manual
 Content-Style: 'text/css'
-title: pmempool-rm
+title: pmempool-rm(1)
 ...
-
-# pmempool-rm
 
 [NAME](#name)<br />
 [SYNOPSIS](#synopsis)<br />
@@ -14,17 +12,17 @@ title: pmempool-rm
 [PMEMPOOL](#pmempool)<br />
 
 
-### NAME
+### NAME ###
 
 **pmempool-rm** − Remove (unlink) poolset files
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```
 pmempool rm [<options>] <file>..
 ```
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 The **pmempool** invoked with **rm** command removes (unlinks) all files specified in command line arguments. If the specified file is a poolset file all parts will be removed. All files are removed using the **unlink (3)** call. Without specifying the **-i\|–interactive** option, the **rm** command prompts only before removing *write-protected* files. If specified file does not exist the **rm** command terminates with error code. The **-f\|–force** command ignores non-existing files and never prompts before removing a file. See **EXAMPLES** section for example usage of the **rm** command.
 
@@ -51,7 +49,7 @@ The **pmempool** invoked with **rm** command removes (unlinks) all files specifi
 : Prompt before removing every single file.
 
 
-### EXAMPLES
+### EXAMPLES ###
 
 *pmempool rm pool.obj pool.blk*
 
@@ -62,11 +60,11 @@ The **pmempool** invoked with **rm** command removes (unlinks) all files specifi
 : Remove all pool files from the pool.set, do not remove pool.set itself.
 
 
-### SEE ALSO
+### SEE ALSO ###
 
 **pmempool(1)**, **pmempool-create(1)**
 
 
-### PMEMPOOL
+### PMEMPOOL ###
 
 Part of the **pmempool(1)** suite.

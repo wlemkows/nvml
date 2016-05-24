@@ -2,13 +2,11 @@
 layout: manual
 Content-Style: 'text/css'
 generator: 'groff -Thtml, see www.gnu.org'
-title: libpmemblk
+title: libpmemblk(3)
 ...
 
-# libpmemblk
-
 [NAME](#name)<br />
-[SYNOPSIS](#synapsis)<br />
+[SYNOPSIS](#synopsis)<br />
 [DESCRIPTION](#description)<br />
 [MOST COMMONLY USED FUNCTIONS](#most-commonly-used-functions)<br />
 [LIBRARY API VERSIONING](#library-api-versioning)<br />
@@ -20,11 +18,11 @@ title: libpmemblk
 [SEE ALSO](#see-also)<br />
 
 
-### NAME
+### NAME ###
 
 **libpmemblk** − persistent memory resident array of blocks
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```c
 #include <ibpmemblk.h>
@@ -67,7 +65,7 @@ cc ... -lpmemblk -lpmem
 
 : **const char** **\*pmemblk_errormsg**(**void**);
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 **libpmemblk**
 provides an array of blocks in *persistent memory* (pmem) such that updates to a single block are atomic. This library is intended for applications using direct access storage (DAX), which is storage that supports load/store access without paging blocks from a block storage device. Some types of *non-volatile memory DIMMs* (NVDIMMs) provide this type of byte addressable access to storage. A *persistent memory aware file system* is typically used to expose the direct access to applications. Memory mapping a file from this type of file system results in the load/store, non-paged access to pmem. **libpmemblk** builds on this type of memory mapped file.
@@ -81,7 +79,7 @@ This library is for applications that need a potentially large array of blocks, 
 
 Under normal usage, **libpmemblk** will never print messages or intentionally cause the process to exit. The only exception to this is the debugging information, when enabled, as described under **DEBUGGING AND ERROR HANDLING** below.
 
-### MOST COMMONLY USED FUNCTIONS
+### MOST COMMONLY USED FUNCTIONS ###
 
 To use the atomic block arrays supplied by **libpmemblk**, a *memory pool* is first created. This is done with the **pmemblk_create**() function described in this section. The other functions described in this section then operate on the resulting block memory pool. Once created, the memory pool is represented by an opaque handle, of type *PMEMblkpool*\*, which is passed to most of the other functions in this section. Internally, **libpmemblk** will use either **pmem_persist**() or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the block memory API provided by **libpmemblk**.
 
@@ -160,7 +158,7 @@ pmempool create blk <bsize> --from-set=myblkpool.set
   On success, zero is returned. On error, -1 is returned and errno is set.
 
 
-### LIBRARY API VERSIONING
+### LIBRARY API VERSIONING ###
 
 This section describes how the library API is versioned, allowing applications to work with an evolving API.
 
@@ -184,7 +182,7 @@ if (reason != NULL)
   When the version check performed by **pmemblk_check_version**() is successful, the return value is NULL. Otherwise the return value is a static string describing the reason for failing the version check. The string returned by **pmemblk_check_version**() must not be modified or freed.
 
 
-### MANAGING LIBRARY BEHAVIOR
+### MANAGING LIBRARY BEHAVIOR ###
 
 The library entry points described in this section are less commonly used than the previous sections.
 
@@ -202,7 +200,7 @@ The library entry points described in this section are less commonly used than t
 
   The **pmemblk_check**() function performs a consistency check of the file indicated by *path* and returns 1 if the memory pool is found to be consistent. Any inconsistencies found will cause **pmemblk_check**() to return 0, in which case the use of the file with **libpmemblk** will result in undefined behavior. The debug version of **libpmemblk** will provide additional details on inconsistencies when **PMEMBLK_LOG_LEVEL** is at least 1, as described in the **DEBUGGING AND ERROR HANDLING** section below. When *bsize* is non-zero **pmemblk_check**() will compare it to the block size of the pool and return 0 when they don’t match. **pmemblk_check**() will return -1 and set errno if it cannot perform the consistency check due to other errors. **pmemblk_check**() opens the given *path* read-only so it never makes any changes to the file.
 
-### DEBUGGING AND ERROR HANDLING
+### DEBUGGING AND ERROR HANDLING ###
 
 Two versions of **libpmemblk** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemblk** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemblk** function, an application may retrieve an error message describing the reason of failure using the following function:
 
@@ -223,7 +221,7 @@ The environment variable **PMEMBLK_LOG_FILE** specifies a file name where all lo
 Setting the environment variable **PMEMBLK_LOG_LEVEL** has no effect on the non-debug version of **libpmemblk**.
 
 
-### EXAMPLES
+### EXAMPLES ###
 
 The following example illustrates how the **libpmemblk** API is used.
 
@@ -290,16 +288,16 @@ main(int argc, char *argv[])
 ```
 See http://pmem.io/nvml/libpmemblk for more examples using the **libpmemblk** API.
 
-### BUGS
+### BUGS ###
 
 Unlike **libpmemobj**, data replication is not supported in **libpmemblk**. Thus, it is not allowed to specify replica sections in pool set files.
 
-### ACKNOWLEDGEMENTS
+### ACKNOWLEDGEMENTS ###
 
 **libpmemblk** builds on the persistent memory programming model recommended by the SNIA NVM Programming Technical Work Group:
 
 [http://snia.org/nvmp](http://snia.org/nvmp)
 
-### SEE ALSO
+### SEE ALSO ###
 
 **mmap**(2), **munmap**(2), **msync**(2), **strerror**(3), **libpmemobj**(3), **libpmemlog**(3), **libpmem**(3), **libvmem**(3) and **[http://pmem.io](http://pmem.io)**

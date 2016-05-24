@@ -23,17 +23,11 @@ title: libpmem(3)
 **libpmem** − persistent memory support library
 
 ### SYNOPSIS ###
-=======
-### NAME
-
-**libpmem** − persistent memory support library
-
-### SYNOPSIS
->>>>>>> a7cd8fe2467b07e43d5b31b967c7fb0f7c8aa62a
 
 ```c
 #include <libpmem.h>
 ```
+
 **cc … -lpmem**
 
 **Most commonly used functions:**
@@ -78,7 +72,7 @@ title: libpmem(3)
 
 : **const char** **\*pmem_errormsg**(**void**);
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 **libpmem**
 provides low-level *persistent memory* (pmem) support for
@@ -108,7 +102,7 @@ intentionally cause the process to exit.
 The only exception to this is the debugging information, when enabled,
 as described under **DEBUGGING AND ERROR HANDLING** below.
 
-### MOST COMMONLY USED FUNCTIONS
+### MOST COMMONLY USED FUNCTIONS ###
 
 Most pmem-aware applications will take advantage of higher level
 libraries that alleviate the application from calling into **libpmem**
@@ -243,7 +237,7 @@ else
   using the **munmap**(2), On success, **pmem_unmap**() returns zero. On
   error, -1 is returned, and errno is set appropriately.
 
-### PARTIAL FLUSHING OPERATIONS
+### PARTIAL FLUSHING OPERATIONS ###
 
 The functions in this section provide access to the stages of flushing
 to persistence, for the less common cases where an application needs
@@ -295,7 +289,7 @@ the **PMEM_NO_PCOMMIT** environment variable as described in the
   additional platform features such as Asynchronous DRAM Refresh (ADR) or
   something similar.
 
-### COPYING TO PERSISTENT MEMORY
+### COPYING TO PERSISTENT MEMORY ###
 
 The functions in this section provide optimized copying to persistent
 memory.
@@ -357,7 +351,7 @@ pmem_drain();
 or **pmem_memset_nodrain**() on a destination where
 **pmem_is_pmem**() returns false may not do anything useful.
 
-### LIBRARY API VERSIONING
+### LIBRARY API VERSIONING ###
 
 This section describes how the library API is versioned, allowing
 applications to work with an evolving API.
@@ -395,7 +389,7 @@ static string describing the reason for failing the version check. The
 string returned by **pmem_check_version**() must not be modified or
 freed.
 
-### DEBUGGING AND ERROR HANDLING
+### DEBUGGING AND ERROR HANDLING ###
 
 Two versions of **libpmem** are typically available on a development
 system. The normal version, accessed when a program is linked using the
@@ -443,7 +437,7 @@ the logging output goes to stderr.
 Setting the environment variable **PMEM_LOG_LEVEL** has no effect on
 the non-debug version of **libpmem**.
 
-### ENVIRONMENT VARIABLES
+### ENVIRONMENT VARIABLES ###
 
 **libpmem** can change its default behavior based on the following
 environment variables. These are largely intended for testing and are
@@ -526,7 +520,7 @@ direct pointer to the object.
   and causing the specified address to be used as a hint about where to
   place the mapping.
 
-### EXAMPLES
+### EXAMPLES ###
 
 The following example uses **libpmem** to flush changes made to raw,
 memory-mapped persistent memory.
@@ -554,7 +548,7 @@ result in a partial write to pmem. Use a transactional library such as
 
 int main(int argc, char *argv[])
 {
-  char *pmemaddr;		
+  char *pmemaddr;
   size_t mapped_len;
   int is_pmem;
 
@@ -565,7 +559,7 @@ int main(int argc, char *argv[])
   {
     perror("pmem_map_file");
     exit(1);
-  }				
+  }
 
   /* store a string to the persistent memory */
 
@@ -591,19 +585,19 @@ int main(int argc, char *argv[])
 See [http://pmem.io/nvml/libpmem](http://pmem.io/nvml/libpmem) for more examples using the **libpmem** API.
 
 
-### ACKNOWLEDGEMENTS
+### ACKNOWLEDGEMENTS ###
 
 **libpmem** builds on the persistent memory programming model
 recommended by the SNIA NVM Programming Technical Work Group:
 
 [http://snia.org/nvmp](http://snia.org/nvmp)
 
-### SEE ALSO
+### SEE ALSO ###
 
-[**libpmemobj**(3)](../../libpmemobj/master/libpmemobj.3.html),
-[**libpmemblk**(3)](../../libpmemblk/master/libpmemblk.3.html),
-[**libpmemlog**(3)](../../libpmemlog/master/libpmemlog.3.html),
-[**libvmem**(3)](../../libvmem/master/libvmem.3.html),
+**libpmemobj**(3),
+**libpmemblk**(3),
+**libpmemlog**(3),
+**libvmem**(3),
 **open**(2),
 **mmap**(2),
 **munmap**(2),

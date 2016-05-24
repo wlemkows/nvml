@@ -1,31 +1,29 @@
 ---
 layout: manual
 Content-Style: 'text/css'
-title: pmempool-dump
+title: pmempool-dump(1)
 ...
-
-# pmempool-dump
 
 [NAME](#name)<br />
 [SYNOPSIS](#synopsis)<br />
-[DESCRIPTION](#DESCRIPTION)<br />
+[DESCRIPTION](#description)<br />
 [RANGE](#range)<br />
 [EXAMPLES](#examples)<br />
 [SEE ALSO](#see-also)<br />
 [PMEMPOOL](#pmempool)<br />
 
 
-### NAME
+### NAME ###
 
 **pmempool-dump** − Dump user data from specified pool
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```
 pmempool dump [<options>] <file>
 ```
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 The **pmempool** invoked with **dump** command dumps user data from specified pool file. The output format may be either binary or hexadecimal.
 
@@ -57,7 +55,7 @@ Using **-r** option you can specify number of blocks/bytes/data chunks using spe
 
 : Display help message and exit.
 
-### RANGE
+### RANGE ###
 
 Using **-r, –range** option it is possible to dump only a range of user data. This section describes valid format of *\<range\>* string.
 
@@ -79,7 +77,7 @@ You can specify multiple ranges separated by commas.
 
 : Only **\<number\>** block/byte/data chunk will be dumped.
 
-### EXAMPLES
+### EXAMPLES ###
 
 *pmempool dump pool.bin*
 
@@ -94,11 +92,11 @@ You can specify multiple ranges separated by commas.
 : Dump data form 1K to 2K from pool.bin file.
 
 
-### SEE ALSO
+### SEE ALSO ###
 
 **libpmemblk(3)**, **libpmemlog(3)**, **pmempool(1)**
 
 
-### PMEMPOOL
+### PMEMPOOL ###
 
 Part of the **pmempool(1)** suite.

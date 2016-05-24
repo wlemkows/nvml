@@ -1,30 +1,28 @@
 ---
 layout: manual
 Content-Style: 'text/css'
-title: pmempool-create
+title: pmempool-create(1)
 ...
 
-# pmempool-create
-
-[NAME](#NAME)<br />
-[SYNOPSIS](#SYNOPSIS)<br />
-[DESCRIPTION](#DESCRIPTION)<br />
-[EXAMPLES](#EXAMPLES)<br />
-[SEE ALSO](#SEE%20ALSO)<br />
-[PMEMPOOL](#PMEMPOOL)<br />
+[NAME](#name)<br />
+[SYNOPSIS](#synopsis)<br />
+[DESCRIPTION](#description)<br />
+[EXAMPLES](#examples)<br />
+[SEE ALSO](#see-also)<br />
+[PMEMPOOL](#pmempool)<br />
 
 
-### NAME
+### NAME ###
 
 **pmempool-create** − Create Persistent Memory Pool of specified type
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```
 pmempool create [<options>] [<type>] [<bsize>] <file>
 ```
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 The **pmempool** invoked with **create** command creates a pool file of specified type. Depending on a pool type it is possible to provide more properties of pool.
 
@@ -80,7 +78,7 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 : Layout name of the **pmemobj** pool.
 
 
-### EXAMPLES
+### EXAMPLES ###
 
 *pmempool create blk 512 pool.blk*
 
@@ -103,10 +101,10 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 : Create a pool file based on pool.log file
 
 
-### SEE ALSO
+### SEE ALSO ###
 
 **libpmemblk(3)**, **libpmemlog(3)**, **pmempool(1)**
 
-### PMEMPOOL
+### PMEMPOOL ###
 
 Part of the **pmempool(1)** suite.

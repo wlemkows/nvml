@@ -1,9 +1,8 @@
 ---
 layout: manual
 Content-Style: 'text/css'
-title: pmempool-check
+title: pmempool-check(1)
 ...
-# pmempool-check
 
 [NAME](#name)<br />
 [SYNOPSIS](#synopsis)<br />
@@ -13,24 +12,23 @@ title: pmempool-check
 [PMEMPOOL](#pmempool)<br />
 
 
-### NAME
+### NAME ###
 
 **pmempool-check**  − Check and repair Persistent Memory Pool
 
-### SYNOPSIS
+### SYNOPSIS ###
 
 ```
 pmempool check [<options>] <file>
 ```
 
-### DESCRIPTION
+### DESCRIPTION ###
 
 The **pmempool** invoked with **check** command checks consistency of a given pool file. If the pool file is consistent **pmempool** exits with 0 value. If the pool file is not consistent non-zero error code is returned.
 
 In case of any errors, the proper message is printed. The verbosity level may be increased using **-v** option. The output messages may be also suppressed using **-q** option.
 
 It is possible to try to fix encountered problems using **-r** option. In order to be sure this will not corrupt your data you can either create backup of the pool file using **-b** option or just print what would be fixed without modifying original pool using **-N** option.
-
 
 **Available options:**
 
@@ -62,8 +60,7 @@ It is possible to try to fix encountered problems using **-r** option. In order 
 
 : Display help message and exit.
 
-
-### EXAMPLES
+### EXAMPLES ###
 
 *pmempool check pool.bin*
 
@@ -77,10 +74,10 @@ It is possible to try to fix encountered problems using **-r** option. In order 
 
 : Check consistency of pool.bin pool file, print what would be repaired with increased verbosity level.
 
-### SEE ALSO
+### SEE ALSO ###
 
 **libpmemblk(3)**, **libpmemlog(3)**, **pmempool(1)**
 
-### PMEMPOOL
+### PMEMPOOL ###
 
 Part of the **pmempool(1)** suite.
