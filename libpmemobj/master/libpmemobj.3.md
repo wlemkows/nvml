@@ -45,7 +45,6 @@ cc -std=gnu99 ... -lpmemobj -lpmem
 #### Most commonly used functions: ####
 
 ```c
-`one`**`two`**`three`
 
 MEMobjpool *pmemobj_open(const char *path, const char *layout);
 
