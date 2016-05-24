@@ -24,8 +24,9 @@ title: libpmemlog(3)
 
 ```c
 #include <libpmemlog.h>
-```
+
 cc ... -lpmemlog -lpmem
+```
 
 ##### Most commonly used functions: #####
 
