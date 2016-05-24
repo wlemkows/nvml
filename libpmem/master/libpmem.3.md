@@ -23,36 +23,38 @@ title: libpmem(3)
 **libpmem** − persistent memory support library
 
 ### SYNOPSIS ###
+=======
+### NAME
+
+**libpmem** − persistent memory support library
+
+### SYNOPSIS
+>>>>>>> a7cd8fe2467b07e43d5b31b967c7fb0f7c8aa62a
 
 ```c
 #include <libpmem.h>
 ```
 **cc … -lpmem**
 
-#### Most commonly used functions: ####
+**Most commonly used functions:**
 
+: **int** **pmem_is_pmem**(**const void \***addr, **size_t** len);
 
-```c
-int pmem_is_pmem(const void addr, size_t len);
+  **void** **pmem_persist**(**const void \***addr, **size_t** len);
 
-void pmem_persist(const void *addr, size_t len);
+  **int** **pmem_msync**(**const void \***addr, **size_t** len);
 
-int pmem_msync(const void *addr, size_t len);
+  **void** **\*pmem_map_file**(**const char \***path, **size_t** len, **int** flags, **mode_t** mode, **size_t \***mapped_lenp, **int** \*is_pmemp);
 
-void *pmem_map_file(const char *path, size_t len, int flags, mode_t mode, size_t *mapped_lenp, int *is_pmemp);
+  **int **pmem_unmap**(**void \***addr, **size_t** len);
 
-int pmem_unmap(void *addr, size_t len);
-```
+**Partial flushing operations:**
 
-##### Partial flushing operations: #####
+: **void** **pmem_flush**(**const void \***addr, **size_t** len);
 
+  **void** **pmem_drain**(**void**);
 
-**```void pmem_flush```**```(```**const void \***addr, **size_t** len);
-
-**void** **pmem_drain**(**void**);
-
-**int** **pmem_has_hw_drain**(**void**);
-
+  **int** **pmem_has_hw_drain**(**void**);
 
 **Copying to persistent memory:**
 
