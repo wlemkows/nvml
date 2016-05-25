@@ -304,7 +304,7 @@ recommended way to inhibit use of the PCOMMIT instruction is by setting
 the **PMEM_NO_PCOMMIT** environment variable as described in the
 **ENVIRONMENT VARIABLES** section.
 
-```c
+* ```c
 int pmem_has_hw_drain(void);
 ```
 
@@ -326,7 +326,7 @@ int pmem_has_hw_drain(void);
 The functions in this section provide optimized copying to persistent
 memory.
 
-```c
+* ```c
 void *pmem_memmove_persist(void *pmemdest, const void *src, size_t len);
 void *pmem_memcpy_persist(void *pmemdest, const void *src, size_t len);
 void *pmem_memset_persist(void *pmemdest, int c, size_t len);
