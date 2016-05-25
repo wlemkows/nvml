@@ -328,7 +328,13 @@ memory.
 
 * ```c
 void *pmem_memmove_persist(void *pmemdest, const void *src, size_t len);
+```
+
+* ```c
 void *pmem_memcpy_persist(void *pmemdest, const void *src, size_t len);
+```
+
+* ```c
 void *pmem_memset_persist(void *pmemdest, int c, size_t len);
 ```
 
