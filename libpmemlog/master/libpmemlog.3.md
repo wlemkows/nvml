@@ -134,9 +134,10 @@ PMEMPOOLSET
 
 The files in the set may be created by running the following command:
 
-```
+```c
 pmempool create log --from-set=mylogpool.set
 ```
+
 
 * ```c
 void pmemlog_close(PMEMlogpool *plp);
@@ -150,7 +151,7 @@ size_t pmemlog_nbyte(PMEMlogpool *plp);
 
   The `pmemlog_nbyte()` function returns the amount of usable space in the log *plp*. This function may be used on a log to determine how much usable space is available after **libpmemlog** has added its metadata to the memory pool.
 
-* ```
+* ```c
 int pmemlog_append(PMEMlogpool *plp, const void *buf, size_t count);
 ```
 
