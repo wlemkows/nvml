@@ -140,8 +140,8 @@ int pmem_is_pmem(const void *addr, size_t len);
   `pmem_is_pmem()` each time changes are flushed to persistence will
   not perform well.
 
->WARNING: Using `pmem_persist()` on a range where `pmem_is_pmem()`
-returns false may not do anything useful – use **msync**(2) instead.
+  >WARNING: Using `pmem_persist()` on a range where `pmem_is_pmem()`
+  returns false may not do anything useful – use **msync**(2) instead.
 
 + ```c
 void pmem_persist(const void *addr, size_t len);

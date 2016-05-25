@@ -85,7 +85,7 @@ Under normal usage, **libvmem** will never print messages or intentionally cause
 
 To use **libvmem**, a *memory pool* is first created. This is most commonly done with the **vmem_create**() function described in this section. The other functions described in this section are for less common cases, where applications have special needs for creating pools or examining library state.
 
-Once created, a memory pool is represented by an opaque pool handle, of type *VMEM **, which is passed to the functions for memory allocation described in the next section.
+Once created, a memory pool is represented by an opaque pool handle, of type `VMEM*`, which is passed to the functions for memory allocation described in the next section.
 
 ```c
 VMEM *vmem_create(const char *dir, size_t size);
