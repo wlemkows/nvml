@@ -101,11 +101,15 @@ To use the pmem-resident log file provided by **libpmemlog**, a *memory pool* is
 
 Once created, the memory pool is represented by an opaque handle, of type `PMEMlogpool*`, which is passed to most of the other functions in this section. Internally, **libpmemlog** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the `pmem_is_pmem()` function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the log memory API provided by **libpmemlog**.
 
-* `PMEMlogpool *pmemlog_open(const char *path);`
+* ```c
+PMEMlogpool *pmemlog_open(const char *path);
+```
 
   The `pmemlog_open()` function opens an existing log memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a log memory pool as created by `pmemlog_create()`. The application must have permission to open the file and memory map it with read/write permissions. If an error prevents the pool from being opened, `pmemlog_open()` returns NULL and sets errno appropriately.
 
-* `PMEMlogpool *pmemlog_create(const char *path, size_t poolsize, mode_t mode);`
+* ```c
+PMEMlogpool *pmemlog_create(const char *path, size_t poolsize, mode_t mode);
+```
 
   The `pmemlog_create()` function creates a log memory pool with the given total *poolsize*. Since the transactional nature of a log memory pool requires some space overhead in the memory pool, the resulting available log size is less than *poolsize*, and is made available to the caller via the `pmemlog_nbyte()` function described below. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling `pmemlog_create()` and then specifying *poolsize* as zero. In this case `pmemlog_create()` will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a log pool is defined in `<libpmemlog.h>` as `PMEMLOG_MIN_POOL`.
 
@@ -134,33 +138,47 @@ The files in the set may be created by running the following command:
 pmempool create log --from-set=mylogpool.set
 ```
 
-* `void pmemlog_close(PMEMlogpool *plp);`
+* ```c
+void pmemlog_close(PMEMlogpool *plp);
+```
 
   The `pmemlog_close()` function closes the memory pool indicated by *plp* and deletes the memory pool handle. The log memory pool itself lives on in the file that contains it and may be re-opened at a later time using **pmemlog_open**() as described above.
 
-* `size_t pmemlog_nbyte(PMEMlogpool *plp);`
+* ```c
+size_t pmemlog_nbyte(PMEMlogpool *plp);
+```
 
   The `pmemlog_nbyte()` function returns the amount of usable space in the log *plp*. This function may be used on a log to determine how much usable space is available after **libpmemlog** has added its metadata to the memory pool.
 
-* `int pmemlog_append(PMEMlogpool *plp, const void *buf, size_t count);`
+* ```
+int pmemlog_append(PMEMlogpool *plp, const void *buf, size_t count);
+```
 
   The `pmemlog_append()` function appends *count* bytes from *buf* to the current write offset in the log memory pool *plp*. Calling this function is analogous to appending to a file. The append is atomic and cannot be torn by a program failure or system crash. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* `int pmemlog_appendv(PMEMlogpool *plp, const struct iovec *iov, int iovcnt);`
+* ```c
+int pmemlog_appendv(PMEMlogpool *plp, const struct iovec *iov, int iovcnt);
+```
 
   The `pmemlog_appendv()` function appends to the log *plp* just like `pmemlog_append()` above, but this function takes a scatter/gather list in a manner similar to **writev**(2). In this case, the entire list of buffers is appended atomically, as if the buffers in *iov* were concatenated in order. On success, zero is returned. On error, -1 is returned and errno is set.
 
 >NOTE: Since **libpmemlog** is designed as a low-latency code path, many of the checks routinely done by the operating system for **writev**(2) are not practical in the library’s implementation of `pmemlog_appendv()`. No attempt is made to detect NULL or incorrect pointers, or illegal count values, for example.
 
-* `long long pmemlog_tell(PMEMlogpool *plp);`
+* ```c
+long long pmemlog_tell(PMEMlogpool *plp);
+```
 
   The `pmemlog_tell()` function returns the current write point for the log, expressed as a byte offset into the usable log space in the memory pool. This offset starts off as zero on a newly-created log, and is incremented by each successful append operation. This function can be used to determine how much data is currently in the log.
 
-* `void pmemlog_rewind(PMEMlogpool *plp);`
+* ```c
+void pmemlog_rewind(PMEMlogpool *plp);
+```
 
   The **pmemlog_rewind**() function resets the current write point for the log to zero. After this call, the next append adds to the beginning of the log.
 
-* `void pmemlog_walk(PMEMlogpool *plp, size_t chunksize, int (*process_chunk)(const void *buf, size_t len, void *arg), void *arg);`
+* ```c
+void pmemlog_walk(PMEMlogpool *plp, size_t chunksize, int (*process_chunk)(const void *buf, size_t len, void *arg), void *arg);
+```
 
   The `pmemlog_walk()` function walks through the log *plp*, from beginning to end, calling the callback function *process_chunk* for each *chunksize* block of data found. The argument *arg* is also passed to the callback to help avoid the need for global state. The *chunksize* argument is useful for logs with fixed-length records and may be specified as 0 to cause a single call to the callback with the entire log contents passed as the *buf* argument. The *len* argument tells the *process_chunk* function how much data buf is holding. The callback function should return 1 if `pmemlog_walk()` should continue walking through the log, or 0 to terminate the walk. The callback function is called while holding **libpmemlog** internal locks that make calls atomic, so the callback function must not try to append to the log itself or deadlock will occur.
 
@@ -168,7 +186,9 @@ pmempool create log --from-set=mylogpool.set
 
 This section describes how the library API is versioned, allowing applications to work with an evolving API.
 
-* `const char *pmemlog_check_version(unsigned major_required, unsigned minor_required);`
+* ```c
+const char *pmemlog_check_version(unsigned major_required, unsigned minor_required);
+```
 
   The `pmemlog_check_version()` function is used to see if the installed **libpmemlog** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in `<libpmemlog.h`>, like this:
 
@@ -191,15 +211,19 @@ When the version check performed by `pmemlog_check_version()` is successful, the
 
 The library entry points described in this section are less commonly used than the previous sections.
 
-* ```void pmemlog_set_funcs(
+* ```c
+  void pmemlog_set_funcs(
   void *(*malloc_func)(size_t size),
   void (*free_func)(void *ptr),
   void *(*realloc_func)(void *ptr, size_t size),
-  char *(*strdup_func)(const char *s));```
+  char *(*strdup_func)(const char *s));
+```
 
   The `pmemlog_set_funcs()` function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
-* `int pmemlog_check(const char *path);`
+* ```c
+int pmemlog_check(const char *path);
+```
 
   The `pmemlog_check()` function performs a consistency check of the file indicated by *path* and returns 1 if the memory pool is found to be consistent. Any inconsistencies found will cause `pmemlog_check()` to return 0, in which case the use of the file with **libpmemlog** will result in undefined behavior. The debug version of **libpmemlog** will provide additional details on inconsistencies when **PMEMLOG_LOG_LEVEL** is at least 1, as described in the **DEBUGGING AND ERROR HANDLING** section below. `pmemlog_check()` will return -1 and set errno if it cannot perform the consistency check due to other errors. `pmemlog_check()` opens the given *path* read-only so it never makes any changes to the file.
 
@@ -207,7 +231,9 @@ The library entry points described in this section are less commonly used than t
 
 Two versions of **libpmemlog** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemlog** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemlog** function, an application may retrieve an error message describing the reason of failure using the following function:
 
-* `const char *pmemlog_errormsg(void);`
+* ```c
+const char *pmemlog_errormsg(void);
+```
 
   The `pmemlog_errormsg()` function returns a pointer to a static buffer containing the last error message logged for current thread. The error message may include description of the corresponding error code (if errno was set), as returned by **strerror**(3). The error message buffer is thread-local; errors encountered in one thread do not affect its value in other threads. The buffer is never cleared by any library function; its content is significant only when the return value of the immediately preceding call to **libpmemlog** function indicated an error, or if errno was set. The application must not modify or free the error message string, but it may be modified by subsequent calls to other library functions.
 

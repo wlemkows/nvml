@@ -475,9 +475,7 @@ the non-debug version of **libpmem**.
 environment variables. These are largely intended for testing and are
 not normally required.
 
-* ```c
-PMEM_IS_PMEM_FORCE**=val
-```
+**PMEM_IS_PMEM_FORCE**=val
 
 If *val* is 0 (zero), then `pmem_is_pmem()` will always return
 false. Setting *val* to 1 causes `pmem_is_pmem()` to always return
