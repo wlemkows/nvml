@@ -24,9 +24,9 @@ pmempool rm [<options>] <file>..
 
 ### DESCRIPTION ###
 
-The **pmempool** invoked with **rm** command removes (unlinks) all files specified in command line arguments. If the specified file is a poolset file all parts will be removed. All files are removed using the **unlink (3)** call. Without specifying the **-i\|–interactive** option, the **rm** command prompts only before removing *write-protected* files. If specified file does not exist the **rm** command terminates with error code. The **-f\|–force** command ignores non-existing files and never prompts before removing a file. See **EXAMPLES** section for example usage of the **rm** command.
+The **pmempool** invoked with `rm` command removes (unlinks) all files specified in command line arguments. If the specified file is a poolset file all parts will be removed. All files are removed using the **unlink (3)** call. Without specifying the `-i|–interactive` option, the `rm` command prompts only before removing *write-protected* files. If specified file does not exist the `rm` command terminates with error code. The `-f|–force` command ignores non-existing files and never prompts before removing a file. See **EXAMPLES** section for example usage of the `rm` command.
 
-**Available options:**
+##### Available options: #####
 
 `-h, –help`
 

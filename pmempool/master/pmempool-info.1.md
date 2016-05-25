@@ -39,7 +39,7 @@ The **info** command may collect and print basic statistics about data usage. Th
 
 Although the pool consistency is *not* checked by the **info** command, it prints information about checksum errors and/or offsets errors.
 
-**Common options:**
+##### Common options: #####
 
 By default the **info** command of **pmempool** prints information about the most important internal data structures from pool. The particular set of headers and meta-data depend on pool type. The pool type is recognized automatically and appropriate information is displayed in human-readable format.
 
@@ -76,13 +76,13 @@ To force processing specified file(s) as desired pool type use `-f` option with 
 : Display help message and exit.
 
 
-**Options for PMEMLOG:**
+##### Options for PMEMLOG: #####
 
 `-w, –walk <size>`
 
 : Use this option to walk through used data with fixed data chunk size. See `pmemlog_walk()` in **libpmemlog(3)** for details.
 
-**Options for PMEMBLK:**
+##### Options for PMEMBLK: #####
 
 By default the **info** command displays the pmem blk header and BTT (Block Translation Table) Info header in case of pmem blk pool type.
 
@@ -102,7 +102,7 @@ In order to display BTT Info header backup use `-B` option.
 
 : Print BTT Info header backup.
 
->By default the **info** command displays all data blocks when `-d` options is used. However it is possible to skip blocks marked with *zero* and/or *error* flags. It is also possible to skip blocks which are *not* marked with any flag. Skipping blocks has impact on blocks ranges (e.g. display 10 blocks marked with error flag in the range from 0 to 10000) and statistics.
+  >By default the **info** command displays all data blocks when `-d` options is used. However it is possible to skip blocks marked with *zero* and/or *error* flags. It is also possible to skip blocks which are *not* marked with any flag. Skipping blocks has impact on blocks ranges (e.g. display 10 blocks marked with error flag in the range from 0 to 10000) and statistics.
 
 `-z, –skip-zeros`
 
@@ -117,7 +117,7 @@ In order to display BTT Info header backup use `-B` option.
 : Skip blocks *not* marked with any flag.
 
 
-**Options for PMEMOBJ:**
+##### Options for PMEMOBJ: #####
 
 By default the **info** command displays pool header and **pmem obj** pool descriptor. In order to print information about other data structures one of the following options may be used.
 
@@ -209,7 +209,7 @@ You can specify multiple ranges separated by commas.
 
 Below is the description of statistical measures for specific pool types.
 
-**PMEMLOG**
+##### PMEMLOG #####
 
   **Total**
 
@@ -224,7 +224,7 @@ Below is the description of statistical measures for specific pool types.
   : Size and percentage of used space.
 
 
-**PMEMBLK**
+##### PMEMBLK #####
 
   **Total blocks**
 
@@ -248,7 +248,7 @@ Below is the description of statistical measures for specific pool types.
 * *skipped* types of blocks ( `-z`, `-e`, `-u` options).
 
 
-**PMEMOBJ**
+##### PMEMOBJ #####
 
 * **Object store**
 
