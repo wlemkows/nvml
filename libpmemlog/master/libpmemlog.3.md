@@ -146,7 +146,7 @@ pmempool create log --from-set=mylogpool.set
 
   The `pmemlog_append()` function appends *count* bytes from *buf* to the current write offset in the log memory pool *plp*. Calling this function is analogous to appending to a file. The append is atomic and cannot be torn by a program failure or system crash. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* `int pmemlog_appendv(PMEMlogpool *plp, const struct iovec *iov, int iovcnt);
+* `int pmemlog_appendv(PMEMlogpool *plp, const struct iovec *iov, int iovcnt);`
 
   The `pmemlog_appendv()` function appends to the log *plp* just like `pmemlog_append()` above, but this function takes a scatter/gather list in a manner similar to **writev**(2). In this case, the entire list of buffers is appended atomically, as if the buffers in *iov* were concatenated in order. On success, zero is returned. On error, -1 is returned and errno is set.
 
@@ -166,9 +166,9 @@ pmempool create log --from-set=mylogpool.set
 
 This section describes how the library API is versioned, allowing applications to work with an evolving API.
 
-* **const char** **\*pmemlog_check_version**(**unsigned** major_required, **unsigned** minor_required);
+* `const char *pmemlog_check_version(unsigned major_required, unsigned minor_required);`
 
-  The **pmemlog_check_version**() function is used to see if the installed **libpmemlog** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<libpmemlog.h\>**, like this:
+  The `pmemlog_check_version()` function is used to see if the installed **libpmemlog** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in `<libpmemlog.h`>, like this:
 
 ```c
 reason = pmemblk_check_version(PMEMLOG_MAJOR_VERSION,
@@ -183,17 +183,17 @@ Any mismatch in the major version number is considered a failure, but a library 
 
 An application can also check specifically for the existence of an interface by checking for the version where that interface was introduced. These versions are documented in this man page as follows: unless otherwise specified, all interfaces described here are available in version 1.0 of the library. Interfaces added after version 1.0 will contain the text *introduced in version x.y* in the section of this manual describing the feature.
 
-When the version check performed by **pmemlog_check_version**() is successful, the return value is NULL. Otherwise the return value is a static string describing the reason for failing the version check. The string returned by **pmemlog_check_version**() must not be modified or freed.
+When the version check performed by `pmemlog_check_version()` is successful, the return value is NULL. Otherwise the return value is a static string describing the reason for failing the version check. The string returned by `pmemlog_check_version()` must not be modified or freed.
 
 ### MANAGING LIBRARY BEHAVIOR ###
 
 The library entry points described in this section are less commonly used than the previous sections.
 
-* **void** **pmemlog_set_funcs**(<br />
-  **void \***(\*malloc_func)(**size_t** size),<br />
-  **void** (\*free_func)(**void \***ptr),<br />
-  **void \***(\*realloc_func)(**void \***ptr, **size_t** size),<br />
-  **char \***(\*strdup_func)(**const char \***s));
+* `void pmemlog_set_funcs(<br />
+  void *(*malloc_func)(size_t size),<br />
+  void (*free_func)(void *ptr),<br />
+  void *(*realloc_func)(void *ptr, size_t size),<br />
+  char *(*strdup_func)(const char *s));`
 
   The **pmemlog_set_funcs**() function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
