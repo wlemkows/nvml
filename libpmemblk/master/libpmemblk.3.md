@@ -38,7 +38,7 @@ PMEMblkpool *pmemblk_open(const char *path, size_t bsize);
 
 PMEMblkpool *pmemblk_create(const char *path, size_t bsize, size_t poolsize, mode_t mode);
 
-void pmemblk_close(PMEMblkpool *pbp);dnf
+void pmemblk_close(PMEMblkpool *pbp);
 
 size_t pmemblk_bsize(PMEMblkpool *pbp);
 
