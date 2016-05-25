@@ -41,7 +41,7 @@ Although the pool consistency is *not* checked by the `info` command, it prints 
 
 ##### Common options: #####
 
-By default the **info** command of **pmempool** prints information about the most important internal data structures from pool. The particular set of headers and meta-data depend on pool type. The pool type is recognized automatically and appropriate information is displayed in human-readable format.
+By default the `info` command of **pmempool** prints information about the most important internal data structures from pool. The particular set of headers and meta-data depend on pool type. The pool type is recognized automatically and appropriate information is displayed in human-readable format.
 
 To force processing specified file(s) as desired pool type use `-f` option with appropriate name of pool type. The valid names off pool types are *blk , log* or *obj.* This option may be useful when the pool header is corrupted and automatic recognition of pool type fails.
 
