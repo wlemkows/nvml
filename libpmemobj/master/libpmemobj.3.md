@@ -257,57 +257,57 @@ POBJ_FOREACH_SAFE_TYPE(PMEMobjpool *pop, TOID var, TOID nvar)
 ```c
 int pmemobj_list_insert(PMEMobjpool *pop, size_t pe_offset, void *head, PMEMoid dest, int before, PMEMoid oid);
 
-**PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor, **void \***arg);
+PMEMoid pmemobj_list_insert_new(PMEMobjpool *pop, size_t pe_offset, void *head, PMEMoid dest, int before, size_t size, uint64_t type_num, pmemobj_constr constructor, void *arg);
 
-**int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** oid, **int** free);
+int pmemobj_list_remove(PMEMobjpool *pop, size_t pe_offset, void *head, PMEMoid oid, int free);
 
-**int** **pmemobj_list_move**(**PMEMobjpool \***pop,<br />
-**size_t** pe_old_offset, **void \***head_old,<br />
-**size_t** pe_new_offset, **void \***head_new,<br />
-**PMEMoid** dest, **int** before, **PMEMoid** oid);
+int pmemobj_list_move(PMEMobjpool *pop,
+size_t pe_old_offset, void *head_old,
+size_t pe_new_offset, void *head_new,
+PMEMoid dest, int before, PMEMoid oid);
 
-**POBJ_LIST_ENTRY**(TYPE)
+POBJ_LIST_ENTRY(TYPE)
 
-**POBJ_LIST_HEAD**(HEADNAME, TYPE)
+POBJ_LIST_HEAD(HEADNAME, TYPE)
 
-**POBJ_LIST_FIRST**(**POBJ_LIST_HEAD \***head)
+POBJ_LIST_FIRST(POBJ_LIST_HEAD *head)
 
-**POBJ_LIST_NEXT**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_NEXT(TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_LAST**(**POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_LAST(POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_PREV**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_PREV(TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_DEST_TAIL**
+POBJ_LIST_DEST_TAIL
 
-**POBJ_LIST_EMPTY**(**POBJ_LIST_HEAD \***head)
+POBJ_LIST_EMPTY(POBJ_LIST_HEAD *head)
 
-**POBJ_LIST_DEST_HEAD**
+POBJ_LIST_DEST_HEAD
 
-**POBJ_LIST_FOREACH**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_FOREACH(TOID var, POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_FOREACH_REVERSE**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_FOREACH_REVERSE(TOID var, POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_INSERT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_INSERT_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_INSERT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_INSERT_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_INSERT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_INSERT_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_INSERT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_INSERT_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_INSERT_NEW_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-**pmemobj_constr** constructor, **void \***arg)
+POBJ_LIST_INSERT_NEW_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_ENTRY FIELD, size_t size,
+pmemobj_constr constructor, void *arg)
 
-**POBJ_LIST_INSERT_NEW_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-**void** (\*constructor)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg),
-**void \***arg)
+POBJ_LIST_INSERT_NEW_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_ENTRY FIELD, size_t size,
+void (*constructor)(PMEMobjpool *pop, void *ptr, void *arg),
+void *arg)
 
 **POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
 **TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
