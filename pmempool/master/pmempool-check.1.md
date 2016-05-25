@@ -24,7 +24,7 @@ pmempool check [<options>] <file>
 
 ### DESCRIPTION ###
 
-The **pmempool** invoked with **check** command checks consistency of a given pool file. If the pool file is consistent **pmempool** exits with 0 value. If the pool file is not consistent non-zero error code is returned.
+The **pmempool** invoked with `check` command checks consistency of a given pool file. If the pool file is consistent **pmempool** exits with 0 value. If the pool file is not consistent non-zero error code is returned.
 
 In case of any errors, the proper message is printed. The verbosity level may be increased using `-v` option. The output messages may be also suppressed using `-q` option.
 
@@ -46,7 +46,7 @@ It is possible to try to fix encountered problems using `-r` option. In order to
 
 `-b, –backup <file>`
 
-: Create backup of a pool file before executing. Terminate if it is *not* possible to create a backup file. This option requires **-r** option.
+: Create backup of a pool file before executing. Terminate if it is *not* possible to create a backup file. This option requires `-r` option.
 
 `-q, –quiet`
 

@@ -27,17 +27,17 @@ pmempool info [<options>] <file>
 
 ### DESCRIPTION ###
 
-The **pmempool** invoked with **info** command analyzes an existing pool created by **NVML** libraries. The main task of this command is to print all usable information from pool headers and user data in human readable format. It automatically recognizes pool type by parsing and analyzing pool header. The recognition is done by checking the signature in pool header. The main job of **info** command is to present internal data structures as they are stored in file but *not* for checking consistency. For this purpose there is the **pmempool-check(1)** command available.
+The **pmempool** invoked with `info` command analyzes an existing pool created by **NVML** libraries. The main task of this command is to print all usable information from pool headers and user data in human readable format. It automatically recognizes pool type by parsing and analyzing pool header. The recognition is done by checking the signature in pool header. The main job of `info` command is to present internal data structures as they are stored in file but *not* for checking consistency. For this purpose there is the **pmempool-check(1)** command available.
 
-The **pmempool** with **info** command analyzes pool file as long as it is possible regarding *correctness* of internal meta-data (correct offsets, sizes etc.). If it is *not* possible to analyze the rest of the file, **pmempool** exits with error code and prints appropriate error message.
+The **pmempool** with `info` command analyzes pool file as long as it is possible regarding *correctness* of internal meta-data (correct offsets, sizes etc.). If it is *not* possible to analyze the rest of the file, **pmempool** exits with error code and prints appropriate error message.
 
-Currently there is lack of interprocess synchronization for pool files, so the **info** command should be invoked off-line. Using **pmempool** on pool file which may be modified by another process may lead to unexpected errors in pool file.
+Currently there is lack of interprocess synchronization for pool files, so the `info` command should be invoked off-line. Using **pmempool** on pool file which may be modified by another process may lead to unexpected errors in pool file.
 
-**pmempool info** opens pool file in *read-only* mode so the file will remain untouched after processing.
+`pmempool info` opens pool file in *read-only* mode so the file will remain untouched after processing.
 
-The **info** command may collect and print basic statistics about data usage. The statistics are specific to the type of pool. See **STATISTICS** section for details.
+The `info` command may collect and print basic statistics about data usage. The statistics are specific to the type of pool. See **STATISTICS** section for details.
 
-Although the pool consistency is *not* checked by the **info** command, it prints information about checksum errors and/or offsets errors.
+Although the pool consistency is *not* checked by the `info` command, it prints information about checksum errors and/or offsets errors.
 
 ##### Common options: #####
 
@@ -84,7 +84,7 @@ To force processing specified file(s) as desired pool type use `-f` option with 
 
 ##### Options for PMEMBLK: #####
 
-By default the **info** command displays the pmem blk header and BTT (Block Translation Table) Info header in case of pmem blk pool type.
+By default the `info` command displays the pmem blk header and BTT (Block Translation Table) Info header in case of pmem blk pool type.
 
 To display BTT Map and/or BTT FLOG (Free List and Log) use `-m` and `-g` options respectively or increase verbosity level.
 
@@ -102,7 +102,7 @@ In order to display BTT Info header backup use `-B` option.
 
 : Print BTT Info header backup.
 
-  >By default the **info** command displays all data blocks when `-d` options is used. However it is possible to skip blocks marked with *zero* and/or *error* flags. It is also possible to skip blocks which are *not* marked with any flag. Skipping blocks has impact on blocks ranges (e.g. display 10 blocks marked with error flag in the range from 0 to 10000) and statistics.
+  >By default the `info` command displays all data blocks when `-d` options is used. However it is possible to skip blocks marked with *zero* and/or *error* flags. It is also possible to skip blocks which are *not* marked with any flag. Skipping blocks has impact on blocks ranges (e.g. display 10 blocks marked with error flag in the range from 0 to 10000) and statistics.
 
 `-z, –skip-zeros`
 
@@ -119,7 +119,7 @@ In order to display BTT Info header backup use `-B` option.
 
 ##### Options for PMEMOBJ: #####
 
-By default the **info** command displays pool header and **pmem obj** pool descriptor. In order to print information about other data structures one of the following options may be used.
+By default the `info` command displays pool header and **pmem obj** pool descriptor. In order to print information about other data structures one of the following options may be used.
 
 `-l, –lanes [<range>]`
 

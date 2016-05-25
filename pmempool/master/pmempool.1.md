@@ -31,11 +31,11 @@ The **pmempool** may be useful for troubleshooting by system administrators and 
 
 ### OPTIONS ###
 
-**-v, –version**
+`-v, –version`
 
 : Prints the version of **pmempool.**
 
-**-h, –help**
+`-h, –help`
 
 : Prints synopsis and list of commands.
 

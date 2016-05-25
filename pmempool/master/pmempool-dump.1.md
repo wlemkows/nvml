@@ -25,7 +25,7 @@ pmempool dump [<options>] <file>
 
 ### DESCRIPTION ###
 
-The **pmempool** invoked with **dump** command dumps user data from specified pool file. The output format may be either binary or hexadecimal.
+The **pmempool** invoked with `dump` command dumps user data from specified pool file. The output format may be either binary or hexadecimal.
 
 By default the output format is hexadecimal.
 
