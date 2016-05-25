@@ -47,7 +47,11 @@ long long pmemlog_tell(PMEMlogpool *plp);
 
 void pmemlog_rewind(PMEMlogpool *plp);
 
-void pmemlog_walk(PMEMlogpool *plp, size_t chunksize, int (*process_chunk)(const void *buf, size_t len, void *arg), void *arg);
+void pmemlog_walk(
+      PMEMlogpool *plp, 
+      size_t chunksize,
+      int (*process_chunk)(const void *buf, size_t len, void *arg),
+      void *arg);
 ```
 
 ##### Library API versioning: #####
