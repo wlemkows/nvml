@@ -92,7 +92,7 @@ There are two configuration variables that **must** be set to make **libvmmalloc
 
 : Defines the desired size (in bytes) of the memory pool file. It must be not less than the minimum allowed size **VMMALLOC_MIN_POOL** as defined in **\<libvmmalloc.h\>.**
 
->NOTE that due to the fact the library adds some metadata to the memory pool, the amount of actual usable space is typically less than the size of the memory pool file.
+   >NOTE that due to the fact the library adds some metadata to the memory pool, the amount of actual usable space is typically less than the size of the memory pool file.
 
 Setting the **VMMALLOC_FORK** configuration variable is optional. It controls the behavior of **libvmmalloc** in case of **fork**(3), and can be set to the following values:
 
@@ -102,7 +102,7 @@ Setting the **VMMALLOC_FORK** configuration variable is optional. It controls th
 
 + **2** - A copy of the entire memory pool file is created for the use of the child process. This requires additional space on the file system, but both the parent and the child process may still operate on their memory pools, not consuming the system memory resources.
 
->NOTE: In case of large memory pools, creating a copy of the pool file may stall the fork operation for a quite long time.
+   >NOTE: In case of large memory pools, creating a copy of the pool file may stall the fork operation for a quite long time.
 
 + **3** - The library first attempts to create a copy of the memory pool (as for option #2), but if it fails (i.e. because of insufficient amount of free space on the file system), it will fall back to option #1.
 
