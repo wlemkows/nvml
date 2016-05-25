@@ -51,11 +51,11 @@ The **pmempool** invoked with **rm** command removes (unlinks) all files specifi
 
 ### EXAMPLES ###
 
-*pmempool rm pool.obj pool.blk*
+`pmempool rm pool.obj pool.blk`
 
 : Remove specified pool files
 
-*pmempool rm -s pool.set*
+`pmempool rm -s pool.set`
 
 : Remove all pool files from the pool.set, do not remove pool.set itself.
 
