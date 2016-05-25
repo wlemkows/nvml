@@ -42,7 +42,8 @@ title: libpmemobj(3)
 
 cc -std=gnu99 ... -lpmemobj -lpmem
 
-#### Most commonly used functions: ####
+##### Most commonly used functions: #####
+
 
 ```c
 MEMobjpool *pmemobj_open(const char *path, const char *layout);
@@ -71,6 +72,8 @@ void pmemobj_drain(PMEMobjpool *pop);
 
 ##### Locking: #####
 
+
+```c
 void pmemobj_mutex_zero(PMEMobjpool *pop, PMEMmutex *mutexp);
 
 int pmemobj_mutex_lock(PMEMobjpool *pop, PMEMmutex *mutexp);
@@ -87,239 +90,254 @@ int pmemobj_rwlock_rdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
 int pmemobj_rwlock_wrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-int **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
+int pmemobj_rwlock_timedrdlock(PMEMobjpool *pop, PMEMrwlock *restrict rwlockp, const struct timespec *restrict abs_timeout);
 
-  **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
+int pmemobj_rwlock_timedwrlock(PMEMobjpool *pop, PMEMrwlock *restrict rwlockp, const struct timespec *restrict abs_timeout);
 
-  **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+int pmemobj_rwlock_tryrdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **int** **pmemobj_rwlock_trywrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+int pmemobj_rwlock_trywrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **int** **pmemobj_rwlock_unlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+int pmemobj_rwlock_unlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **void** **pmemobj_cond_zero**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+void pmemobj_cond_zero(PMEMobjpool *pop, PMEMcond *condp);
 
-  **int** **pmemobj_cond_broadcast**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+int pmemobj_cond_broadcast(PMEMobjpool *pop, PMEMcond *condp);
 
-  **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+int pmemobj_cond_signal(PMEMobjpool *pop, PMEMcond *condp);
 
-  **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp, **PMEMmutex \*restrict** mutexp, **const struct timespec \*restrict** abs_timeout);
+int pmemobj_cond_timedwait(PMEMobjpool *pop, PMEMcond *restrict condp, PMEMmutex *restrict mutexp, const struct timespec *restrict abs_timeout);
 
-  **int** **pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp, **PMEMmutex \*restrict** mutexp);
-
-**Persistent object identifier:**
-
-: **OID_IS_NULL**(**PMEMoid** oid)
-
-  **OID_EQUALS**(**PMEMoid** lhs, **PMEMoid** rhs)
-
-**Type-safety:**
-
-: **TOID**(TYPE)
-
-  **TOID_DECLARE**(TYPE, **uint64_t** type_num)
-
-  **TOID_DECLARE_ROOT**(ROOT_TYPE)
-
-  **TOID_TYPE_NUM**(TYPE)
-
-  **TOID_TYPE_NUM_OF**(**TOID** oid)
-
-  **TOID_VALID**(**TOID** oid)
-
-  **OID_INSTANCEOF**(**PMEMoid** oid, TYPE)
-
-  **TOID_ASSIGN**(**TOID** oid, VALUE)
-
-  **TOID_IS_NULL**(**TOID** oid)
-
-  **TOID_EQUALS**(**TOID** lhs, **TOID** rhs)
-
-```c 
-   DIRECT_RW(TOID oid)
-
-   DIRECT_RO(TOID oid)
-
-   D_RW(TOID oid)
-
-   D_RO(TOID oid)
+int pmemobj_cond_wait(PMEMobjpool *pop, PMEMcond *condp, PMEMmutex *restrict mutexp);
 ```
 
-**Layout declaration:**
+##### Persistent object identifier: #####
 
-: **POBJ_LAYOUT_BEGIN**(layout)
 
-  **POBJ_LAYOUT_TOID**(layout, TYPE)
+```c
+OID_IS_NULL(PMEMoid oid)
 
-  **POBJ_LAYOUT_ROOT**(layout, ROOT_TYPE)
+OID_EQUALS(PMEMoid lhs, PMEMoid rhs)
+```
 
-  **POBJ_LAYOUT_NAME**(layout)
+##### Type-safety: #####
 
-  **POBJ_LAYOUT_END**(layout)
 
-  **POBJ_LAYOUT_TYPES_NUM**(layout)
+```c
+TOID(TYPE)
 
-**Non-transactional atomic allocations:**
+TOID_DECLARE(TYPE, uint64_t type_num)
 
-: **typedef int** (\*pmemobj_constr)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg);
+TOID_DECLARE_ROOT(ROOT_TYPE)
 
-  **int** **pmemobj_alloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num, **pmemobj_constr constructor**, **void \***arg);
+TOID_TYPE_NUM(TYPE)
 
-  **int** **pmemobj_zalloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+TOID_TYPE_NUM_OF(TOID oid)
 
-  **int** **pmemobj_realloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+TOID_VALID(TOID oid)
 
-  **int** **pmemobj_zrealloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+OID_INSTANCEOF(PMEMoid oid, TYPE)
 
-  **void** **pmemobj_free**(**PMEMoid \***oidp);
+TOID_ASSIGN(TOID oid, VALUE)
 
-  **int** **pmemobj_strdup**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **const char \***s, **uint64_t** type_num);
+TOID_IS_NULL(TOID oid)
 
-  **size_t** **pmemobj_alloc_usable_size**(**PMEMoid** oid);
+TOID_EQUALS(TOID lhs, TOID rhs)
 
-  **PMEMobjpool** **\*pmemobj_pool_by_oid**(**PMEMoid** oid);
+DIRECT_RW(TOID oid)
 
-  **PMEMobjpool** **\*pmemobj_pool_by_ptr**(**const void \***addr);
+DIRECT_RO(TOID oid)
 
-  **void** **\*pmemobj_direct**(**PMEMoid** oid);
+D_RW(TOID oid)
 
-  **uint64_t** **pmemobj_type_num**(**PMEMoid** oid);
+D_RO(TOID oid)
+```
 
+##### Layout declaration: #####
 
-: **POBJ_NEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **pmemobj_constr** constructor, **void \***arg)
 
-  **POBJ_ALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size, **pmemobj_constr** constructor, **void \***arg)
+```c
+POBJ_LAYOUT_BEGIN(layout)
 
-  **POBJ_ZNEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE)
+POBJ_LAYOUT_TOID(layout, TYPE)
 
-  **POBJ_ZALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+POBJ_LAYOUT_ROOT(layout, ROOT_TYPE)
 
-  **POBJ_REALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+POBJ_LAYOUT_NAME(layout)
 
-  **POBJ_ZREALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+POBJ_LAYOUT_END(layout)
 
-  **POBJ_FREE**(**TOID \***oidp)
+POBJ_LAYOUT_TYPES_NUM(layout)
+```
 
+##### Non-transactional atomic allocations: #####
 
-**Root object management:**
 
-: **PMEMoid** **pmemobj_root**(**PMEMobjpool \***pop, **size_t** size);
+```c
+typedef int (*pmemobj_constr)(PMEMobjpool *pop, void *ptr, void *arg);
 
-  **PMEMoid** **pmemobj_root_construct**(**PMEMobjpool \***pop, **size_t** size, **pmemobj_constr** constructor, **void \***arg);
+int pmemobj_alloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num, pmemobj_constr constructor, void *arg);
 
-  **size_t** **pmemobj_root_size**(**PMEMobjpool \***pop);
+int pmemobj_zalloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
 
-  **POBJ_ROOT**(**PMEMobjpool \***pop, TYPE)
+int pmemobj_realloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
 
+int pmemobj_zrealloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
 
-**Object containers:**
+void pmemobj_free(PMEMoid *oidp);
 
-: **PMEMoid** **pmemobj_first**(**PMEMobjpool \***pop);
+int pmemobj_strdup(PMEMobjpool *pop, PMEMoid *oidp, const char *s, uint64_t type_num);
 
-  **PMEMoid** **pmemobj_next**(**PMEMoid** oid);
+size_t pmemobj_alloc_usable_size(PMEMoid oid);
 
-  **POBJ_FIRST_TYPE_NUM**(**PMEMobjpool \***pop, **uint64_t** type_num)
+PMEMobjpool *pmemobj_pool_by_oid(PMEMoid oid);
 
-  **POBJ_FIRST**(**PMEMobjpool \***pop, TYPE)
+PMEMobjpool *pmemobj_pool_by_ptr(const void *addr);
 
-  **POBJ_NEXT_TYPE_NUM**(**PMEMoid** oid)
+void *pmemobj_direct(PMEMoid oid);
 
-  **POBJ_NEXT**(**TOID** oid)
+uint64_t pmemobj_type_num(PMEMoid oid);
 
-  **POBJ_FOREACH**(**PMEMobjpool \***pop, **PMEMoid** varoid)
+POBJ_NEW(PMEMobjpool *pop, TOID *oidp, TYPE, pmemobj_constr constructor, void *arg)
 
-  **POBJ_FOREACH_SAFE**(**PMEMobjpool \***pop, **PMEMoid** varoid, **PMEMoid** nvaroid)
+POBJ_ALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size, pmemobj_constr constructor, void *arg)
 
-  **POBJ_FOREACH_TYPE**(**PMEMobjpool \***pop, **TOID** var)
+POBJ_ZNEW(PMEMobjpool *pop, TOID *oidp, TYPE)
 
-  **POBJ_FOREACH_SAFE_TYPE**(**PMEMobjpool \***pop, **TOID** var, **TOID** nvar)
+POBJ_ZALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
 
+POBJ_REALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
 
-**Non-transactional persistent atomic circular doubly-linked list:**
+POBJ_ZREALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
 
-: **int** **pmemobj_list_insert**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **PMEMoid** oid);
+POBJ_FREE(TOID *oidp)
+```
 
-  **PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor, **void \***arg);
+##### Root object management: #####
 
-  **int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** oid, **int** free);
 
-  **int** **pmemobj_list_move**(**PMEMobjpool \***pop,<br />
-      **size_t** pe_old_offset, **void \***head_old,<br />
-      **size_t** pe_new_offset, **void \***head_new,<br />
-      **PMEMoid** dest, **int** before, **PMEMoid** oid);
+```c
+PMEMoid pmemobj_root(PMEMobjpool *pop, size_t size);
 
-  **POBJ_LIST_ENTRY**(TYPE)
+PMEMoid pmemobj_root_construct(PMEMobjpool *pop, size_t size, pmemobj_constr constructor, void *arg);
 
-  **POBJ_LIST_HEAD**(HEADNAME, TYPE)
+size_t pmemobj_root_size(PMEMobjpool *pop);
 
-  **POBJ_LIST_FIRST**(**POBJ_LIST_HEAD \***head)
+POBJ_ROOT(PMEMobjpool *pop, TYPE)
+```
 
-  **POBJ_LIST_NEXT**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+##### Object containers: #####
 
-  **POBJ_LIST_LAST**(**POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
 
-  **POBJ_LIST_PREV**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+```c
+PMEMoid pmemobj_first(PMEMobjpool *pop);
 
-  **POBJ_LIST_DEST_TAIL**
+PMEMoid pmemobj_next(PMEMoid oid);
 
-  **POBJ_LIST_EMPTY**(**POBJ_LIST_HEAD \***head)
+POBJ_FIRST_TYPE_NUM(PMEMobjpool *pop, uint64_t type_num)
 
-  **POBJ_LIST_DEST_HEAD**
+POBJ_FIRST(PMEMobjpool *pop, TYPE)
 
-  **POBJ_LIST_FOREACH**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+POBJ_NEXT_TYPE_NUM(PMEMoid oid)
 
-  **POBJ_LIST_FOREACH_REVERSE**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+POBJ_NEXT(TOID oid)
 
-  **POBJ_LIST_INSERT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_FOREACH(PMEMobjpool *pop, PMEMoid varoid)
 
-  **POBJ_LIST_INSERT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_FOREACH_SAFE(PMEMobjpool *pop, PMEMoid varoid, PMEMoid nvaroid)
 
-  **POBJ_LIST_INSERT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_FOREACH_TYPE(PMEMobjpool *pop, TOID var)
 
-  **POBJ_LIST_INSERT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_FOREACH_SAFE_TYPE(PMEMobjpool *pop, TOID var, TOID nvar)
+```
 
-  **POBJ_LIST_INSERT_NEW_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-      **pmemobj_constr** constructor, **void \***arg)
+##### Non-transactional persistent atomic circular doubly-linked list: #####
 
-  **POBJ_LIST_INSERT_NEW_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-      **void** (\*constructor)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg),
-      **void \***arg)
 
-  **POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-      **pmemobj_constr** constructor, **void \***arg)
+```c
+int pmemobj_list_insert(PMEMobjpool *pop, size_t pe_offset, void *head, PMEMoid dest, int before, PMEMoid oid);
 
-  **POBJ_LIST_INSERT_NEW_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-      **pmemobj_constr** constructor, **void \***arg)
+**PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** dest, **int** before, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor, **void \***arg);
 
-  **POBJ_LIST_REMOVE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+**int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset, **void \***head, **PMEMoid** oid, **int** free);
 
-  **POBJ_LIST_REMOVE_FREE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+**int** **pmemobj_list_move**(**PMEMobjpool \***pop,<br />
+**size_t** pe_old_offset, **void \***head_old,<br />
+**size_t** pe_new_offset, **void \***head_new,<br />
+**PMEMoid** dest, **int** before, **PMEMoid** oid);
 
-  **POBJ_LIST_MOVE_ELEMENT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
-      **POBJ_LIST_ENTRY** field_new)
+**POBJ_LIST_ENTRY**(TYPE)
 
-  **POBJ_LIST_MOVE_ELEMENT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
-      **POBJ_LIST_ENTRY** field_new)
+**POBJ_LIST_HEAD**(HEADNAME, TYPE)
 
-  **POBJ_LIST_MOVE_ELEMENT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
-      **POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
+**POBJ_LIST_FIRST**(**POBJ_LIST_HEAD \***head)
 
-  **POBJ_LIST_MOVE_ELEMENT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-      **POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
-      **POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
+**POBJ_LIST_NEXT**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_LAST**(**POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_PREV**(**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_DEST_TAIL**
+
+**POBJ_LIST_EMPTY**(**POBJ_LIST_HEAD \***head)
+
+**POBJ_LIST_DEST_HEAD**
+
+**POBJ_LIST_FOREACH**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_FOREACH_REVERSE**(**TOID** var, **POBJ_LIST_HEAD \***head, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_INSERT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_INSERT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_INSERT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_INSERT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_INSERT_NEW_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor, **void \***arg)
+
+**POBJ_LIST_INSERT_NEW_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**void** (\*constructor)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg),
+**void \***arg)
+
+**POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor, **void \***arg)
+
+**POBJ_LIST_INSERT_NEW_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
+**pmemobj_constr** constructor, **void \***arg)
+
+**POBJ_LIST_REMOVE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_REMOVE_FREE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+
+**POBJ_LIST_MOVE_ELEMENT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+**POBJ_LIST_ENTRY** field_new)
+
+**POBJ_LIST_MOVE_ELEMENT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
+**POBJ_LIST_ENTRY** field_new)
+
+**POBJ_LIST_MOVE_ELEMENT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
+
+**POBJ_LIST_MOVE_ELEMENT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
+**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
+**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
 
 **Transactional object manipulation:**
 
