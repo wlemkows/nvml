@@ -329,11 +329,9 @@ memory.
 * ```c
 void *pmem_memmove_persist(void *pmemdest, const void *src, size_t len);
 ```
-
 * ```c
 void *pmem_memcpy_persist(void *pmemdest, const void *src, size_t len);
 ```
-
 * ```c
 void *pmem_memset_persist(void *pmemdest, int c, size_t len);
 ```
@@ -364,9 +362,13 @@ fact that *pmemdest* is persistent memory and use instructions such as
 >WARNING: Using these functions where `pmem_is_pmem()` returns false
 may not do anything useful. Use the normal libc functions in that case.
 
-```c
+* ```c
 void *pmem_memmove_nodrain(void *pmemdest, const void *src, size_t len);
+```
+* ```c
 void *pmem_memcpy_nodrain(void *pmemdest, const void *src, size_t len);
+```
+* ```c
 void *pmem_memset_nodrain(void *pmemdest, int c, size_t len);
 ```
 
