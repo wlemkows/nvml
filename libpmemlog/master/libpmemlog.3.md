@@ -197,25 +197,25 @@ The library entry points described in this section are less commonly used than t
   void *(*realloc_func)(void *ptr, size_t size),
   char *(*strdup_func)(const char *s));```
 
-  The **pmemlog_set_funcs**() function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
+  The `pmemlog_set_funcs()` function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
-* **int** **pmemlog_check**(**const char \***path);
+* `int pmemlog_check(const char *path);`
 
-  The **pmemlog_check**() function performs a consistency check of the file indicated by *path* and returns 1 if the memory pool is found to be consistent. Any inconsistencies found will cause **pmemlog_check**() to return 0, in which case the use of the file with **libpmemlog** will result in undefined behavior. The debug version of **libpmemlog** will provide additional details on inconsistencies when **PMEMLOG_LOG_LEVEL** is at least 1, as described in the **DEBUGGING AND ERROR HANDLING** section below. **pmemlog_check**() will return -1 and set errno if it cannot perform the consistency check due to other errors. **pmemlog_check**() opens the given *path* read-only so it never makes any changes to the file.
+  The `pmemlog_check()` function performs a consistency check of the file indicated by *path* and returns 1 if the memory pool is found to be consistent. Any inconsistencies found will cause `pmemlog_check()` to return 0, in which case the use of the file with **libpmemlog** will result in undefined behavior. The debug version of **libpmemlog** will provide additional details on inconsistencies when **PMEMLOG_LOG_LEVEL** is at least 1, as described in the **DEBUGGING AND ERROR HANDLING** section below. `pmemlog_check()` will return -1 and set errno if it cannot perform the consistency check due to other errors. `pmemlog_check()` opens the given *path* read-only so it never makes any changes to the file.
 
 ### DEBUGGING AND ERROR HANDLING ###
 
 Two versions of **libpmemlog** are typically available on a development system. The normal version, accessed when a program is linked using the **-lpmemlog** option, is optimized for performance. That version skips checks that impact performance and never logs any trace information or performs any run-time assertions. If an error is detected during the call to **libpmemlog** function, an application may retrieve an error message describing the reason of failure using the following function:
 
-* **const char** **\*pmemlog_errormsg**(**void**);
+* `const char *pmemlog_errormsg(void);`
 
-  The **pmemlog_errormsg**() function returns a pointer to a static buffer containing the last error message logged for current thread. The error message may include description of the corresponding error code (if errno was set), as returned by **strerror**(3). The error message buffer is thread-local; errors encountered in one thread do not affect its value in other threads. The buffer is never cleared by any library function; its content is significant only when the return value of the immediately preceding call to **libpmemlog** function indicated an error, or if errno was set. The application must not modify or free the error message string, but it may be modified by subsequent calls to other library functions.
+  The `pmemlog_errormsg()` function returns a pointer to a static buffer containing the last error message logged for current thread. The error message may include description of the corresponding error code (if errno was set), as returned by **strerror**(3). The error message buffer is thread-local; errors encountered in one thread do not affect its value in other threads. The buffer is never cleared by any library function; its content is significant only when the return value of the immediately preceding call to **libpmemlog** function indicated an error, or if errno was set. The application must not modify or free the error message string, but it may be modified by subsequent calls to other library functions.
 
 A second version of **libpmemlog**, accessed when a program uses the libraries under **/usr/lib/nvml_debug**, contains run-time assertions and trace points. The typical way to access the debug version is to set the environment variable **LD_LIBRARY_PATH** to **/usr/lib/nvml_debug** or **/usr/lib64/nvml_debug** depending on where the debug libraries are installed on the system. The trace points in the debug version of the library are enabled using the environment variable **PMEMLOG_LOG_LEVEL**, which can be set to the following values:
 
 + **0** - This is the default level when **PMEMLOG_LOG_LEVEL** is not set. No log messages are emitted at this level.
 
-+ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **pmemlog_errormsg**().
++ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using `pmemlog_errormsg()`.
 
 + **2** - A trace of basic operations is logged.
 
