@@ -97,9 +97,9 @@ Under normal usage, **libpmemlog** will never print messages or intentionally ca
 
 ### MOST COMMONLY USED FUNCTIONS ###
 
-To use the pmem-resident log file provided by **libpmemlog**, a *memory pool* is first created. This is done with the **pmemlog_create**() function described in this section. The other functions described in this section then operate on the resulting log memory pool.
+To use the pmem-resident log file provided by **libpmemlog**, a *memory pool* is first created. This is done with the `pmemlog_create()` function described in this section. The other functions described in this section then operate on the resulting log memory pool.
 
-Once created, the memory pool is represented by an opaque handle, of type *PMEMlogpool**, which is passed to most of the other functions in this section. Internally, **libpmemlog** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the log memory API provided by **libpmemlog**.
+Once created, the memory pool is represented by an opaque handle, of type `PMEMlogpool*`, which is passed to most of the other functions in this section. Internally, **libpmemlog** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the `pmem_is_pmem()` function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the log memory API provided by **libpmemlog**.
 
 * `PMEMlogpool *pmemlog_open(const char *path);`
 
