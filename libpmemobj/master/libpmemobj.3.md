@@ -309,35 +309,36 @@ POBJ_LIST_ENTRY FIELD, size_t size,
 void (*constructor)(PMEMobjpool *pop, void *ptr, void *arg),
 void *arg)
 
-**POBJ_LIST_INSERT_NEW_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-**pmemobj_constr** constructor, **void \***arg)
+POBJ_LIST_INSERT_NEW_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
+pmemobj_constr constructor, void *arg)
 
-**POBJ_LIST_INSERT_NEW_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** listelm, **POBJ_LIST_ENTRY** FIELD, **size_t** size,<br />
-**pmemobj_constr** constructor, **void \***arg)
+POBJ_LIST_INSERT_NEW_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
+pmemobj_constr constructor, void *arg)
 
-**POBJ_LIST_REMOVE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_REMOVE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_REMOVE_FREE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**TOID** elm, **POBJ_LIST_ENTRY** FIELD)
+POBJ_LIST_REMOVE_FREE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+TOID elm, POBJ_LIST_ENTRY FIELD)
 
-**POBJ_LIST_MOVE_ELEMENT_HEAD**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
-**POBJ_LIST_ENTRY** field_new)
+POBJ_LIST_MOVE_ELEMENT_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
+POBJ_LIST_ENTRY field_new)
 
-**POBJ_LIST_MOVE_ELEMENT_TAIL**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_HEAD \***head_new, **TOID** elm, **POBJ_LIST_ENTRY** FIELD,<br />
-**POBJ_LIST_ENTRY** field_new)
+POBJ_LIST_MOVE_ELEMENT_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
+POBJ_LIST_ENTRY field_new)
 
-**POBJ_LIST_MOVE_ELEMENT_AFTER**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
-**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
+POBJ_LIST_MOVE_ELEMENT_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
+POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
 
-**POBJ_LIST_MOVE_ELEMENT_BEFORE**(**PMEMobjpool \***pop, **POBJ_LIST_HEAD \***head,<br />
-**POBJ_LIST_HEAD \***head_new, **TOID** listelm, **TOID** elm,<br />
-**POBJ_LIST_ENTRY** FIELD, **POBJ_LIST_ENTRY** field_new)
+POBJ_LIST_MOVE_ELEMENT_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
+POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+```
 
 **Transactional object manipulation:**
 
