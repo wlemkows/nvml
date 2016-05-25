@@ -270,8 +270,10 @@ to persistence, for the less common cases where an application needs
 more control of the flushing operations than the `pmem_persist()`
 function described above.
 
-```c
+* ```c
 void pmem_flush(const void *addr, size_t len);
+```
+* ```c
 void pmem_drain(void);
 ```
 
