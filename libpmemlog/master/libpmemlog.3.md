@@ -134,10 +134,7 @@ PMEMPOOLSET
 
 The files in the set may be created by running the following command:
 
-```c
-pmempool create log --from-set=mylogpool.set
-```
-
+`pmempool create log --from-set=mylogpool.set`
 
 * ```c
 void pmemlog_close(PMEMlogpool *plp);
