@@ -157,9 +157,11 @@ pmempool create log --from-set=mylogpool.set
   The `pmemlog_tell()` function returns the current write point for the log, expressed as a byte offset into the usable log space in the memory pool. This offset starts off as zero on a newly-created log, and is incremented by each successful append operation. This function can be used to determine how much data is currently in the log.
 
 * `void pmemlog_rewind(PMEMlogpool *plp);`
+
   The **pmemlog_rewind**() function resets the current write point for the log to zero. After this call, the next append adds to the beginning of the log.
 
 * `void pmemlog_walk(PMEMlogpool *plp, size_t chunksize, int (*process_chunk)(const void *buf, size_t len, void *arg), void *arg);`
+
   The `pmemlog_walk()` function walks through the log *plp*, from beginning to end, calling the callback function *process_chunk* for each *chunksize* block of data found. The argument *arg* is also passed to the callback to help avoid the need for global state. The *chunksize* argument is useful for logs with fixed-length records and may be specified as 0 to cause a single call to the callback with the entire log contents passed as the *buf* argument. The *len* argument tells the *process_chunk* function how much data buf is holding. The callback function should return 1 if `pmemlog_walk()` should continue walking through the log, or 0 to terminate the walk. The callback function is called while holding **libpmemlog** internal locks that make calls atomic, so the callback function must not try to append to the log itself or deadlock will occur.
 
 ### LIBRARY API VERSIONING ###
@@ -189,11 +191,11 @@ When the version check performed by `pmemlog_check_version()` is successful, the
 
 The library entry points described in this section are less commonly used than the previous sections.
 
-* `void pmemlog_set_funcs(<br />
-  void *(*malloc_func)(size_t size),<br />
-  void (*free_func)(void *ptr),<br />
-  void *(*realloc_func)(void *ptr, size_t size),<br />
-  char *(*strdup_func)(const char *s));`
+* ```void pmemlog_set_funcs(
+  void *(*malloc_func)(size_t size),
+  void (*free_func)(void *ptr),
+  void *(*realloc_func)(void *ptr, size_t size),
+  char *(*strdup_func)(const char *s));```
 
   The **pmemlog_set_funcs**() function allows an application to override memory allocation calls used internally by **libpmemlog**. Passing in NULL for any of the handlers will cause the **libpmemlog** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
 
