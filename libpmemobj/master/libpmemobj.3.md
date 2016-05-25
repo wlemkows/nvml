@@ -340,102 +340,113 @@ POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
 POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
 ```
 
-**Transactional object manipulation:**
-
-: **enum tx_stage** **pmemobj_tx_stage**(**void**);
-
-  **int** **pmemobj_tx_begin**(**PMEMobjpool \***pop, **jmp_buf \***env, **enum** tx_lock, ...);
-
-  **int** **pmemobj_tx_lock**(**enum tx_lock** lock_type, **void \***lockp);
-
-  **void** **pmemobj_tx_abort**(**int** errnum);
-
-  **void** **pmemobj_tx_commit**(**void**);
-
-  **int** **pmemobj_tx_end**(**void**);
-
-  **int** **pmemobj_tx_errno**(**void**);
-
-  **void** **pmemobj_tx_process**(**void**);
-
-  **int** **pmemobj_tx_add_range**(**PMEMoid** oid, **uint64_t** off, **size_t** size);
-
-  **int** **pmemobj_tx_add_range_direct**(**const void \***ptr, **size_t** size);
-
-  **PMEMoid** **pmemobj_tx_alloc**(**size_t** size, **uint64_t** type_num);
-
-  **PMEMoid** **pmemobj_tx_zalloc**(**size_t** size, **uint64_t** type_num);
-
-  **PMEMoid** **pmemobj_tx_realloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
-
-  **PMEMoid** **pmemobj_tx_zrealloc**(**PMEMoid** oid, **size_t** size, **uint64_t** type_num);
-
-  **PMEMoid** **pmemobj_tx_strdup**(**const char \***s, **uint64_t** type_num);
-
-  **int** **pmemobj_tx_free**(**PMEMoid** oid);
-
-  **TX_BEGIN_LOCK**(**PMEMobjpool \***pop, ...)
-
-  **TX_BEGIN**(**PMEMobjpool \***pop)
-
-  **TX_ONABORT**
-
-  **TX_ONCOMMIT**
-
-  **TX_FINALLY**
-
-  **TX_END**
-
-  **TX_ADD**(**TOID** o)
-
-  **TX_ADD_FIELD**(**TOID** o, FIELD)
-
-  **TX_ADD_DIRECT**(**TYPE \***p)
-
-  **TX_ADD_FIELD_DIRECT**(**TYPE \***p, FIELD)
-
-  **TX_NEW**(TYPE)
-
-  **TX_ALLOC**(TYPE, **size_t** size)
-
-  **TX_ZNEW**(TYPE)
-
-  **TX_ZALLOC**(TYPE, **size_t** size)
-
-  **TX_REALLOC**(**TOID** o, **size_t** size)
-
-  **TX_ZREALLOC**(**TOID** o, **size_t** size)
-
-  **TX_STRDUP**(**const char \***s, **uint64_t** type_num)
-
-  **TX_FREE**(**TOID** o)
-
-  **TX_SET**(**TOID** o, FIELD, VALUE)
-
-  **TX_SET_DIRECT**(**TYPE \***p, FIELD, VALUE)
-
-  **TX_MEMCPY**(**void \***dest, **const void \***src, **size_t** num)
-
-  **TX_MEMSET**(**void \***dest, **int** c, **size_t** num)
-
-  **Library API versioning:**
-
-  **const char** **\*pmemobj_check_version**(**unsigned** major_required, **unsigned** minor_required);
+##### Transactional object manipulation: #####
 
 
-**Managing library behavior:**
+```c
+enum tx_stage pmemobj_tx_stage(void);
 
-: **void** **pmemobj_set_funcs**(
-      **void** \*(\*malloc_func)(**size_t** size),
-      **void** (\*free_func)(**void \***ptr),
-      **void \*(\*realloc_func)(**void \***ptr, **size_t** size),
-      **char \***(\*strdup_func)(**const char \***s));
+int pmemobj_tx_begin(PMEMobjpool *pop, jmp_buf *env, enum tx_lock, ...);
 
-  **int** **pmemobj_check**(**const char \***path, **const char \***layout);
+int pmemobj_tx_lock(enum tx_lock lock_type, void *lockp);
 
-**Error handling:**
+void pmemobj_tx_abort(int errnum);
 
-: **const char** **\*pmemobj_errormsg**(**void**);
+void pmemobj_tx_commit(void);
+
+int pmemobj_tx_end(void);
+
+int pmemobj_tx_errno(void);
+
+void pmemobj_tx_process(void);
+
+int pmemobj_tx_add_range(PMEMoid oid, uint64_t off, size_t size);
+
+int pmemobj_tx_add_range_direct(const void *ptr, size_t size);
+
+PMEMoid pmemobj_tx_alloc(size_t size, uint64_t type_num);
+
+PMEMoid pmemobj_tx_zalloc(size_t size, uint64_t type_num);
+
+PMEMoid pmemobj_tx_realloc(PMEMoid oid, size_t size, uint64_t type_num);
+
+PMEMoid pmemobj_tx_zrealloc(PMEMoid oid, size_t size, uint64_t type_num);
+
+PMEMoid pmemobj_tx_strdup(const char *s, uint64_t type_num);
+
+int pmemobj_tx_free(PMEMoid oid);
+
+TX_BEGIN_LOCK(PMEMobjpool *pop, ...)
+
+TX_BEGIN(PMEMobjpool *pop)
+
+TX_ONABORT
+
+TX_ONCOMMIT
+
+TX_FINALLY
+
+TX_END
+
+TX_ADD(TOID o)
+
+TX_ADD_FIELD(TOID o, FIELD)
+
+TX_ADD_DIRECT(TYPE *p)
+
+TX_ADD_FIELD_DIRECT(TYPE *p, FIELD)
+
+TX_NEW(TYPE)
+
+TX_ALLOC(TYPE, size_t size)
+
+TX_ZNEW(TYPE)
+
+TX_ZALLOC(TYPE, size_t size)
+
+TX_REALLOC(TOID o, size_t size)
+
+TX_ZREALLOC(TOID o, size_t size)
+
+TX_STRDUP(const char *s, uint64_t type_num)
+
+TX_FREE(TOID o)
+
+TX_SET(TOID o, FIELD, VALUE)
+
+TX_SET_DIRECT(TYPE *p, FIELD, VALUE)
+
+TX_MEMCPY(void *dest, const void *src, size_t num)
+
+TX_MEMSET(void *dest, int c, size_t num)
+```
+
+##### Library API versioning: #####
+
+
+```c
+const char *pmemobj_check_version(unsigned major_required, unsigned minor_required);
+```
+
+##### Managing library behavior: #####
+
+
+```c
+void pmemobj_set_funcs(
+	void *(*malloc_func)(size_t size),
+	void (*free_func)(void *ptr),
+	void *(*realloc_func)(void *ptr, size_t size),
+	char *(*strdup_func)(const char *s));
+
+int pmemobj_check(const char *path, const char *layout);
+```
+
+##### Error handling: #####
+
+
+```c
+const char *pmemobj_errormsg(void);
+```
 
 
 ### DESCRIPTION ###
