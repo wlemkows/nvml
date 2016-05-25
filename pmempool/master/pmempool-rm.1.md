@@ -28,23 +28,23 @@ The **pmempool** invoked with **rm** command removes (unlinks) all files specifi
 
 **Available options:**
 
-**-h, –help**
+`-h, –help`
 
 : Print help message
 
-**-v, –verbose**
+`-v, –verbose`
 
 : Be verbose and print all removing files.
 
-**-s, –only-pools**
+`-s, –only-pools`
 
 : Remove only pool files and do not remove poolset files.
 
-**-f, –force**
+`-f, –force`
 
 : Remove all specified files, ignore not existing files, never prompt.
 
-**-i, –interactive**
+`-i, –interactive`
 
 : Prompt before removing every single file.
 
