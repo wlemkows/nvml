@@ -40,6 +40,7 @@ int vmem_check(VMEM *vmp);
 
 void vmem_stats_print(VMEM *vmp, const char *opts);
 ```
+
 ##### Memory allocation related functions: #####
 
 ```c
@@ -60,11 +61,9 @@ size_t vmem_malloc_usable_size(VMEM *vmp, void *ptr);
 
 ##### Managing overall library behavior: #####
 
-* ```c
+```c
 const char *vmem_check_version(unsigned major_required, unsigned minor_required);
-```
 
-* ```c
 void vmem_set_funcs(
 	void *(*malloc_func)(size_t size),
 	void (*free_func)(void *ptr),
@@ -75,7 +74,7 @@ void vmem_set_funcs(
 
 ##### Error handling: #####
 
-* ```c
+```c
 const char *vmem_errormsg(void);
 ```
 
