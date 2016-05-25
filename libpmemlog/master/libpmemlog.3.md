@@ -160,7 +160,7 @@ int pmemlog_appendv(PMEMlogpool *plp, const struct iovec *iov, int iovcnt);
 
   The `pmemlog_appendv()` function appends to the log *plp* just like `pmemlog_append()` above, but this function takes a scatter/gather list in a manner similar to **writev**(2). In this case, the entire list of buffers is appended atomically, as if the buffers in *iov* were concatenated in order. On success, zero is returned. On error, -1 is returned and errno is set.
 
->NOTE: Since **libpmemlog** is designed as a low-latency code path, many of the checks routinely done by the operating system for **writev**(2) are not practical in the library’s implementation of `pmemlog_appendv()`. No attempt is made to detect NULL or incorrect pointers, or illegal count values, for example.
+   >NOTE: Since **libpmemlog** is designed as a low-latency code path, many of the checks routinely done by the operating system for **writev**(2) are not practical in the library’s implementation of `pmemlog_appendv()`. No attempt is made to detect NULL or incorrect pointers, or illegal count values, for example.
 
 * ```c
 long long pmemlog_tell(PMEMlogpool *plp);
