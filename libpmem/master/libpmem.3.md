@@ -400,7 +400,7 @@ or `pmem_memset_nodrain()` on a destination where
 This section describes how the library API is versioned, allowing
 applications to work with an evolving API.
 
-```c
+* ```c
 const char *pmem_check_version(unsigned major_required, unsigned minor_required);
 ```
 
@@ -446,7 +446,7 @@ performs any run-time assertions. If an error is detected during the
 call to **libpmem** function, an application may retrieve an error
 message describing the reason of failure using the following function:
 
-```c
+* ```c
 const char *pmem_errormsg(void);
 ```
 
