@@ -132,9 +132,7 @@ PMEMPOOLSET
 
 The files in the set may be created by running the following command:
 
-```
-pmempool create blk <bsize> --from-set=myblkpool.set
-```
+`pmempool create blk <bsize> --from-set=myblkpool.set`
 
 * ```c
 void pmemblk_close(PMEMblkpool *pbp);
@@ -182,7 +180,7 @@ int pmemblk_set_zero(PMEMblkpool *pbp, long long blockno);
   Using this function is faster than actually writing a block of zeros since **libpmemblk** uses metadata to indicate the block should read back as zero.
   On success, zero is returned. On error, -1 is returned and errno is set.
 
-* ```
+* ```c
 int pmemblk_set_error(PMEMblkpool *pbp, long long blockno);
 ```
 
@@ -195,7 +193,9 @@ int pmemblk_set_error(PMEMblkpool *pbp, long long blockno);
 
 This section describes how the library API is versioned, allowing applications to work with an evolving API.
 
-* const char **\*pmemblk_check_version**(unsigned major_required, unsigned minor_required);
+* ```c
+const char *pmemblk_check_version(unsigned major_required, unsigned minor_required);
+```
 
   The **pmemblk_check_version**() function is used to see if the installed **libpmemblk** supports the version of the library API required by an application. The easiest way to do this is for the application to supply the compile-time version information, supplied by defines in **\<ibpmemblk.h\>**, like this:
 
