@@ -49,7 +49,7 @@ To force processing specified file(s) as desired pool type use `-f` option with 
 
 : Force parsing pool as specified pool type.
 
->By default only pool headers and internal meta-data are displayed. To display user data use `-d` option. Using `-r` option you can specify number of blocks/bytes/data chunks or objects using special text format. See **RANGE** section for details. The range refers to *block numbers* in case of pmem blk pool type, to *chunk numbers* in case of pmem log pool type and to *object numbers* in case of pmem obj pool type. See **EXAMPLES** section for an example of usage of these options.
+  >By default only pool headers and internal meta-data are displayed. To display user data use `-d` option. Using `-r` option you can specify number of blocks/bytes/data chunks or objects using special text format. See **RANGE** section for details. The range refers to *block numbers* in case of pmem blk pool type, to *chunk numbers* in case of pmem log pool type and to *object numbers* in case of pmem obj pool type. See **EXAMPLES** section for an example of usage of these options.
 
 `-d, –data`
 
@@ -322,7 +322,7 @@ Below is the description of statistical measures for specific pool types.
 
 : Print information and data in hexadecimal dump format for file pmem log.
 
-*`mempool info -d -r10-100 -eu ./pmemblk`
+`mempool info -d -r10-100 -eu ./pmemblk`
 
 : Print information from pmemblk file. Dump data blocks from 10 to 100, skip blocks marked with error flag and not marked with any flag.
 
