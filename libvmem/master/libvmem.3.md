@@ -225,7 +225,7 @@ A second version of **libvmem**, accessed when a program uses the libraries unde
 
 + **0** - This is the default level when **VMEM_LOG_LEVEL** is not set. Only statistics are logged, and then only in response to a call to `vmem_stats_print()`.
 
-+ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using **vmem_errormsg**().
++ **1** - Additional details on any errors detected are logged (in addition to returning the errno-based errors as usual). The same information may be retrieved using `vmem_errormsg()`.
 
 + **2** - A trace of basic operations including allocations and deallocations is logged.
 

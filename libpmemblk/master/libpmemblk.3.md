@@ -26,44 +26,56 @@ title: libpmemblk(3)
 
 ```c
 #include <ibpmemblk.h>
-```
 
 cc ... -lpmemblk -lpmem
+```
 
 
-**Most commonly used functions:**
+##### Most commonly used functions: #####
 
-: **PMEMblkpool** **\*pmemblk_open**(**const char \***path, **size_t** bsize);
+```c
+PMEMblkpool *pmemblk_open(const char *path, size_t bsize);
 
-  **PMEMblkpool** **\*pmemblk_create**(**const char \***path, **size_t** bsize, **size_t** poolsize, **mode_t** mode);
+PMEMblkpool *pmemblk_create(const char *path, size_t bsize, size_t poolsize, mode_t mode);
 
-  **void** **pmemblk_close**(**PMEMblkpool \***pbp);
+void pmemblk_close(PMEMblkpool *pbp);dnf
 
-  **size_t** **pmemblk_bsize**(**PMEMblkpool \***pbp);
+size_t pmemblk_bsize(PMEMblkpool *pbp);
 
-  **size_t** **pmemblk_nblock**(**PMEMblkpool \***pbp);
+size_t pmemblk_nblock(PMEMblkpool *pbp);
 
-  **int** **pmemblk_read**(**PMEMblkpool \***pbp, **void \***buf, **long long** blockno);
+int pmemblk_read(PMEMblkpool *pbp, void *buf, long long blockno);
 
-  **int** **pmemblk_write**(**PMEMblkpool \***pbp, **const void \***buf, **long long** blockno);
+int pmemblk_write(PMEMblkpool *pbp, const void *buf, long long blockno);
 
-  **int** **pmemblk_set_zero**(**PMEMblkpool \***pbp, **long long** blockno);
+int pmemblk_set_zero(PMEMblkpool *pbp, long long blockno);
 
-  **int** **pmemblk_set_error**(**PMEMblkpool \***pbp, **long long** blockno);
+int pmemblk_set_error(PMEMblkpool *pbp, long long blockno);
+```
 
-**Library API versioning:**
+##### Library API versioning: #####
 
-: **const char** **\*pmemblk_check_version**(**unsigned** major_required, **unsigned** minor_required);
+```c
+const char *pmemblk_check_version(unsigned major_required, unsigned minor_required);
+```
 
-**Managing library behavior:**
+##### Managing library behavior: #####
 
-: **void** **pmemblk_set_funcs**(**void **\*(\*malloc_func)(**size_t** size), **void** (\*free_func)(**void \***ptr), **void \***(\*realloc_func)(**void \***ptr, **size_t** size), **char \***(\*strdup_func)(**const char \***s));
+```c
+void pmemblk_set_funcs(
+	void *(*malloc_func)(size_t size),
+	void (*free_func)(void *ptr),
+	void *(*realloc_func)(void *ptr, size_t size),
+	char *(*strdup_func)(const char *s));
 
-  **int** **pmemblk_check**(**const char \***path, **size_t** bsize);
+int pmemblk_check(const char *path, size_t bsize);
+```
 
-**Error handling:**
+##### Error handling: #####
 
-: **const char** **\*pmemblk_errormsg**(**void**);
+```c
+const char *pmemblk_errormsg(void);
+```
 
 ### DESCRIPTION ###
 
@@ -81,7 +93,7 @@ Under normal usage, **libpmemblk** will never print messages or intentionally ca
 
 ### MOST COMMONLY USED FUNCTIONS ###
 
-To use the atomic block arrays supplied by **libpmemblk**, a *memory pool* is first created. This is done with the **pmemblk_create**() function described in this section. The other functions described in this section then operate on the resulting block memory pool. Once created, the memory pool is represented by an opaque handle, of type *PMEMblkpool*\*, which is passed to most of the other functions in this section. Internally, **libpmemblk** will use either **pmem_persist**() or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the block memory API provided by **libpmemblk**.
+To use the atomic block arrays supplied by **libpmemblk**, a *memory pool* is first created. This is done with the `pmemblk_create()` function described in this section. The other functions described in this section then operate on the resulting block memory pool. Once created, the memory pool is represented by an opaque handle, of type `PMEMblkpool*`, which is passed to most of the other functions in this section. Internally, **libpmemblk** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the `pmem_is_pmem()` function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the block memory API provided by **libpmemblk**.
 
 * **PMEMblkpoo**l **\*pmemblk_open**(**const char \***path, **size_t** bsize);
 
