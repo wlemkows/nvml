@@ -95,24 +95,27 @@ Under normal usage, **libpmemblk** will never print messages or intentionally ca
 
 To use the atomic block arrays supplied by **libpmemblk**, a *memory pool* is first created. This is done with the `pmemblk_create()` function described in this section. The other functions described in this section then operate on the resulting block memory pool. Once created, the memory pool is represented by an opaque handle, of type `PMEMblkpool*`, which is passed to most of the other functions in this section. Internally, **libpmemblk** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the `pmem_is_pmem()` function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the block memory API provided by **libpmemblk**.
 
-* **PMEMblkpoo**l **\*pmemblk_open**(**const char \***path, **size_t** bsize);
+* ```c
+ PMEMblkpoo *pmemblk_open(const char *path, size_t bsize);
+```
 
-  The **pmemblk_open**() function opens an existing block memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a block memory pool as created by **pmemblk_create**(). The application must have permission to open the file and memory map it with read/write permissions. If the *bsize* provided is non-zero, **pmemblk_open**() will verify the given block size matches the block size used when the pool was created. Otherwise, **pmemblk_open**() will open the pool without verification of the block size. The *bsize* can be determined using the **pmemblk_bsize**() function. If an error prevents the pool from being opened, **pmemblk_open**() returns NULL and sets errno appropriately. A block size mismatch with the *bsize* argument passed in results in errno being set to EINVAL.
+  The `pmemblk_open()` function opens an existing block memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a block memory pool as created by `pmemblk_create()`. The application must have permission to open the file and memory map it with read/write permissions. If the *bsize* provided is non-zero, `pmemblk_open()` will verify the given block size matches the block size used when the pool was created. Otherwise, `pmemblk_open()` will open the pool without verification of the block size. The *bsize* can be determined using the `pmemblk_bsize()` function. If an error prevents the pool from being opened, `pmemblk_open()` returns NULL and sets errno appropriately. A block size mismatch with the *bsize* argument passed in results in errno being set to EINVAL.
 
-* **PMEMblkpool** **\*pmemblk_create**(**const char \***path, **size_t** bsize, **size_t** poolsize, **mode_t** mode);
+* ```c
+PMEMblkpool *pmemblk_create(const char *path, size_t bsize, size_t poolsize, mode_t mode);
+```
 
-  The **pmemblk_create**() function creates a block memory pool with the given total *poolsize* divided up into as many elements of size *bsize* as will fit in the pool. Since the transactional nature of a block memory pool requires some space overhead in the memory pool, the resulting number of available blocks is less than *poolsize / bsize*, and is made available to the caller via the **pmemblk_nblock**() function described below. Given the specifics of the implementation, the number of available blocks for the user cannot be less than 256. This translates to at least 512 internal blocks. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemblk_create**() and then specifying *poolsize* as zero. In this case **pmemblk_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a block pool is defined in **\<libpmemblk.h\>** as **PMEMBLK_MIN_POOL**. *bsize* can be any non-zero value, however **libpmemblk** will silently round up the given size to **PMEMBLK_MIN_BLK**, as defined in **\<libpmemblk.h\>**.
-
+  The `pmemblk_create()` function creates a block memory pool with the given total *poolsize* divided up into as many elements of size *bsize* as will fit in the pool. Since the transactional nature of a block memory pool requires some space overhead in the memory pool, the resulting number of available blocks is less than *poolsize / bsize*, and is made available to the caller via the `pmemblk_nblock()` function described below. Given the specifics of the implementation, the number of available blocks for the user cannot be less than 256. This translates to at least 512 internal blocks. *path* specifies the name of the memory pool file to be created. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling `pmemblk_create()` and then specifying *poolsize* as zero. In this case `pmemblk_create()` will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a block pool is defined in `<libpmemblk.h>` as **PMEMBLK_MIN_POOL**. *bsize* can be any non-zero value, however **libpmemblk** will silently round up the given size to **PMEMBLK_MIN_BLK**, as defined in `<libpmemblk.h>`.
 
 Depending on the configuration of the system, the available space of non-volatile memory space may be divided into multiple memory devices. In such case, the maximum size of the pmemblk memory pool could be limited by the capacity of a single memory device. The **libpmemblk** allows building persistent memory resident array spanning multiple memory devices by creation of persistent memory pools consisting of multiple files, where each part of such a *pool set* may be stored on different pmem-aware filesystem.
 
-Creation of all the parts of the pool set can be done with the **pmemblk_create**() function. However, the recommended method for creating pool sets is to do it by using the **pmempool**(1) utility.
+Creation of all the parts of the pool set can be done with the `pmemblk_create()` function. However, the recommended method for creating pool sets is to do it by using the **pmempool**(1) utility.
 
-When creating the pool set consisting of multiple files, the *path* argument passed to **pmemblk_create**() must point to the special *set* file that defines the pool layout and the location of all the parts of the pool set. The *poolsize* argument must be 0. The meaning of *layout* and *mode* arguments doesn’t change, except that the same *mode* is used for creation of all the parts of the pool set. If the error prevents any of the pool set files from being created, **pmemblk_create**() returns NULL and sets errno appropriately.
+When creating the pool set consisting of multiple files, the *path* argument passed to `pmemblk_create()` must point to the special *set* file that defines the pool layout and the location of all the parts of the pool set. The *poolsize* argument must be 0. The meaning of *layout* and *mode* arguments doesn’t change, except that the same *mode* is used for creation of all the parts of the pool set. If the error prevents any of the pool set files from being created, `pmemblk_create()` returns NULL and sets errno appropriately.
 
-When opening the pool set consisting of multiple files, the *path* argument passed to **pmemblk_open**() must not point to the pmemblk memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file **pmemblk_open**() returns NULL and sets errno appropriately.
+When opening the pool set consisting of multiple files, the *path* argument passed to `pmemblk_open()` must not point to the pmemblk memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file `pmemblk_open()` returns NULL and sets errno appropriately.
 
-The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a block pool consisting of one file. It is defined in **\<libpmemblk.h\>** as **PMEMBLK_MIN_POOL**. Lines starting with “#” character are ignored.
+The set file is a plain text file, which must start with the line containing a `PMEMPOOLSET` string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The minimum file size of each part of the pool set is the same as the minimum size allowed for a block pool consisting of one file. It is defined in `<libpmemblk.h>` as **PMEMBLK_MIN_POOL**. Lines starting with “#” character are ignored.
 
 Here is the example “myblkpool.set” file:
 
@@ -129,43 +132,57 @@ The files in the set may be created by running the following command:
 pmempool create blk <bsize> --from-set=myblkpool.set
 ```
 
-* **void** **pmemblk_close**(**PMEMblkpool \***pbp);
+* ```c
+void pmemblk_close(PMEMblkpool *pbp);
+```
 
-  The **pmemblk_close**() function closes the memory pool indicated by *pbp* and deletes the memory pool handle.
-  The block memory pool itself lives on in the file that contains it and may be re-opened at a later time using **pmemblk_open**() as described above.
+  The `pmemblk_close()` function closes the memory pool indicated by *pbp* and deletes the memory pool handle.
+  The block memory pool itself lives on in the file that contains it and may be re-opened at a later time using `pmemblk_open()` as described above.
 
-* **size_t** **pmemblk_bsize**(**PMEMblkpool \***pbp);
+* ```c
+size_t pmemblk_bsize(PMEMblkpool *pbp);
+```
 
-  The **pmemblk_bsize**() function returns the block size of the specified block memory pool. It’s the value which was passed as *bsize* to **pmemblk_create**().
-  *pbp* must be a block memory pool handle as returned by **pmemblk_open**() or **pmemblk_create**().
+  The `pmemblk_bsize()` function returns the block size of the specified block memory pool. It’s the value which was passed as *bsize* to `pmemblk_create()`.
+  *pbp* must be a block memory pool handle as returned by `pmemblk_open()` or `pmemblk_create()`.
 
-* **size_t** **pmemblk_nblock**(**PMEMblkpool \***pbp);
+* ```c
+size_t pmemblk_nblock(PMEMblkpool *pbp);
+```
 
-  The **pmemblk_nblock**() function returns the usable space in the block memory pool, expressed as the number of blocks available.
-  *pbp* must be a block memory pool handle as returned by **pmemblk_open**() or **pmemblk_create**().
+  The `pmemblk_nblock()` function returns the usable space in the block memory pool, expressed as the number of blocks available.
+  *pbp* must be a block memory pool handle as returned by `pmemblk_open()` or `pmemblk_create()`.
 
-* **int** **pmemblk_read**(**PMEMblkpool \***pbp, **void \***buf, **long long** blockno);
+* ```c
+int pmemblk_read(PMEMblkpool *pbp, void *buf, long long blockno);
+```
 
-  The **pmemblk_read**() function reads a block from memory pool *pbp*, block number *blockno*, into the buffer *buf*.
+  The `pmemblk_read()` function reads a block from memory pool *pbp*, block number *blockno*, into the buffer *buf*.
   On success, zero is returned. On error, -1 is returned and errno is set.
-  Reading a block that has never been written by **pmemblk_write**() will return a block of zeroes.
+  Reading a block that has never been written by `pmemblk_write()` will return a block of zeroes.
 
-* **int** **pmemblk_write**(**PMEMblkpool \***pbp, **const void \***buf, **long long** blockno);
+* ```c
+int pmemblk_write(PMEMblkpool *pbp, const void *buf, long long blockno);
+```
 
-  The **pmemblk_write**() function writes a block from *buf* to block number *blockno* in the memory pool *pbp*.
+  The `pmemblk_write()` function writes a block from *buf* to block number *blockno* in the memory pool *pbp*.
   The write is atomic with respect to other reads and writes. In addition, the write cannot be torn by program failure or system crash;
   on recovery the block is guaranteed to contain either the old data or the new data, never a mixture of both.
   On success, zero is returned. On error, -1 is returned and errno is set.
 
-* **int** **pmemblk_set_zero**(**PMEMblkpool \***pbp, **long long** blockno);
+* ```c
+int pmemblk_set_zero(PMEMblkpool *pbp, long long blockno);
+```
 
-  The **pmemblk_set_zero**() function writes zeros to block number *blockno* in memory pool *pbp*.
+  The `pmemblk_set_zero()` function writes zeros to block number *blockno* in memory pool *pbp*.
   Using this function is faster than actually writing a block of zeros since **libpmemblk** uses metadata to indicate the block should read back as zero.
   On success, zero is returned. On error, -1 is returned and errno is set.
 
-* **int** **pmemblk_set_error**(**PMEMblkpool \***pbp, **long long** blockno);
+* ```
+int pmemblk_set_error(PMEMblkpool *pbp, long long blockno);
+```
 
-  The **pmemblk_set_error**() function sets the error state for block number *blockno* in memory pool *pbp*.
+  The `pmemblk_set_error()` function sets the error state for block number *blockno* in memory pool *pbp*.
   A block in the error state returns errno EIO when read. Writing the block clears the error state and returns the block to normal use.
   On success, zero is returned. On error, -1 is returned and errno is set.
 
