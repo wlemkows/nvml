@@ -27,7 +27,7 @@ title: libpmem(3)
 
 ```c
 #include <libpmem.h>
-cc … -lpmem
+cc ... -lpmem
 ```
 
 ##### Most commonly used functions: #####
@@ -154,7 +154,7 @@ void pmem_persist(const void *addr, size_t len);
   *addr* and *len*, but `pmem_persist()` may expand the range as
   necessary to meet platform alignment requirements.
 
->WARNING: Like **msync**(2), there is nothing atomic or transactional
+  >WARNING: Like **msync**(2), there is nothing atomic or transactional
 about this call. Any unwritten stores in the given range will be
 written, but some stores may have already been written by virtue of
 normal cache eviction/replacement policies. Correctly written code must
@@ -287,7 +287,7 @@ void pmem_persist(const void *addr, size_t len)
   several discontiguous ranges can call `pmem_flush()` for each range
   and then follow up by calling `pmem_drain()` once.
 
->NOTE: Some software is designed for custom platforms that obviate the
+  >NOTE: Some software is designed for custom platforms that obviate the
 need for using PCOMMIT (perhaps the platform issues PCOMMIT on shutdown
 or something similar). Even in such cases, it is recommended that
 applications using **libpmem** do not skip the step of calling
@@ -401,6 +401,7 @@ if (reason != NULL)
   /* version check failed, reason string tells you why */
 }
 ```
+
 Any mismatch in the major version number is considered a failure, but a
 library with a newer minor version number will pass this check since
 increasing minor versions imply backwards compatibility.
