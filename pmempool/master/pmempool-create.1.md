@@ -71,7 +71,7 @@ By default when creating a pmem **blk** pool, the **BTT** layout is *not* writte
 
 ##### Options for PMEMOBJ: #####
 
-: By default when creating a pmem **obj** pool, the layout name provided to the **libpmemobj** library is an empty string. Please refer to **libpmemobj**(3) for details.
+By default when creating a pmem **obj** pool, the layout name provided to the **libpmemobj** library is an empty string. Please refer to **libpmemobj**(3) for details.
 
 `-l, –layout <layout>`
 
