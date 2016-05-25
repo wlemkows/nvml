@@ -53,42 +53,41 @@ void pmemobj_close(PMEMobjpool *pop);
 ```
 
 ##### Low-level memory manipulation: #####
-test
-<pre>
-<b>void</b> *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
-</pre>
+
 
 ```c
-  void *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
+void *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
 
-  void *pmemobj_memset_persist(PMEMobjpool *pop, void *dest, int c, size_t len);
+void *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
 
-  void pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len);
+void *pmemobj_memset_persist(PMEMobjpool *pop, void *dest, int c, size_t len);
 
-  void pmemobj_flush(PMEMobjpool *pop, const void *addr, size_t len);
+void pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len);
 
-  void pmemobj_drain(PMEMobjpool *pop);
+void pmemobj_flush(PMEMobjpool *pop, const void *addr, size_t len);
+
+void pmemobj_drain(PMEMobjpool *pop);
 ```
 
-**Locking:**
+##### Locking: #####
 
-: **void** **pmemobj_mutex_zero**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+void pmemobj_mutex_zero(PMEMobjpool *pop, PMEMmutex *mutexp);
 
-  **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+int pmemobj_mutex_lock(PMEMobjpool *pop, PMEMmutex *mutexp);
 
-  **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop, **PMEMmutex \*restrict** mutexp, **const struct timespec \*restrict** abs_timeout);
+int pmemobj_mutex_timedlock(PMEMobjpool *pop, PMEMmutex *restrict mutexp, const struct timespec *restrict abs_timeout);
 
-  **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+int pmemobj_mutex_trylock(PMEMobjpool *pop, PMEMmutex *mutexp);
 
-  **int** **pmemobj_mutex_unlock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+int pmemobj_mutex_unlock(PMEMobjpool *pop, PMEMmutex *mutexp);
 
-  **void** **pmemobj_rwlock_zero**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+void pmemobj_rwlock_zero(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **int** **pmemobj_rwlock_rdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+int pmemobj_rwlock_rdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+int pmemobj_rwlock_wrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 
-  **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
+int **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
 
   **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop, **PMEMrwlock \*restrict** rwlockp, **const struct timespec \*restrict** abs_timeout);
 
