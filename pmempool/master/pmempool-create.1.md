@@ -26,7 +26,7 @@ pmempool create [<options>] [<type>] [<bsize>] <file>
 
 The **pmempool** invoked with **create** command creates a pool file of specified type. Depending on a pool type it is possible to provide more properties of pool.
 
-Valid pool types are: **blk**, **log** and **obj** which stands for *pmem*blk, *pmem*log and *pmem*obj pools respectively. By default the pool file is created with *minimum* allowed size for specified pool type. The minimum sizes for **blk**, **log** and **obj** pool types are **PMEMBLK_MIN_POOL**, **PMEMLOG_MIN_POOL** and **PMEMOBJ_MIN_POOL** respectively. See **libpmemblk**(3)**, libpmemlog**(3) and **libpmemobj**(3) for details.
+Valid pool types are: **blk**, **log** and **obj** which stands for *pmemblk*, *pmemlog* and *pmemobj* pools respectively. By default the pool file is created with *minimum* allowed size for specified pool type. The minimum sizes for **blk**, **log** and **obj** pool types are **PMEMBLK_MIN_POOL**, **PMEMLOG_MIN_POOL** and **PMEMOBJ_MIN_POOL** respectively. See **libpmemblk**(3)**, libpmemlog**(3) and **libpmemobj**(3) for details.
 
 For *pmemblk* pool type block size `<bsize>` is a required argument.
 
