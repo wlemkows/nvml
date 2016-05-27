@@ -194,11 +194,8 @@ POBJ_LAYOUT_TYPES_NUM(layout)
 typedef int (*pmemobj_constr)(PMEMobjpool *pop, void *ptr, void *arg);
 
 int pmemobj_alloc(
-	PMEMobjpool *pop, 
-	PMEMoid *oidp, size_t size, 
-	uint64_t type_num, 
-	pmemobj_constr constructor, 
-	void *arg);
+	PMEMobjpool *pop, PMEMoid *oidp, size_t size, 
+	uint64_t type_num, pmemobj_constr constructor, void *arg);
 
 int pmemobj_zalloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
 
@@ -223,12 +220,8 @@ uint64_t pmemobj_type_num(PMEMoid oid);
 POBJ_NEW(PMEMobjpool *pop, TOID *oidp, TYPE, pmemobj_constr constructor, void *arg)
 
 POBJ_ALLOC(
-	PMEMobjpool *pop, 
-	TOID *oidp, 
-	TYPE, 
-	size_t size, 
-	pmemobj_constr constructor, 
-	void *arg)
+	PMEMobjpool *pop, TOID *oidp, 
+	TYPE, size_t size, pmemobj_constr constructor, void *arg)
 
 POBJ_ZNEW(PMEMobjpool *pop, TOID *oidp, TYPE)
 
@@ -248,10 +241,8 @@ POBJ_FREE(TOID *oidp)
 PMEMoid pmemobj_root(PMEMobjpool *pop, size_t size);
 
 PMEMoid pmemobj_root_construct(
-	PMEMobjpool *pop, 
-	size_t size, 
-	pmemobj_constr constructor, 
-	void *arg);
+	PMEMobjpool *pop, size_t size, 
+	pmemobj_constr constructor, void *arg);
 
 size_t pmemobj_root_size(PMEMobjpool *pop);
 
@@ -287,7 +278,9 @@ POBJ_FOREACH_SAFE_TYPE(PMEMobjpool *pop, TOID var, TOID nvar)
 
 
 ```c
-int pmemobj_list_insert(PMEMobjpool *pop, size_t pe_offset, void *head, PMEMoid dest, int before, PMEMoid oid);
+int pmemobj_list_insert(
+	PMEMobjpool *pop, size_t pe_offset,
+	void *head, PMEMoid dest, int before, PMEMoid oid);
 
 PMEMoid pmemobj_list_insert_new(
 	PMEMobjpool *pop, size_t pe_offset, 
