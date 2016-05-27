@@ -469,40 +469,50 @@ Under normal usage, **libpmemobj** will never print messages or intentionally ca
 
 ### MOST COMMONLY USED FUNCTIONS ###
 
-To use the pmem-resident transactional object store provided by **libpmemobj**, a *memory pool* is first created. This is done with the **pmemobj_create**() function described in this section. The other functions described in this section then operate on the resulting memory pool.
+To use the pmem-resident transactional object store provided by **libpmemobj**, a *memory pool* is first created. This is done with the `pmemobj_create()` function described in this section. The other functions described in this section then operate on the resulting memory pool.
 
-Once created, the memory pool is represented by an opaque handle, of type *PMEMobjpool **, which is passed to most of the other functions in this section. Internally, **libpmemobj** will use either **pmem_persist**() or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the **pmem_is_pmem**() function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the obj memory API provided by **libpmemobj**.
+Once created, the memory pool is represented by an opaque handle, of type *PMEMobjpool **, which is passed to most of the other functions in this section. Internally, **libpmemobj** will use either `pmem_persist()` or **msync**(2) when it needs to flush changes, depending on whether the memory pool appears to be persistent memory or a regular file (see the `pmem_is_pmem()` function in **libpmem**(3) for more information). There is no need for applications to flush changes directly when using the obj memory API provided by **libpmemobj**.
 
-* **PMEMobjpool** **\*pmemobj_open**(**const char \***path, **const char \***layout);
+* ```c
+PMEMobjpool *pmemobj_open(const char *path, const char *layout);
+```
 
-  The **pmemobj_open**() function opens an existing object store memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a pmemobj memory pool as created by **pmemobj_create**(). If *layout* is non-NULL, it is compared to the layout name provided to **pmemobj_create**() when the pool was first created. This can be used to verify the layout of the pool matches what was expected. The application must have permission to open the file and memory map it with read/write permissions. If an error prevents the pool from being opened, or if the given *layout* does not match the pool’s layout, **pmemobj_open**() returns NULL and sets errno appropriately.
+  The `pmemobj_open()` function opens an existing object store memory pool, returning a memory pool handle used with most of the functions in this section. *path* must be an existing file containing a pmemobj memory pool as created by `pmemobj_create()`. If *layout* is non-NULL, it is compared to the layout name provided to `pmemobj_create()` when the pool was first created. This can be used to verify the layout of the pool matches what was expected. The application must have permission to open the file and memory map it with read/write permissions. If an error prevents the pool from being opened, or if the given *layout* does not match the pool’s layout, `pmemobj_open()` returns NULL and sets errno appropriately.
 
-* **PMEMobjpool** **\*pmemobj_create**(**const char \***path, **const char \***layout, **size_t** poolsize, **mode_t** mode);
+* ```c
+PMEMobjpool *pmemobj_create(const char *path, const char *layout, size_t poolsize, mode_t mode);
+```
 
-  The **pmemobj_create**() function creates a transactional object store with the given total *poolsize*. *path* specifies the name of the memory pool file to be created. *layout* specifies the application’s layout type in the form of a string. The layout name is not interpreted by **libpmemobj**, but may be used as a check when **pmemobj_open**() is called. The layout name, including the null termination, cannot be longer than **PMEMOBJ_MAX_LAYOUT** as defined in **\<libpmemobj.h\>**. It is allowed to pass NULL as *layout*, which is equivalent for using an empty string as a layout name. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemobj_create**() and then specifying *poolsize* as zero. In this case **pmemobj_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a transactional object store is defined in **\<libpmemobj.h\>** as **PMEMOBJ_MIN_POOL**.
+  The `pmemobj_create()` function creates a transactional object store with the given total *poolsize*. *path* specifies the name of the memory pool file to be created. *layout* specifies the application’s layout type in the form of a string. The layout name is not interpreted by **libpmemobj**, but may be used as a check when **pmemobj_open**() is called. The layout name, including the null termination, cannot be longer than **PMEMOBJ_MAX_LAYOUT** as defined in **\<libpmemobj.h\>**. It is allowed to pass NULL as *layout*, which is equivalent for using an empty string as a layout name. *mode* specifies the permissions to use when creating the file as described by **creat**(2). The memory pool file is fully allocated to the size *poolsize* using **posix_fallocate**(3). The caller may choose to take responsibility for creating the memory pool file by creating it before calling **pmemobj_create**() and then specifying *poolsize* as zero. In this case **pmemobj_create**() will take the pool size from the size of the existing file and will verify that the file appears to be empty by searching for any non-zero data in the pool header at the beginning of the file. The minimum file size allowed by the library for a transactional object store is defined in **\<libpmemobj.h\>** as **PMEMOBJ_MIN_POOL**.
 
 * ```c 
 void pmemobj_close(PMEMobjpool *pop); 
 ```
 
-  The **pmemobj_close**() function closes the memory pool indicated by *pop* and deletes the memory pool handle. The object store itself lives on in the file that contains it and may be re-opened at a later time using **pmemobj_open**() as described above.
+  The `pmemobj_close()` function closes the memory pool indicated by *pop* and deletes the memory pool handle. The object store itself lives on in the file that contains it and may be re-opened at a later time using `pmemobj_open()` as described above.
 
 
 ### LOW-LEVEL MEMORY MANIPULATION ###
 
 The **libpmemobj** specific low-level memory manipulation functions leverage the knowledge of the additional configuration options available for **libpmemobj** pools, such as replication. They also take advantage of the type of storage behind the pool and use appropriate flush/drain functions. It is advised to use these functions in conjunction with **libpmemobj** objects, instead of using low-level memory manipulations functions from **libpmem**.
 
-* **void** **pmemobj_persist**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
+* ```c
+void pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len);
+```
 
-  Forces any changes in the range [*addr*, *addr*+*len*) to be stored durably in persistent memory. Internally this may call either **pmem_msync**() or **pmem_persist**(). There are no alignment restrictions on the range described by *addr* and *len*, but **pmemobj_persist**() may expand the range as necessary to meet platform alignment requirements.
+  Forces any changes in the range [*addr*, *addr*+*len*) to be stored durably in persistent memory. Internally this may call either `pmem_msync()` or `pmem_persist()`. There are no alignment restrictions on the range described by *addr* and *len*, but `pmemobj_persist()` may expand the range as necessary to meet platform alignment requirements.
 
->WARNING: Like **msync**(2), there is nothing atomic or transactional about this call. Any unwritten stores in the given range will be written, but some stores may have already been written by virtue of normal cache eviction/replacement policies. Correctly written code must not depend on stores waiting until **pmemobj_persist**() is called to become persistent – they can become persistent at any time before **pmemobj_persist**() is called.
+>WARNING: Like **msync**(2), there is nothing atomic or transactional about this call. Any unwritten stores in the given range will be written, but some stores may have already been written by virtue of normal cache eviction/replacement policies. Correctly written code must not depend on stores waiting until `pmemobj_persist()` is called to become persistent – they can become persistent at any time before `pmemobj_persist()` is called.
 
 
-* **void** **pmemobj_flush**(**PMEMobjpool \***pop, **const void \***addr, **size_t** len);
-* **void** **pmemobj_drain**(**PMEMobjpool \***pop);
+* ```c
+void pmemobj_flush(PMEMobjpool *pop, const void *addr, size_t len);
+```
+* ```c
+void pmemobj_drain(PMEMobjpool *pop);
+```
 
-  These functions provide partial versions of the **pmemobj_persist**() function described above. **pmemobj_persist**() can be thought of as this:
+  These functions provide partial versions of the `pmemobj_persist()` function described above. `pmemobj_persist()` can be thought of as this:
 
 ```c
 void
@@ -516,13 +526,17 @@ pmemobj_persist(PMEMobjpool *pop, const void *addr, size_t len)
 }
 ```
 
-These functions allow advanced programs to create their own variations of **pmemobj_persist**(). For example, a program that needs to flush several discontiguous ranges can call **pmemobj_flush**() for each range and then follow up by calling **pmemobj_drain**() once. For more information on partial flushing operations see the **libpmem** manpage.
+These functions allow advanced programs to create their own variations of `pmemobj_persist()`. For example, a program that needs to flush several discontiguous ranges can call `pmemobj_flush()` for each range and then follow up by calling `pmemobj_drain()` once. For more information on partial flushing operations see the **libpmem** manpage.
 
 
-* **void** **\*pmemobj_memcpy_persist**(**PMEMobjpool \***pop, **void \***dest, **const void \***src, **size_t** len);
-* **void** **\*pmemobj_memset_persist**(**PMEMobjpool \***pop, **void \***dest, **int** c, **size_t** len);
+* ```c
+void *pmemobj_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src, size_t len);
+```
+* ```c
+void *pmemobj_memset_persist(PMEMobjpool *pop, void *dest, int c, size_t len);
+```
 
-  The **pmemobj_memcpy_persist**(), and **pmemobj_memset_persist**(), functions provide the same memory copying as their namesakes **memcpy**(3), and **memset**(3), and ensure that the result has been flushed to persistence before returning. For example, the following code is functionally equivalent to **pmemobj_memcpy_persist**():
+  The `pmemobj_memcpy_persist()`, and `pmemobj_memset_persist()`, functions provide the same memory copying as their namesakes **memcpy**(3), and **memset**(3), and ensure that the result has been flushed to persistence before returning. For example, the following code is functionally equivalent to `pmemobj_memcpy_persist()`:
 
 ```c
 void *
@@ -543,15 +557,15 @@ Depending on the configuration of the system, the available space of non-volatil
 
 To improve reliability and eliminate the single point of failure, all the changes of the data stored in the persistent memory pool could be also automatically written to local pool replicas, thereby providing a backup for a persistent memory pool by producing a *mirrored pool set*. In practice, the pool replicas may be considered binary copies of the “master” pool set.
 
-Creation of all the parts of the pool set and the associated replica sets can be done with the **pmemobj_create**() function or by using the **pmempool**(1) utility.
+Creation of all the parts of the pool set and the associated replica sets can be done with the `pmemobj_create()` function or by using the **pmempool**(1) utility.
 
-When creating the pool set consisting of multiple files, or when creating the replicated pool set, the *path* argument passed to **pmemobj_create**() must point to the special *set* file that defines the pool layout and the location of all the parts of the pool set. The *poolsize* argument must be 0. The meaning of *layout* and *mode* arguments doesn’t change, except that the same *mode* is used for creation of all the parts of the pool set and replicas. If the error prevents any of the pool set files from being created, **pmemobj_create**() returns NULL and sets errno appropriately.
+When creating the pool set consisting of multiple files, or when creating the replicated pool set, the *path* argument passed to `pmemobj_create()` must point to the special *set* file that defines the pool layout and the location of all the parts of the pool set. The *poolsize* argument must be 0. The meaning of *layout* and *mode* arguments doesn’t change, except that the same *mode* is used for creation of all the parts of the pool set and replicas. If the error prevents any of the pool set files from being created, `pmemobj_create()` returns NULL and sets errno appropriately.
 
-When opening the pool set consisting of multiple files, or when opening the replicated pool set, the *path* argument passed to **pmemobj_open**() must not point to the pmemobj memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file **pmemobj_open**() returns NULL and sets errno appropriately.
+When opening the pool set consisting of multiple files, or when opening the replicated pool set, the *path* argument passed to `pmemobj_open()` must not point to the pmemobj memory pool file, but to the same *set* file that was used for the pool set creation. If an error prevents any of the pool set files from being opened, or if the actual size of any file does not match the corresponding part size defined in *set* file `pmemobj_open()` returns NULL and sets errno appropriately.
 
 The set file is a plain text file, which must start with the line containing a *PMEMPOOLSET* string, followed by the specification of all the pool parts in the next lines. For each part, the file size and the absolute path must be provided. The size has to be compliant with the format specified in IEC 80000-13, IEEE 1541 or the Metric Interchange Format. Standards accept SI units with obligatory B - kB, MB, GB … (multiplier by 1000) and IEC units with optional “iB” - KiB, MiB, GiB, …, K, M, G, … - (multiplier by 1024).
 
-The minimum file size of each part of the pool set is the same as the minimum size allowed for a transactional object store consisting of one file. It is defined in **\<libpmemobj.h\>** as **PMEMOBJ_MIN_POOL**. Sections defining the replica sets are optional. There could be multiple replica sections and each must start with the line containing a *REPLICA* string. Lines starting with “#” character are ignored.
+The minimum file size of each part of the pool set is the same as the minimum size allowed for a transactional object store consisting of one file. It is defined in `<libpmemobj.h>` as **PMEMOBJ_MIN_POOL**. Sections defining the replica sets are optional. There could be multiple replica sections and each must start with the line containing a *REPLICA* string. Lines starting with “#” character are ignored.
 
 Here is the example “myobjpool.set” file:
 
@@ -577,94 +591,129 @@ pmempool create --layout="mylayout" obj myobjpool.set
 
 **libpmemobj** provides several types of synchronization primitives, designed so as to use them with persistent memory. The locks are not dynamically allocated, but embedded in pmem-resident objects. For performance reasons, they are also padded up to 64 bytes (cache line size).
 
-Pmem-aware locks implementation is based on the standard POSIX Thread Library, as described in **pthread_mutex**(3), **pthread_rwlock**(3) and **pthread_cond**(3). They provide semantics similar to standard **pthread** locks, except that they are considered initialized by zeroing them. So allocating the locks with **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() does not require another initialization step.
+Pmem-aware locks implementation is based on the standard POSIX Thread Library, as described in **pthread_mutex**(3), **pthread_rwlock**(3) and **pthread_cond**(3). They provide semantics similar to standard **pthread** locks, except that they are considered initialized by zeroing them. So allocating the locks with `pmemobj_zalloc()` or `pmemobj_tx_zalloc()` does not require another initialization step.
 
 The fundamental property of pmem-aware locks is their automatic reinitialization every time the persistent object store pool is open. This way, all the pmem-aware locks may be considered initialized (unlocked) right after opening the pool, regardless of their state at the time the pool was closed for the last time.
 
 Pmem-aware mutexes, read/write locks and condition variables must be declared with one of the *PMEMmutex*, *PMEMrwlock*, or *PMEMcond* type respectively.
 
-* **void** **pmemobj_mutex_zero**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+* ```c
+void pmemobj_mutex_zero(PMEMobjpool *pop, PMEMmutex *mutexp);
+```
 
-  The **pmemobj_mutex_zero**() function explicitly initializes pmem-aware mutex pointed by *mutexp* by zeroing it. Initialization is not necessary if the object containing the mutex has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
+  The `pmemobj_mutex_zero()` function explicitly initializes pmem-aware mutex pointed by *mutexp* by zeroing it. Initialization is not necessary if the object containing the mutex has been allocated using one of `pmemobj_zalloc()` or `pmemobj_tx_zalloc()` functions.
 
-* **int** **pmemobj_mutex_lock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+* ```c
+int pmemobj_mutex_lock(PMEMobjpool *pop, PMEMmutex *mutexp);
+```
 
-  The **pmemobj_mutex_lock**() function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, the calling thread will block until the mutex becomes available. If this is the first use of the mutex since opening of the pool *pop*, the mutex is automatically reinitialized and then locked.
+  The `pmemobj_mutex_lock()` function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, the calling thread will block until the mutex becomes available. If this is the first use of the mutex since opening of the pool *pop*, the mutex is automatically reinitialized and then locked.
 
-* **int** **pmemobj_mutex_timedlock**(**PMEMobjpool \***pop,<br />
-  **PMEMmutex \*restrictrestrict mutexp,<br />
-  **const struct timespec \*restrict** abs_timeout);
+* ```c
+int pmemobj_mutex_timedlock(PMEMobjpool *pop,
+  PMEMmutex *restrictrestrict mutexp,
+  const struct timespec *restrict abs_timeout);
+```
 
-  The **pmemobj_mutex_timedlock**() performs the same action as **pmemobj_mutex_lock**(), but will not wait beyond *abs_timeout* to obtain the lock before returning.
+  The `pmemobj_mutex_timedlock()` performs the same action as `pmemobj_mutex_lock()`, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
-* **int** **pmemobj_mutex_trylock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+* ```c
+int pmemobj_mutex_trylock(PMEMobjpool *pop, PMEMmutex *mutexp);
+```
 
-  The **pmemobj_mutex_trylock**() function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, **pthread_mutex_trylock**() will not block waiting for the mutex, but will return an error condition. If this is the first use of the mutex since opening of the pool *pop* the mutex is automatically reinitialized and then locked.
+  The `pmemobj_mutex_trylock()` function locks pmem-aware mutex pointed by *mutexp*. If the mutex is already locked, `pthread_mutex_trylock()` will not block waiting for the mutex, but will return an error condition. If this is the first use of the mutex since opening of the pool *pop* the mutex is automatically reinitialized and then locked.
 
-* **int** **pmemobj_mutex_unlock**(**PMEMobjpool \***pop, **PMEMmutex \***mutexp);
+* ```c
+int pmemobj_mutex_unlock(PMEMobjpool *pop, PMEMmutex *mutexp);
+```
 
-  The **pmemobj_mutex_unlock**() function unlocks an acquired pmem-aware mutex pointed by *mutexp*. Undefined behavior follows if a thread tries to unlock a mutex that has not been locked by it, or if a thread tries to release a mutex that is already unlocked or not initialized.
+  The `pmemobj_mutex_unlock()` function unlocks an acquired pmem-aware mutex pointed by *mutexp*. Undefined behavior follows if a thread tries to unlock a mutex that has not been locked by it, or if a thread tries to release a mutex that is already unlocked or not initialized.
 
-* **void** **pmemobj_rwlock_zero**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c
+void pmemobj_rwlock_zero(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_zero**() function is used to explicitly initialize pmem-aware read/write lock pointed by *rwlockp* by zeroing it. Initialization is not necessary if the object containing the lock has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
+  The `pmemobj_rwlock_zero()` function is used to explicitly initialize pmem-aware read/write lock pointed by *rwlockp* by zeroing it. Initialization is not necessary if the object containing the lock has been allocated using one of `pmemobj_zalloc()` or `pmemobj_tx_zalloc()` functions.
 
-* **int** **pmemobj_rwlock_rdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c
+int pmemobj_rwlock_rdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_rdlock**() function acquires a read lock on *rwlockp* provided that lock is not presently held for writing and no writer threads are presently blocked on the lock. If the read lock cannot be immediately acquired, the calling thread blocks until it can acquire the lock. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
+  The `pmemobj_rwlock_rdlock()` function acquires a read lock on *rwlockp* provided that lock is not presently held for writing and no writer threads are presently blocked on the lock. If the read lock cannot be immediately acquired, the calling thread blocks until it can acquire the lock. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
-* **int** **pmemobj_rwlock_timedrdlock**(**PMEMobjpool \***pop, <br />
-  **PMEMrwlock \*restrict** rwlockp,<br />
-  **const struct timespec \*restrict** abs_timeout);
+* ```c
+int pmemobj_rwlock_timedrdlock(PMEMobjpool *pop,
+PMEMrwlock *restrict rwlockp,
+const struct timespec *restrict abs_timeout);
 
-  The **pmemobj_rwlock_timedrdlock**() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
+  The `pmemobj_rwlock_timedrdlock`() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
-  A thread may hold multiple concurrent read locks. If so, **pmemobj_rwlock_unlock**() must be called once for each lock obtained.
+  A thread may hold multiple concurrent read locks. If so, `pmemobj_rwlock_unlock()` must be called once for each lock obtained.
 
   The results of acquiring a read lock while the calling thread holds a write lock are undefined.
 
-* **int** **pmemobj_rwlock_wrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c 
+int pmemobj_rwlock_wrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_wrlock**() function blocks until a write lock can be acquired against lock pointed by *rwlockp*. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
+  The `pmemobj_rwlock_wrlock()` function blocks until a write lock can be acquired against lock pointed by *rwlockp*. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
-* **int** **pmemobj_rwlock_timedwrlock**(**PMEMobjpool \***pop,<br />
-  **PMEMrwlock \*restrict** rwlockp,<br />
-  **const struct timespec \*restrict** abs_timeout);
+* ```c
+int pmemobj_rwlock_timedwrlock(PMEMobjpool *pop,
+PMEMrwlock *restrict rwlockp,
+const struct timespec *restrict abs_timeout);
+```
 
-  The **pmemobj_rwlock_timedwrlock**() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
+  The `pmemobj_rwlock_timedwrlock()` performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
-* **int** **pmemobj_rwlock_tryrdlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c
+int pmemobj_rwlock_tryrdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_tryrdlock**() function performs the same action as **pmemobj_rwlock_rdlock**(), but does not block if the lock cannot be immediately obtained.
+  The `pmemobj_rwlock_tryrdlock()` function performs the same action as `pmemobj_rwlock_rdlock()`, but does not block if the lock cannot be immediately obtained.
   The results are undefined if the calling thread already holds the lock at the time the call is made.
 
-* **int** **pmemobj_rwlock_trywrlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c
+int pmemobj_rwlock_trywrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_trywrlock**() function performs the same action as **pmemobj_rwlock_wrlock**(), but does not block if the lock cannot be immediately obtained.
+  The `pmemobj_rwlock_trywrlock()` function performs the same action as `pmemobj_rwlock_wrlock()`, but does not block if the lock cannot be immediately obtained.
   The results are undefined if the calling thread already holds the lock at the time the call is made.
 
-* **int** **pmemobj_rwlock_unlock**(**PMEMobjpool \***pop, **PMEMrwlock \***rwlockp);
+* ```c
+int pmemobj_rwlock_unlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
+```
 
-  The **pmemobj_rwlock_unlock**() function is used to release the read/write lock previously obtained by **pmemobj_rwlock_rdlock**(), **pmemobj_rwlock_wrlock**(), **pthread_rwlock_tryrdlock**(), or **pmemobj_rwlock_trywrlock**().
+  The `pmemobj_rwlock_unlock()` function is used to release the read/write lock previously obtained by `pmemobj_rwlock_rdlock()`, `pmemobj_rwlock_wrlock()`, `pthread_rwlock_tryrdlock()`, or `pmemobj_rwlock_trywrlock()`.
 
-* **void pmemobj_cond_zero**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+* ```c
+void pmemobj_cond_zero(PMEMobjpool *pop, PMEMcond *condp);
+```
 
-  The **pmemobj_cond_zero**() function explicitly initializes pmem-aware condition variable by zeroing it. Initialization is not necessary if the object containing the condition variable has been allocated using one of **pmemobj_zalloc**() or **pmemobj_tx_zalloc**() functions.
+  The `pmemobj_cond_zero()` function explicitly initializes pmem-aware condition variable by zeroing it. Initialization is not necessary if the object containing the condition variable has been allocated using one of `pmemobj_zalloc()` or `pmemobj_tx_zalloc()` functions.
 
-* **int** **pmemobj_cond_broadcast**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+* ```c
+int pmemobj_cond_broadcast(PMEMobjpool *pop, PMEMcond *condp);
+```
 
-* **int** **pmemobj_cond_signal**(**PMEMobjpool \***pop, **PMEMcond \***condp);
+* ```c
+int pmemobj_cond_signal(PMEMobjpool *pop, PMEMcond *condp);
+```
 
-  The difference between **pmemobj_cond_broadcast**() and **pmemobj_cond_signal**() is that the former unblocks all threads waiting for the condition variable, whereas the latter blocks only one waiting thread. If no threads are waiting on *cond*, neither function has any effect. If more than one thread is blocked on a condition variable, the used scheduling policy determines the order in which threads are unblocked. The same mutex used for waiting must be held while calling either function. Although neither function strictly enforces this requirement, undefined behavior may follow if the mutex is not held.
+  The difference between `pmemobj_cond_broadcast()` and `pmemobj_cond_signal()` is that the former unblocks all threads waiting for the condition variable, whereas the latter blocks only one waiting thread. If no threads are waiting on *cond*, neither function has any effect. If more than one thread is blocked on a condition variable, the used scheduling policy determines the order in which threads are unblocked. The same mutex used for waiting must be held while calling either function. Although neither function strictly enforces this requirement, undefined behavior may follow if the mutex is not held.
 
-* **int** **pmemobj_cond_timedwait**(**PMEMobjpool \***pop, **PMEMcond \*restrict** condp,<br />
-  **PMEMmutex \*restrict** mutexp,<br />
-  **const struct timespec \*restrict** abs_timeout);
+* ```c
+int pmemobj_cond_timedwait(PMEMobjpool *pop, PMEMcond *restrict condp,
+PMEMmutex *restrict mutexp,
+const struct timespec *restrict abs_timeout);
+```
 
-* **int pmemobj_cond_wait**(**PMEMobjpool \***pop, **PMEMcond \***condp,<br />
-  **PMEMmutex \*restrict** mutexp);
+* ```c
+int pmemobj_cond_wait(PMEMobjpool *pop, PMEMcond *condp,
+PMEMmutex *restrict mutexp);
+```
 
-  The **pmemobj_cond_timedwait**() and **pmemobj_cond_wait**() functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to **pmemobj_cond_broadcast**() or **pmemobj_cond_signal**() in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
+  The `pmemobj_cond_timedwait()` and `pmemobj_cond_wait()` functions shall block on a condition variable. They shall be called with mutex locked by the calling thread or undefined behavior results. These functions atomically release mutex pointed by *mutexp* and cause the calling thread to block on the condition variable *cond*; atomically here means “atomically with respect to access by another thread to the mutex and then the condition variable”. That is, if another thread is able to acquire the mutex after the about-to-block thread has released it, then a subsequent call to `pmemobj_cond_broadcast()` or `pmemobj_cond_signal()` in that thread shall behave as if it were issued after the about-to-block thread has blocked. Upon successful return, the mutex shall have been locked and shall be owned by the calling thread.
 
 
 ### PERSISTENT OBJECTS ###
@@ -675,114 +724,161 @@ An OID cannot be considered as a direct pointer to an object. Each time the prog
 
 In contrast to the memory address, the OID value for given object does not change during the life of an object (except for realloc operation), and remains valid after closing and reopening the pool. For this reason, if an object contains a reference to another persistent object - necessary to build some kind of a linked data structure - it shall never use memory address of an object, but its OID.
 
-* **void** **pmemobj_direct**(**PMEMoid** oid);
+* ```c
+void pmemobj_direct(PMEMoid oid);
+```
 
-  The **pmemobj_direct**() function returns a pointer to an object represented by *oid*. If OID_NULL is passed as an argument, function returns NULL.
+  The `pmemobj_direct()` function returns a pointer to an object represented by *oid*. If OID_NULL is passed as an argument, function returns NULL.
 
-* **uint64_t** **pmemobj_type_num**(**PMEMoid** oid);
+* ```c
+uint64_t pmemobj_type_num(PMEMoid oid);
+```
 
-  The **pmemobj_type_num**() function returns a type number of the object represented by *oid*.
+  The `pmemobj_type_num()` function returns a type number of the object represented by *oid*.
 
-* **PMEMobjpool** **\*pmemobj_pool_by_oid**(**PMEMoid** oid);
+* ```c
+PMEMobjpool *pmemobj_pool_by_oid(PMEMoid oid);
+```
 
-  The **pmemobj_pool_by_oid**() function returns a handle to the pool which contains the object represented by *oid*. If the pool is not open or OID_NULL is passed as an argument, function returns NULL.
+  The `pmemobj_pool_by_oid()` function returns a handle to the pool which contains the object represented by *oid*. If the pool is not open or OID_NULL is passed as an argument, function returns NULL.
 
-* **PMEMobjpool** **\*pmemobj_pool_by_ptr**(**const void \***addr);
+* ```c
+PMEMobjpool *pmemobj_pool_by_ptr(const void *addr);
+```
 
-  The **pmemobj_pool_by_ptr**() function returns a handle to the pool which contains the address. If the address does not belong to any open pool, function returns NULL.
+  The `pmemobj_pool_by_ptr()` function returns a handle to the pool which contains the address. If the address does not belong to any open pool, function returns NULL.
 
 
 At the time of allocation (or reallocation), each object may be assigned a number representing its type. Such a *type number* may be used to arrange the persistent objects based on their actual user-defined structure type, thus facilitating implementation of a simple run-time type safety mechanism. It also allows to iterate through all the objects of given type stored in the persistent memory pool. See **OBJECT CONTAINERS** section for more details.
 
-The **OID_IS_NULL** macro checks if given *PMEMoid* represents a NULL object.
+The `OID_IS_NULL` macro checks if given *PMEMoid* represents a NULL object.
 
-The **OID_EQUALS** macro compares two *PMEMoid* objects.
+The `OID_EQUALS` macro compares two *PMEMoid* objects.
 
 
 ### TYPE-SAFETY ###
 
 Operating on untyped object handles, as well as on direct untyped object pointers (void \*) may be confusing and error prone. To facilitate implementation of type safety mechanism, **libpmemobj** defines a set of macros that provide a static type enforcement, catching potential errors at compile time. For example, a compile-time error is generated when an attempt is made to assign a handle to an object of one type to the object handle variable of another type of object.
 
-* **TOID_DECLARE**(TYPE, **uint64_t** type_num)
+* ```c
+TOID_DECLARE(TYPE, uint64_t type_num)
+```
 
-  The **TOID_DECLARE** macro declares a typed OID of user-defined type specified by argument *TYPE*, and with type number specified by argument *type_num*.
+  The `TOID_DECLARE` macro declares a typed OID of user-defined type specified by argument *TYPE*, and with type number specified by argument *type_num*.
 
-* **TOID_DECLARE_ROOT**(ROOT_TYPE)
+* ```c
+TOID_DECLARE_ROOT(ROOT_TYPE)
+```
 
-  The **TOID_DECLARE_ROOT** macro declares a typed OID of user-defined type specified by argument *ROOT_TYPE*, and with type number for root object **POBJ_ROOT_TYPE_NUM**.
+  The `TOID_DECLARE_ROOT` macro declares a typed OID of user-defined type specified by argument *ROOT_TYPE*, and with type number for root object **POBJ_ROOT_TYPE_NUM**.
 
-* **TOID**(TYPE)
+* ```c
+TOID(TYPE)
+```
 
-  The **TOID** macro declares a handle to an object of type specified by argument *TYPE*, where *TYPE* is the name of a user-defined structure. The typed OID must be declared first using the **TOID_DECLARE**, **TOID_DECLARE_ROOT**, **POBJ_LAYOUT_TOID** or **POBJ_LAYOUT_ROOT** macros.
+  The `TOID` macro declares a handle to an object of type specified by argument *TYPE*, where *TYPE* is the name of a user-defined structure. The typed OID must be declared first using the `TOID_DECLARE`, `TOID_DECLARE_ROOT`, `POBJ_LAYOUT_TOID` or `POBJ_LAYOUT_ROOT` macros.
 
-* **TOID_TYPE_NUM**(TYPE)
+* ```c
+TOID_TYPE_NUM(TYPE)
+```
 
-  The **TOID_TYPE_NUM** macro returns a type number of the type specified by argument *TYPE*.
+  The `TOID_TYPE_NUM` macro returns a type number of the type specified by argument *TYPE*.
 
-* **TOID_TYPE_NUM_OF**(**TOID** oid)
+* ```c
+TOID_TYPE_NUM_OF(TOID oid)
+```
 
-  The **TOID_TYPE_NUM_OF** macro returns a type number of the object specified by argument *oid*. The type number is read from the typed OID.
+  The `TOID_TYPE_NUM_OF` macro returns a type number of the object specified by argument *oid*. The type number is read from the typed OID.
 
-* **TOID_VALID**(**TOID** oid)
+* ```c
+TOID_VALID(TOID oid)
+```
 
-  The **TOID_VALID** macro validates whether the type number stored in object’s metadata is equal to the type number read from typed OID.
+  The `TOID_VALID` macro validates whether the type number stored in object’s metadata is equal to the type number read from typed OID.
 
-* **OID_INSTANCEOF**(**PMEMoid** oid, TYPE)
+* ```c
+OID_INSTANCEOF(PMEMoid oid, TYPE)
+```
 
-  The **OID_INSTANCEOF** macro checks whether the *oid* is of the type specified by argument *TYPE*.
+  The `OID_INSTANCEOF` macro checks whether the *oid* is of the type specified by argument *TYPE*.
 
-* **TOID_ASSIGN**(**TOID** o, VALUE)
+* ```c
+TOID_ASSIGN(TOID o, VALUE)
 
-  The **TOID_ASSIGN** macro assigns an object handle specified by *VALUE* to the variable *o*.
+  The `TOID_ASSIGN` macro assigns an object handle specified by *VALUE* to the variable *o*.
 
-* **TOID_IS_NULL**(**TOID** o)
+* ```c
+TOID_IS_NULL(TOID o)
+```
 
-  The **TOID_IS_NULL** macro evaluates to true if the object handle represented by argument *o* has OID_NULL value.
+  The `TOID_IS_NULL` macro evaluates to true if the object handle represented by argument *o* has OID_NULL value.
 
-* **TOID_EQUALS**(**TOID** lhs, **TOID** rhs)
+* ```c
+TOID_EQUALS(TOID lhs, TOID rhs)
+```
 
-  The **TOID_EQUALS** macro evaluates to true if both *lhs* and *rhs* object handles are referencing the same persistent object.
+  The `TOID_EQUALS` macro evaluates to true if both *lhs* and *rhs* object handles are referencing the same persistent object.
 
-* **DIRECT_RW**(**TOID** oid)
+* ```c
+DIRECT_RW(TOID oid)
+```
 
-* **D_RW**(**TOID** oid)
-  The **DIRECT_RW**() macro and its shortened form **D_RW**() return a typed write pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
+* ```c
+D_RW(TOID oid)
+```
 
-* **DIRECT_RO**(**TOID** oid)
+  The `DIRECT_RW()` macro and its shortened form `D_RW()` return a typed write pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
 
-* **D_RO**(**TOID** oid)
-  The **DIRECT_RO**() macro and its shortened form **D_RO**() return a typed read-only (const) pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
+* ```c
+DIRECT_RO(TOID oid)
+```
+
+* ```c
+D_RO(TOID oid)
+```
+
+  The `DIRECT_RO()` macro and its shortened form `D_RO()` return a typed read-only (const) pointer (TYPE \*) to an object represented by *oid*. If *oid* holds OID_NULL value, the macro evaluates to NULL.
 
 
 ### LAYOUT DECLARATION ###
 
 The *libpmemobj* defines a set of macros for convenient declaration of pool’s layout. The declaration of layout consist of declaration of number of used types. The declared types will be assigned consecutive type numbers. Declared types may be used in conjunction with type safety macros. Once created the layout declaration shall not be changed unless the new types are added at the end of the existing layout declaration. Modifying any of existing declaration may lead to changes in type numbers of declared types which in consequence may cause data corruption.
 
-* **POBJ_LAYOUT_BEGIN**(LAYOUT)
+* ```c
+POBJ_LAYOUT_BEGIN(LAYOUT)
+```
 
-  The **POBJ_LAYOUT_BEGIN** macro indicates a begin of declaration of layout. The *LAYOUT* argument is a name of layout. This argument must be passed to all macros related to the declaration of layout.
+  The `POBJ_LAYOUT_BEGIN` macro indicates a begin of declaration of layout. The *LAYOUT* argument is a name of layout. This argument must be passed to all macros related to the declaration of layout.
 
-* **POBJ_LAYOUT_TOID**(LAYOUT, TYPE)
+* ```c
+POBJ_LAYOUT_TOID(LAYOUT, TYPE)
+```
 
-  The **POBJ_LAYOUT_TOID** macro declares a typed OID for type passed as *TYPE* argument inside the declaration of layout. All types declared using this macro are assigned with consecutive type numbers. This macro must be used between the **POBJ_LAYOUT_BEGIN** and **POBJ_LAYOUT_END** macros, with the same name passed as *LAYOUT* argument.
+  The `POBJ_LAYOUT_TOID` macro declares a typed OID for type passed as *TYPE* argument inside the declaration of layout. All types declared using this macro are assigned with consecutive type numbers. This macro must be used between the `POBJ_LAYOUT_BEGIN` and `POBJ_LAYOUT_END` macros, with the same name passed as *LAYOUT* argument.
 
+* ```c
+POBJ_LAYOUT_ROOT(LAYOUT, ROOT_TYPE)
+```
 
-* **POBJ_LAYOUT_ROOT**(LAYOUT, ROOT_TYPE)
+  The `POBJ_LAYOUT_ROOT` macro declares a typed OID for type passed as *ROOT_TYPE* argument inside the declaration of layout. The typed OID will be assigned with type number for root object `POBJ_ROOT_TYPE_NUM`.
 
-  The **POBJ_LAYOUT_ROOT** macro declares a typed OID for type passed as *ROOT_TYPE* argument inside the declaration of layout. The typed OID will be assigned with type number for root object **POBJ_ROOT_TYPE_NUM**.
+* ```c
+POBJ_LAYOUT_END(LAYOUT)
+```
 
-* **POBJ_LAYOUT_END**(LAYOUT)
+  The `POBJ_LAYOUT_END` macro ends the declaration of layout.
 
-  The **POBJ_LAYOUT_END** macro ends the declaration of layout.
+* ```c
+POBJ_LAYOUT_NAME(LAYOUT)
+```
 
-* **POBJ_LAYOUT_NAME**(LAYOUT)
+  The `POBJ_LAYOUT_NAME` macro returns the name of layout as a NULL-terminated string.
 
-  The **POBJ_LAYOUT_NAME** macro returns the name of layout as a NULL-terminated string.
+* ```c
+POBJ_LAYOUT_TYPES_NUM(LAYOUT)
+```
 
-
-* **POBJ_LAYOUT_TYPES_NUM**(LAYOUT)
-
-  The **POBJ_LAYOUT_TYPES_NUM** macro returns number of types declared using the **POBJ_LAYOUT_TOID** macro within the layout declaration.
+  The `POBJ_LAYOUT_TYPES_NUM` macro returns number of types declared using the `POBJ_LAYOUT_TOID` macro within the layout declaration.
 
 This is an example of layout declaration:
 
@@ -820,66 +916,93 @@ All the objects in the persistent memory pool are assigned a *type number* and a
 
 The *libpmemobj* provides a mechanism allowing to iterate through the internal object collection, either looking for a specific object, or performing a specific operation on each object of given type. Software should not make any assumptions about the order of the objects in the internal object containers.
 
-* **PMEMoid pmemobj_first**(**PMEMobjpool \***pop);
+* ```c
+PMEMoid pmemobj_first(PMEMobjpool *pop);
+```
 
-  The **pmemobj_first**() function returns the first object from the pool. If the pool is empty, OID_NULL is returned.
+  The `pmemobj_first()` function returns the first object from the pool. If the pool is empty, OID_NULL is returned.
 
-* **POBJ_FIRST**(**PMEMobjpool \***pop, TYPE)
+* ```c
+POBJ_FIRST(PMEMobjpool *pop, TYPE)
+```
 
-  The **POBJ_FIRST** macro returns the first object from the pool of the type specified by *TYPE*.
+  The `POBJ_FIRST` macro returns the first object from the pool of the type specified by *TYPE*.
 
-* **POBJ_FIRST_TYPE_NUM**(**PMEMobjpool \***pop, **uint64_t** type_num)  The **POBJ_FIRST_TYPE_NUM** macro returns the first object from the pool of the type specified by *type_num*.
+* ```c
+POBJ_FIRST_TYPE_NUM(PMEMobjpool *pop, uint64_t type_num)  The `POBJ_FIRST_TYPE_NUM` macro returns the first object from the pool of the type specified by *type_num*.
 
-* **PMEMoid pmemobj_next**(**PMEMoid** oid);
+* ```c
+PMEMoid pmemobj_next(PMEMoid oid);
+```
 
-  The **pmemobj_next**() function returns the next object from the pool. If an object referenced by *oid* is the last object in the collection, or if the OID_NULL is passed as an argument, function returns OID_NULL.
+  The `pmemobj_next()` function returns the next object from the pool. If an object referenced by *oid* is the last object in the collection, or if the OID_NULL is passed as an argument, function returns OID_NULL.
 
-* **POBJ_NEXT**(**TOID** oid)
+* ```c
+POBJ_NEXT(TOID oid)
+```
 
-  The **POBJ_NEXT** macro returns the next object of the same type as the object referenced by *oid*.
+  The `POBJ_NEXT` macro returns the next object of the same type as the object referenced by *oid*.
 
-* **POBJ_NEXT_TYPE_NUM**(**PMEMoid** oid)
+* ```c
+POBJ_NEXT_TYPE_NUM(PMEMoid oid)
+```
 
-  The **POBJ_NEXT_TYPE_NUM** macro returns the next object of the same type as the object referenced by *oid*.
+  The `POBJ_NEXT_TYPE_NUM` macro returns the next object of the same type as the object referenced by *oid*.
 
 The following four macros provide more convenient way to iterate through the internal collections, performing a specific operation on each object.
 
-* **POBJ_FOREACH**(**PMEMobjpool \***pop, **PMEMoid** varoid)
+* ```c
+POBJ_FOREACH(PMEMobjpool *pop, PMEMoid varoid)
+```
 
-  The **POBJ_FOREACH**() macro allows to perform a specific operation on each allocated object stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects, assigning a handle to each element in turn to *varoid* variable.
+  The `POBJ_FOREACH()` macro allows to perform a specific operation on each allocated object stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects, assigning a handle to each element in turn to *varoid* variable.
 
-* **POBJ_FOREACH_TYPE**(**PMEMobjpool \***pop, **TOID** var)
+* ```c
+POBJ_FOREACH_TYPE(PMEMobjpool *pop, TOID var)
+```
 
-* **POBJ_FOREACH_TYPE**() macro allows to perform a specific operation on each allocated object of the same type as object passed as *var* argument, stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects of the specified type, assigning a handle to each element in turn to *var* variable.
+  The `POBJ_FOREACH_TYPE()` macro allows to perform a specific operation on each allocated object of the same type as object passed as *var* argument, stored in the persistent memory pool pointed by *pop*. It traverses the internal collection of all the objects of the specified type, assigning a handle to each element in turn to *var* variable.
 
-* **POBJ_FOREACH_SAFE**(**PMEMobjpool \***pop, **PMEMoid** varoid, **PMEMoid** nvaroid)
+* ```c
+POBJ_FOREACH_SAFE(PMEMobjpool *pop, PMEMoid varoid, PMEMoid nvaroid)
+```
 
-* **POBJ_FOREACH_SAFE_TYPE**(**PMEMobjpool \***pop, **TOID** var, **TOID** nvar)
+* ```c
+POBJ_FOREACH_SAFE_TYPE(PMEMobjpool *pop, TOID var, TOID nvar)
+```
 
-  The macros **POBJ_FOREACH_SAFE**() and **POBJ_FOREACH_SAFE_TYPE**() work in a similar fashion as **POBJ_FOREACH**() and **POBJ_FOREACH_TYPE**() except that prior to performing the operation on the object, they preserve a handle to the next object in the collection by assigning it to *nvaroid* or *nvar* variable. This allows safe deletion of selected objects while iterating through the collection.
+  The macros `POBJ_FOREACH_SAFE()` and `POBJ_FOREACH_SAFE_TYPE()` work in a similar fashion as `POBJ_FOREACH()` and `POBJ_FOREACH_TYPE()` except that prior to performing the operation on the object, they preserve a handle to the next object in the collection by assigning it to *nvaroid* or *nvar* variable. This allows safe deletion of selected objects while iterating through the collection.
 
 
 ### ROOT OBJECT MANAGEMENT ###
 
 The root object of persistent memory pool is an entry point for all other persistent objects allocated using the *libpmemobj* API. In other words, every single object stored in persistent memory pool should have the root object at the end of its reference path. It may be assumed that for each persistent memory pool the root object always exists, and there is exactly one root object in each pool.
 
-* **PMEMoid pmemobj_root**(**PMEMobjpool \***pop, **size_t** size);
+* ```c
+PMEMoid pmemobj_root(PMEMobjpool *pop, size_t size);
+```
 
-  The **pmemobj_root**() function returns a handle to the root object associated with the persistent memory pool pointed by *pop*. If this is the first call to **pmemobj_root**() and the root object does not exists yet, it is implicitly allocated in a thread-safe manner, so if the function is called by more than one thread simultaneously (with identical *size* value), the same root object handle is returned in all the threads.
+  The `pmemobj_root()` function returns a handle to the root object associated with the persistent memory pool pointed by *pop*. If this is the first call to `pmemobj_root()` and the root object does not exists yet, it is implicitly allocated in a thread-safe manner, so if the function is called by more than one thread simultaneously (with identical *size* value), the same root object handle is returned in all the threads.
 
-  The size of the root object is guaranteed to be not less than the requested *size*. If the requested size is larger than the current size, the root object is automatically resized. In such case, the old data is preserved and the extra space is zeroed. The **pmemobj_root**() function shall not fail, except for the case if the requested object size is larger than the maximum allocation size supported for given pool, or if there is not enough free space in the pool to satisfy the reallocation of the root object. In such case, OID_NULL is returned.
+  The size of the root object is guaranteed to be not less than the requested *size*. If the requested size is larger than the current size, the root object is automatically resized. In such case, the old data is preserved and the extra space is zeroed. The `pmemobj_root()` function shall not fail, except for the case if the requested object size is larger than the maximum allocation size supported for given pool, or if there is not enough free space in the pool to satisfy the reallocation of the root object. In such case, OID_NULL is returned.
 
-* **PMEMoid pmemobj_root_construct**(**PMEMobjpool \***pop, **size_t** size, **pmemobj_constr** constructor, **void \***arg)
+* ```c
+PMEMoid pmemobj_root_construct(PMEMobjpool *pop, size_t size, pmemobj_constr constructor, void *arg)
+```
 
-  The **pmemobj_root_construct**() performs the same actions as the **pmemobj_root**() function, but instead of zeroing the newly allocated object a *constructor* function is called. The constructor is also called on reallocations. If the constructor returns non-zero value the allocation is canceled, the **OID_NULL** value is returned from the caller and errno is set to **ECANCELED .** The **pmemobj_root_size**() can be used in the constructor to check whether it’s the first call to the constructor.
+  The `pmemobj_root_construct()` performs the same actions as the `pmemobj_root()` function, but instead of zeroing the newly allocated object a *constructor* function is called. The constructor is also called on reallocations. If the constructor returns non-zero value the allocation is canceled, the `OID_NULL` value is returned from the caller and errno is set to **ECANCELED**. The `pmemobj_root_size()` can be used in the constructor to check whether it’s the first call to the constructor.
 
-* **POBJ_ROOT**(**PMEMobjpool \***pop, TYPE)
+* ```c
+POBJ_ROOT(PMEMobjpool *pop, TYPE)
+```
 
-  The **POBJ_ROOT** macro works the same way as the **pmemobj_root**() function except it returns a typed OID of type *TYPE* instead of **PMEMoid**.
+  The `POBJ_ROOT` macro works the same way as the `pmemobj_root()` function except it returns a typed `OID` of type *TYPE* instead of `PMEMoid`.
 
-* **size_t pmemobj_root_size**(**PMEMobjpool \***pop);
+* ```c
+size_t pmemobj_root_size(PMEMobjpool *pop);
+```
 
-  The **pmemobj_root_size**() function returns the current size of the root object associated with the persistent memory pool pointed by *pop*. The returned size is the largest value requested by any of the earlier **pmemobj_root**() calls. 0 is returned if the root object has not been allocated yet.
+  The `pmemobj_root_size()` function returns the current size of the root object associated with the persistent memory pool pointed by *pop*. The returned size is the largest value requested by any of the earlier `pmemobj_root()` calls. 0 is returned if the root object has not been allocated yet.
 
 
 ### NON-TRANSACTIONAL ATOMIC ALLOCATIONS ###
