@@ -712,9 +712,9 @@ int pmemobj_rwlock_wrlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
   The `pmemobj_rwlock_wrlock()` function blocks until a write lock can be acquired against lock pointed by *rwlockp*. If this is the first use of the lock since opening of the pool *pop*, the lock is automatically reinitialized and then acquired.
 
 * ```c
-int pmemobj_rwlock_timedwrlock(PMEMobjpool *pop,
-PMEMrwlock *restrict rwlockp,
-const struct timespec *restrict abs_timeout);
+int pmemobj_rwlock_timedwrlock(
+	PMEMobjpool *pop, PMEMrwlock *restrict rwlockp,
+	const struct timespec *restrict abs_timeout);
 ```
 
   The `pmemobj_rwlock_timedwrlock()` performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
@@ -859,6 +859,7 @@ OID_INSTANCEOF(PMEMoid oid, TYPE)
 
 * ```c
 TOID_ASSIGN(TOID o, VALUE)
+```
 
   The `TOID_ASSIGN` macro assigns an object handle specified by *VALUE* to the variable *o*.
 
@@ -1045,7 +1046,9 @@ PMEMoid pmemobj_root(PMEMobjpool *pop, size_t size);
   The size of the root object is guaranteed to be not less than the requested *size*. If the requested size is larger than the current size, the root object is automatically resized. In such case, the old data is preserved and the extra space is zeroed. The `pmemobj_root()` function shall not fail, except for the case if the requested object size is larger than the maximum allocation size supported for given pool, or if there is not enough free space in the pool to satisfy the reallocation of the root object. In such case, `OID_NULL` is returned.
 
 * ```c
-PMEMoid pmemobj_root_construct(PMEMobjpool *pop, size_t size, pmemobj_constr constructor, void *arg)
+PMEMoid pmemobj_root_construct(
+	PMEMobjpool *pop, size_t size, 
+	pmemobj_constr constructor, void *arg)
 ```
 
   The `pmemobj_root_construct()` performs the same actions as the `pmemobj_root()` function, but instead of zeroing the newly allocated object a *constructor* function is called. The constructor is also called on reallocations. If the constructor returns non-zero value the allocation is canceled, the `OID_NULL` value is returned from the caller and errno is set to **ECANCELED**. The `pmemobj_root_size()` can be used in the constructor to check whether it’s the first call to the constructor.
@@ -1078,7 +1081,10 @@ typedef int (*pmemobj_constr)(**PMEMobjpool *pop, void *ptr, void *arg);
   The `pmemobj_constr` type represents a constructor for atomic allocation from persistent memory heap associated with memory pool *pop*. The *ptr* is a pointer to allocating memory area and the *arg* is an user-defined argument passed to an appropriate function.
 
 * ```c
-int pmemobj_alloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num, pmemobj_constr constructor , void *arg);
+int pmemobj_alloc(
+	PMEMobjpool *pop, PMEMoid *oidp, 
+	size_t size, uint64_t type_num, 
+	pmemobj_constr constructor , void *arg);
 ```
 
   The `pmemobj_alloc` function allocates a new object from the persistent memory heap associated with memory pool *pop*. The `PMEMoid` of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized, or if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then `pmemobj_alloc()` returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
@@ -1126,7 +1132,9 @@ POBJ_NEW(PMEMobjpool *pop, TOID *oidp, TYPE, pmemobj_constr constructor, void *a
   The `POBJ_NEW` macro is a wrapper around the `pmemobj_alloc()` function which takes the type name **TYPE** and passes the size and type number to the `pmemobj_alloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
 * ```c
-POBJ_ALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size, pmemobj_constr constructor , void *arg)
+POBJ_ALLOC(
+	PMEMobjpool *pop, TOID *oidp, TYPE, size_t size, 
+	pmemobj_constr constructor , void *arg)
 ```
 
   The `POBJ_ALLOC` macro is a wrapper around the `pmemobj_alloc()` function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the `pmemobj_alloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
@@ -1184,32 +1192,36 @@ The user-defined structure of each element must contain a field of type **list_e
 The functions below are intended to be used outside transactions - transactional variants are described in section **TRANSACTIONAL OBJECT MANIPULATION**. Note that operations performed using this non-transactional API are independent from their transactional counterparts. If any non-transactional allocations or list manipulations are performed within an open transaction, the changes will not be rolled-back if such a transaction is aborted or interrupted.
 
 * ```c
-int pmemobj_list_insert(PMEMobjpool *pop, size_t pe_offset,
-void *head, PMEMoid dest, int before, PMEMoid oid);
+int pmemobj_list_insert(
+	PMEMobjpool *pop, size_t pe_offset, void *head,
+	PMEMoid dest, int before, PMEMoid oid);
 ```
 
   The `pmemobj_list_insert()` function inserts an element represented by object handle *oid* into the list referenced by *head*. Depending on the value of flag *before*, the object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. The *head* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
 * ```c
-PMEMoid pmemobj_list_insert_new(PMEMobjpool *pop, size_t pe_offset,
-void *head, PMEMoid dest, int before, size_t size,
-uint64_t type_num, pmemobj_constr constructor, void arg);
+PMEMoid pmemobj_list_insert_new(
+	PMEMobjpool *pop, size_t pe_offset,
+	void *head, PMEMoid dest, int before, size_t size,
+	uint64_t type_num, pmemobj_constr constructor, void arg);
 ```
 
   The `pmemobj_list_insert_new()` function atomically allocates a new object of given *size* and type *type_num* and inserts it into the list referenced by *head*. Depending on the value of *before* flag, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* must point to the objects allocated from the same memory pool *pop*. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized or, if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *head* cannot be OID_NULL. The allocated object is also added to the internal container associated with given *type_num*. as described in section **OBJECT CONTAINERS**. On success, it returns a handle to the newly allocated object. On error, `OID_NULL` is returned and errno is set.
 
 * ```c
-int pmemobj_list_remove(PMEMobjpool *pop, size_t pe_offset,
-void *head, PMEMoid oid, int free);
+int pmemobj_list_remove(
+	PMEMobjpool *pop, size_t pe_offset,
+	void *head, PMEMoid oid, int free);
 ```
 
   The `pmemobj_list_remove()` function removes the object referenced by *oid* from the list pointed by *head*. If *free* flag is set, it also removes the object from the internal object container and frees the associated memory space. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. Both *head* and *oid* must point to the objects allocated from the same memory pool *pop* and cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
 * ```c
-int pmemobj_list_move(PMEMobjpool *pop,
-size_t pe_old_offset, void *head_old,
-size_t pe_new_offset, void *head_new,
-PMEMoid dest, int before, PMEMoid oid);
+int pmemobj_list_move(
+	PMEMobjpool *pop,
+	size_t pe_old_offset, void *head_old,
+	size_t pe_new_offset, void *head_new,
+	PMEMoid dest, int before, PMEMoid oid);
 ```
 
   The `pmemobj_list_move()` function moves the object represented by *oid* from the list pointed by *head_old* to the list pointed by *head_new*. Depending on the value of flag *before*, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the second list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through `POBJ_LIST_DEST_HEAD` and `POBJ_LIST_DEST_TAIL` defines respectively. The arguments *pe_old_offset* and *pe_new_offset* declare the offsets of the structures that connects the elements in the old and new lists respectively. All the handles *head_old*, *head_new*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. *head_old*, *head_new* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
@@ -1290,99 +1302,120 @@ POBJ_LIST_FOREACH_REVERSE(TOID var, POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD)
   The macro `POBJ_LIST_FOREACH_REVERSE` traverses the list referenced by *head* in reverse order, assigning a handle to each element in turn to *var* variable. The *field* argument is the name of the field of type `POBJ_LIST_ENTRY` in the element structure.
 
 * ```c
-POBJ_LIST_INSERT_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_INSERT_HEAD(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_INSERT_HEAD` inserts the element *elm* at the head of the list referenced by *head*.
 
 * ```c
-POBJ_LIST_INSERT_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_INSERT_TAIL(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_INSERT_TAIL` inserts the element *elm* at the end of the list referenced by *head*.
 
 * ```c
-POBJ_LIST_INSERT_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_INSERT_AFTER(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_INSERT_AFTER` inserts the element *elm* into the list referenced by *head* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list.
 
 * ```c
-POBJ_LIST_INSERT_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_INSERT_BEFORE(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID listelm, TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_INSERT_BEFORE` inserts the element *elm* into the list referenced by *head* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list.
 
 * ```c
-POBJ_LIST_INSERT_NEW_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD, size_t size, pmemobj_constr constructor , void *arg)
+POBJ_LIST_INSERT_NEW_HEAD(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, POBJ_LIST_ENTRY FIELD, 
+	size_t size, pmemobj_constr constructor , void *arg)
 ```
 
   The macro `POBJ_LIST_INSERT_NEW_HEAD` atomically allocates a new object of size *size* and inserts it at the head of the list referenced by *head*. The newly allocated object is also added to the internal object container associated with a type number which is retrieved from the typed OID of the first element on list.
 
 * ```c
-POBJ_LIST_INSERT_NEW_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-POBJ_LIST_ENTRY FIELD, size_t size,
-pmemobj_constr constructor , void *arg)
+POBJ_LIST_INSERT_NEW_TAIL(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	POBJ_LIST_ENTRY FIELD, size_t size,
+	pmemobj_constr constructor , void *arg)
 ```
 
   The macro `POBJ_LIST_INSERT_NEW_TAIL` atomically allocates a new object of size *size* and inserts it at the tail of the list referenced by *head*. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
 * ```c
-POBJ_LIST_INSERT_NEW_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
-pmemobj_constr constructor , void *arg)
+POBJ_LIST_INSERT_NEW_AFTER(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
+	pmemobj_constr constructor , void *arg)
 ```
 
   The macro `POBJ_LIST_INSERT_NEW_AFTER` atomically allocates a new object of size *size* and inserts it into the list referenced by *head* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
 * ```c
-POBJ_LIST_INSERT_NEW_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
-pmemobj_constr constructor, void *arg)
+POBJ_LIST_INSERT_NEW_BEFORE(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	TOID listelm, POBJ_LIST_ENTRY FIELD, size_t size,
+	pmemobj_constr constructor, void *arg)
 ```
 
   The macro `POBJ_LIST_INSERT_NEW_BEFORE` atomically allocates a new object of size *size* and inserts it into the list referenced by *head* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list. The newly allocated object is also added to the internal object container associated with with a type number which is retrieved from the typed OID of the first element on list.
 
 * ```c
-POBJ_LIST_REMOVE(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_REMOVE(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_REMOVE` removes the element *elm* from the list referenced by *head*.
 
 * ```c
-POBJ_LIST_REMOVE_FREE(PMEMobjpool *pop, POBJ_LIST_HEAD *head, TOID elm, POBJ_LIST_ENTRY FIELD)
+POBJ_LIST_REMOVE_FREE(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head, 
+	TOID elm, POBJ_LIST_ENTRY FIELD)
 ```
 
   The macro `POBJ_LIST_REMOVE_FREE` removes the element *elm* from the list referenced by *head* and frees the memory space represented by this element.
 
 * ```c
-POBJ_LIST_MOVE_ELEMENT_HEAD(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
-POBJ_LIST_ENTRY field_new)
+POBJ_LIST_MOVE_ELEMENT_HEAD(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
+	POBJ_LIST_ENTRY field_new)
 ```
 
   The macro `POBJ_LIST_MOVE_ELEMENT_HEAD` moves the element *elm* from the list referenced by *head* to the head of the list *head_new*. The *field* and *field_new* arguments are the names of the fields of type *POBJ_LIST_ENTRY* in the element structure that are used to connect the elements in both lists.
 
 * ```c
-POBJ_LIST_MOVE_ELEMENT_TAIL(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
-POBJ_LIST_ENTRY field_new)
+POBJ_LIST_MOVE_ELEMENT_TAIL(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	POBJ_LIST_HEAD *head_new, TOID elm, POBJ_LIST_ENTRY FIELD,
+	POBJ_LIST_ENTRY field_new)
 ```
 
   The macro `POBJ_LIST_MOVE_ELEMENT_TAIL` moves the element *elm* from the list referenced by *head* to the end of the list *head_new*. The *field* and *field_new* arguments are the names of the fields of type `POBJ_LIST_ENTRY` in the element structure that are used to connect the elements in both lists.
 
 * ```c
-POBJ_LIST_MOVE_ELEMENT_AFTER(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
-POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+POBJ_LIST_MOVE_ELEMENT_AFTER(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
+	POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
 ```
 
   The macro `POBJ_LIST_MOVE_ELEMENT_AFTER` atomically removes the element *elm* from the list referenced by *head* and inserts it into the list referenced by *head_new* after the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the end of the list. The *field* and *field_new* arguments are the names of the fields of type `POBJ_LIST_ENTRY` in the element structure that are used to connect the elements in both lists.
 
 * ```c
-POBJ_LIST_MOVE_ELEMENT_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
-POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
-POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
+POBJ_LIST_MOVE_ELEMENT_BEFORE(
+	PMEMobjpool *pop, POBJ_LIST_HEAD *head,
+	POBJ_LIST_HEAD *head_new, TOID listelm, TOID elm,
+	POBJ_LIST_ENTRY FIELD, POBJ_LIST_ENTRY field_new)
 ```
 
   The macro `POBJ_LIST_MOVE_ELEMENT_BEFORE` atomically removes the element *elm* from the list referenced by *head* and inserts it into the list referenced by *head_new* before the element *listelm*. If *listelm* value is TOID_NULL, the object is inserted at the head of the list. The *field* and *field_new* arguments are the names of the fields of type `POBJ_LIST_ENTRY` in the element structure that are used to connect the elements in both lists.
@@ -1417,6 +1450,7 @@ enum tx_stage pmemobj_tx_stage(void);
 
 * ```c
 int pmemobj_tx_begin(PMEMobjpool *pop, jmp_buf *env, ...);
+```
 
   The `pmemobj_tx_begin()` function starts a new transaction in the current thread. If called within an open transaction, it starts a nested transaction. The caller may use *env* argument to provide a pointer to the information of a calling environment to be restored in case of transaction abort. This information must be filled by a caller, using **setjmp**(3) macro.
 
@@ -1745,10 +1779,10 @@ The library entry points described in this section are less commonly used than t
 
 * ```c
 void pmemobj_set_funcs(
-void *(*malloc_func)(size_t size),
-void (*free_func)(void *ptr),
-void *(*realloc_func)(void *ptr, size_t size),
-char *(*strdup_func)(const char *s));
+	void *(*malloc_func)(size_t size),
+	void (*free_func)(void *ptr),
+	void *(*realloc_func)(void *ptr, size_t size),
+	char *(*strdup_func)(const char *s));
 ```
 
   The `pmemobj_set_funcs()` function allows an application to override memory allocation calls used internally by **libpmemobj**. Passing in NULL for any of the handlers will cause the **libpmemobj** default function to be used. The library does not make heavy use of the system malloc functions, but it does allocate approximately 4-8 kilobytes for each memory pool in use.
