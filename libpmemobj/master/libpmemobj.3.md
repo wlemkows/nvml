@@ -758,8 +758,7 @@ int pmemobj_cond_signal(PMEMobjpool *pop, PMEMcond *condp);
 * ```c
 int pmemobj_cond_timedwait(
 	PMEMobjpool *pop, PMEMcond *restrict condp,
-	PMEMmutex *restrict mutexp,
-	const struct timespec *restrict abs_timeout);
+	PMEMmutex *restrict mutexp, const struct timespec *restrict abs_timeout);
 ```
 
 * ```c
