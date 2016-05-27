@@ -645,6 +645,7 @@ int pmemobj_rwlock_rdlock(PMEMobjpool *pop, PMEMrwlock *rwlockp);
 int pmemobj_rwlock_timedrdlock(PMEMobjpool *pop,
 PMEMrwlock *restrict rwlockp,
 const struct timespec *restrict abs_timeout);
+```
 
   The `pmemobj_rwlock_timedrdlock`() performs the same action, but will not wait beyond *abs_timeout* to obtain the lock before returning.
 
@@ -929,7 +930,10 @@ POBJ_FIRST(PMEMobjpool *pop, TYPE)
   The `POBJ_FIRST` macro returns the first object from the pool of the type specified by *TYPE*.
 
 * ```c
-POBJ_FIRST_TYPE_NUM(PMEMobjpool *pop, uint64_t type_num)  The `POBJ_FIRST_TYPE_NUM` macro returns the first object from the pool of the type specified by *type_num*.
+POBJ_FIRST_TYPE_NUM(PMEMobjpool *pop, uint64_t type_num)
+```
+
+The `POBJ_FIRST_TYPE_NUM` macro returns the first object from the pool of the type specified by *type_num*.
 
 * ```c
 PMEMoid pmemobj_next(PMEMoid oid);
@@ -1013,65 +1017,95 @@ All these functions can be used outside transactions. Note that operations perfo
 
 The allocations are always aligned to the cache-line boundary.
 
-* **typedef int** (\*pmemobj_constr)(**PMEMobjpool \***pop, **void \***ptr, **void \***arg);
+* ```c
+typedef int (*pmemobj_constr)(**PMEMobjpool *pop, void *ptr, void *arg);
+```
 
-  The **pmemobj_constr** type represents a constructor for atomic allocation from persistent memory heap associated with memory pool *pop*. The *ptr* is a pointer to allocating memory area and the *arg* is an user-defined argument passed to an appropriate function.
+  The `pmemobj_constr` type represents a constructor for atomic allocation from persistent memory heap associated with memory pool *pop*. The *ptr* is a pointer to allocating memory area and the *arg* is an user-defined argument passed to an appropriate function.
 
-* **int** **pmemobj_alloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num, **pmemobj_constr** constructor , **void \***arg);
+* ```c
+int pmemobj_alloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num, pmemobj_constr constructor , void *arg);
+```
 
-  The **pmemobj_alloc** function allocates a new object from the persistent memory heap associated with memory pool *pop*. The **PMEMoid** of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized, or if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then **pmemobj_alloc**() returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
+  The `pmemobj_alloc` function allocates a new object from the persistent memory heap associated with memory pool *pop*. The `PMEMoid` of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized, or if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then `pmemobj_alloc()` returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
 
-* **int** **pmemobj_zalloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+* ```c
+int pmemobj_zalloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
+```
 
-  The **pmemobj_zalloc**() function allocates a new zeroed object from the the persistent memory heap associated with memory pool *pop*. The **PMEMoid** of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then **pmemobj_zalloc**() returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
+  The `pmemobj_zalloc()` function allocates a new zeroed object from the the persistent memory heap associated with memory pool *pop*. The `PMEMoid` of allocated object is stored in *oidp*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is modified atomically. The *size* can be any non-zero value, however due to internal padding and object metadata, the actual size of the allocation will differ from the requested one by at least 64 bytes. For this reason, making the allocations of a size less than 64 bytes is extremely inefficient and discouraged. If *size* equals 0, then `pmemobj_zalloc()` returns non-zero value, sets the errno and leaves the *oidp* untouched. The allocated object is added to the internal container associated with given *type_num*.
 
-* **void** **pmemobj_free**(**PMEMoid \***oidp);
+* ```c
+void pmemobj_free(PMEMoid *oidp);
+```
 
-  The **pmemobj_free**() function provides the same semantics as **free**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It frees the memory space represented by *oidp*, which must have been returned by a previous call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, no operation is performed. It sets the *oidp* to *OID_NULL* value after freeing the memory. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically.
+  The `pmemobj_free()` function provides the same semantics as **free**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It frees the memory space represented by *oidp*, which must have been returned by a previous call to `pmemobj_alloc()`, `pmemobj_zalloc()`, `pmemobj_realloc()`, or `pmemobj_zrealloc()`. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, no operation is performed. It sets the *oidp* to *OID_NULL* value after freeing the memory. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically.
 
-* **int** **pmemobj_realloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+* ```c
+int pmemobj_realloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
+```
 
-  The **pmemobj_realloc**() function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oidp*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will *not* be initialized. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to **pmemobj_alloc**(pop, size, type_num). If *size* is equal to zero, and *oidp* is not *OID_NULL*, then the call is equivalent to **pmemobj_free**(oid). Unless *oidp* is *OID_NULL*, it must have been returned by an earlier call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oid* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If **pmemobj_realloc**() is unable to satisfy the allocation request, a non-zero value is returned and errno is set appropriately.
+  The `pmemobj_realloc()` function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oidp*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will *not* be initialized. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to `pmemobj_alloc(pop, size, type_num)`. If *size* is equal to zero, and *oidp* is not *OID_NULL*, then the call is equivalent to `pmemobj_free(oid)`. Unless *oidp* is *OID_NULL*, it must have been returned by an earlier call to `pmemobj_alloc()`, `pmemobj_zalloc()`, `pmemobj_realloc()`, or `pmemobj_zrealloc()`. Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oid* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If `pmemobj_realloc()` is unable to satisfy the allocation request, a non-zero value is returned and errno is set appropriately.
 
-* **int** **pmemobj_zrealloc**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **size_t** size, **uint64_t** type_num);
+* ```c
+int pmemobj_zrealloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size, uint64_t type_num);
+```
 
-  The **pmemobj_zrealloc**() function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oid*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will be zeroed. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to **pmemobj_zalloc**(pop, size, type_num). If *size* is equal to zero, and *oidp* doesn’t point to *OID_NULL*, then the call is equivalent to **pmemobj_free**(pop, oid). Unless *oidp* points to *OID_NULL*, it must have been returned by an earlier call to **pmemobj_alloc**(), **pmemobj_zalloc**(), **pmemobj_realloc**(), or **pmemobj_zrealloc**(). Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oidp* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If **pmemobj_zrealloc**() is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
+  The `pmemobj_zrealloc()` function provide similar semantics to **realloc**(3), but operates on the persistent memory heap associated with memory pool *pop*. It changes the size of the object represented by *oid*, to *size* bytes. The resized object is also added or moved to the internal container associated with given *type_num*. The contents will be unchanged in the range from the start of the region up to the minimum of the old and new sizes. If the new size is larger than the old size, the added memory will be zeroed. If *oidp* is NULL or if it points to the root object’s OID, behavior of the function is undefined. If it points to *OID_NULL*, then the call is equivalent to `pmemobj_zalloc(pop, size, type_num)`. If *size* is equal to zero, and *oidp* doesn’t point to *OID_NULL*, then the call is equivalent to **pmemobj_free**(pop, oid). Unless *oidp* points to *OID_NULL*, it must have been returned by an earlier call to `pmemobj_alloc()`, `pmemobj_zalloc()`, `pmemobj_realloc()`, or `pmemobj_zrealloc()`. Note that the object handle value may change in result of reallocation. If the object was moved, a memory space represented by *oidp* is reclaimed. If *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. If `pmemobj_zrealloc()` is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
 
-* **int** **pmemobj_strdup**(**PMEMobjpool \***pop, **PMEMoid \***oidp, **const char \***s, **uint64_t** type_num);
+* ```c
+int pmemobj_strdup(PMEMobjpool *pop, PMEMoid *oidp, const char *s, uint64_t type_num);
+```
 
-  The **pmemobj_strdup**() function provides the same semantics as **strdup**(3), but operates on the persistent memory heap associated with memory pool *pop*. It stores a handle to a new object in *oidp* which is a duplicate of the string *s*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. The allocated string object is also added to the internal container associated with given *type_num*. Memory for the new string is obtained with **pmemobj_alloc**(), on the given memory pool, and can be freed with **pmemobj_free**() on the same memory pool. If **pmemobj_strdup**() is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
+  The `pmemobj_strdup()` function provides the same semantics as **strdup**(3), but operates on the persistent memory heap associated with memory pool *pop*. It stores a handle to a new object in *oidp* which is a duplicate of the string *s*. If NULL is passed as *oidp*, then the newly allocated object may be accessed only by iterating objects in the object container associated with given *type_num*, as described in **OBJECT CONTAINERS** section. If the *oidp* points to memory location from the **pmemobj** heap the *oidp* is changed atomically. The allocated string object is also added to the internal container associated with given *type_num*. Memory for the new string is obtained with `pmemobj_alloc()`, on the given memory pool, and can be freed with `pmemobj_free()` on the same memory pool. If `pmemobj_strdup()` is unable to satisfy the allocation request, OID_NULL is returned and errno is set appropriately.
 
-* **size_t** **pmemobj_alloc_usable_size**(**PMEMoid** oid);
+* ```c
+size_t pmemobj_alloc_usable_size(PMEMoid oid);
+```
 
-  The **pmemobj_alloc_usable_size**() function provides the same semantics as **malloc_usable_size**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It returns the number of usable bytes in the object represented by *oid*, a handle to an object allocated by **pmemobj_alloc**() or a related function. If *oid* is OID_NULL, 0 is returned.
+  The `pmemobj_alloc_usable_size`() function provides the same semantics as **malloc_usable_size**(3), but instead of the process heap supplied by the system, it operates on the persistent memory heap. It returns the number of usable bytes in the object represented by *oid*, a handle to an object allocated by `pmemobj_alloc`() or a related function. If *oid* is OID_NULL, 0 is returned.
 
-* **POBJ_NEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **pmemobj_constr** constructor, **void \***arg)
+* ```c
+POBJ_NEW(PMEMobjpool *pop, TOID *oidp, TYPE, pmemobj_constr constructor, void *arg)
+```
 
-  The **POBJ_NEW** macro is a wrapper around the **pmemobj_alloc**() function which takes the type name **TYPE** and passes the size and type number to the **pmemobj_alloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_NEW` macro is a wrapper around the `pmemobj_alloc()` function which takes the type name **TYPE** and passes the size and type number to the `pmemobj_alloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size, **pmemobj_constr** constructor , **void \***arg)
+* ```c
+POBJ_ALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size, pmemobj_constr constructor , void *arg)
+```
 
-  The **POBJ_ALLOC** macro is a wrapper around the **pmemobj_alloc**() function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the **pmemobj_alloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_ALLOC` macro is a wrapper around the `pmemobj_alloc()` function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the `pmemobj_alloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZNEW**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE)
+* ```c
+POBJ_ZNEW(PMEMobjpool *pop, TOID *oidp, TYPE)
+```
 
-  The **POBJ_ZNEW** macro is a wrapper around the **pmemobj_zalloc**() function which takes the type name **TYPE** and passes the size and type number to the **pmemobj_zalloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_ZNEW` macro is a wrapper around the `pmemobj_zalloc()` function which takes the type name **TYPE** and passes the size and type number to the `pmemobj_zalloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+* ```c
+POBJ_ZALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
+```
 
-  The **POBJ_ZALLOC** macro is a wrapper around the **pmemobj_zalloc**() function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the **pmemobj_zalloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_ZALLOC` macro is a wrapper around the `pmemobj_zalloc()` function which takes the type name **TYPE**, the size of allocation *size* and passes the type number to the `pmemobj_zalloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_REALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+* ```c
+POBJ_REALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
+```
 
-  The **POBJ_REALLOC** macro is a wrapper around the **pmemobj_realloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_realloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_REALLOC` macro is a wrapper around the `pmemobj_realloc()` function which takes the type name **TYPE** and passes the type number to the `pmemobj_realloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_ZREALLOC**(**PMEMobjpool \***pop, **TOID \***oidp, TYPE, **size_t** size)
+* ```c
+POBJ_ZREALLOC(PMEMobjpool *pop, TOID *oidp, TYPE, size_t size)
+```
 
-  The **POBJ_ZREALLOC** macro is a wrapper around the **pmemobj_zrealloc**() function which takes the type name **TYPE** and passes the type number to the **pmemobj_zrealloc**() function from the typed OID. Instead of taking a pointer to **PMEMoid** it takes a pointer to typed OID of **TYPE**.
+  The `POBJ_ZREALLOC` macro is a wrapper around the `pmemobj_zrealloc()` function which takes the type name **TYPE** and passes the type number to the `pmemobj_zrealloc()` function from the typed OID. Instead of taking a pointer to `PMEMoid` it takes a pointer to typed OID of **TYPE**.
 
-* **POBJ_FREE**(**TOID \***oidp)
+* ```c
+POBJ_FREE(TOID *oidp)
+```
 
-The **POBJ_FREE** macro is a wrapper around the **pmemobj_free**() function which takes pointer to typed OID *oidp* as an argument instead of **PMEMoid**.
+The `POBJ_FREE` macro is a wrapper around the `pmemobj_free()` function which takes pointer to typed OID *oidp* as an argument instead of `PMEMoid`.
 
 
 ### NON-TRANSACTIONAL PERSISTENT ATOMIC LISTS ###
@@ -1091,33 +1125,40 @@ The persistent atomic circular doubly linked lists support the following functio
 
 A list is headed by a *list_head* structure containing a single object handle of the first element on the list. The elements are doubly linked so that an arbitrary element can be removed without a need to traverse the list. New elements can be added to the list before or after an existing element, at the head of the list, or at the end of the list. A list may be traversed in either direction.
 
-The user-defined structure of each element must contain a field of type **list_entry** holding the object handles to the previous and next element on the list. Both the **list_head** and the **list_entry** structures are declared in **\<libpmemobj.h\>**.
+The user-defined structure of each element must contain a field of type **list_entry** holding the object handles to the previous and next element on the list. Both the **list_head** and the **list_entry** structures are declared in `<libpmemobj.h>`.
 
 The functions below are intended to be used outside transactions - transactional variants are described in section **TRANSACTIONAL OBJECT MANIPULATION**. Note that operations performed using this non-transactional API are independent from their transactional counterparts. If any non-transactional allocations or list manipulations are performed within an open transaction, the changes will not be rolled-back if such a transaction is aborted or interrupted.
 
-* **int** **pmemobj_list_insert**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
-**void \***head, **PMEMoid** dest, **int** before, **PMEMoid** oid);
+* ```c
+int pmemobj_list_insert(PMEMobjpool *pop, size_t pe_offset,
+void *head, PMEMoid dest, int before, PMEMoid oid);
+```
 
-  The **pmemobj_list_insert** function inserts an element represented by object handle *oid* into the list referenced by *head*. Depending on the value of flag *before*, the object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. The *head* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
+  The `pmemobj_list_insert()` function inserts an element represented by object handle *oid* into the list referenced by *head*. Depending on the value of flag *before*, the object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. The *head* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* **PMEMoid** **pmemobj_list_insert_new**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
-**void** \*head, **PMEMoid** dest, **int** before, **size_t** size,<br />
-**uint64_t** type_num, **pmemobj_constr** constructor, **void** arg);
+* ```c
+PMEMoid pmemobj_list_insert_new(PMEMobjpool *pop, size_t pe_offset,
+void *head, PMEMoid dest, int before, size_t size,
+uint64_t type_num, pmemobj_constr constructor, void arg);
+```
 
-  The **pmemobj_list_insert_new** function atomically allocates a new object of given *size* and type *type_num* and inserts it into the list referenced by *head*. Depending on the value of *before* flag, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* must point to the objects allocated from the same memory pool *pop*. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized or, if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *head* cannot be OID_NULL. The allocated object is also added to the internal container associated with given *type_num*. as described in section **OBJECT CONTAINERS**. On success, it returns a handle to the newly allocated object. On error, OID_NULL is returned and errno is set.
+  The `pmemobj_list_insert_new()` function atomically allocates a new object of given *size* and type *type_num* and inserts it into the list referenced by *head*. Depending on the value of *before* flag, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. All the handles *head*, *dest* must point to the objects allocated from the same memory pool *pop*. Before returning, it calls the **constructor** function passing the pool handle *pop*, the pointer to the newly allocated object in *ptr* along with the *arg* argument. It is guaranteed that allocated object is either properly initialized or, if the allocation is interrupted before the constructor completes, the memory space reserved for the object is reclaimed. If the constructor returns non-zero value the allocation is canceled, the -1 value is returned from the caller and errno is set to **ECANCELED .** The *head* cannot be OID_NULL. The allocated object is also added to the internal container associated with given *type_num*. as described in section **OBJECT CONTAINERS**. On success, it returns a handle to the newly allocated object. On error, OID_NULL is returned and errno is set.
 
-* **int** **pmemobj_list_remove**(**PMEMobjpool \***pop, **size_t** pe_offset,<br />
-**void \***head, **PMEMoid** oid, **int** free);
+* ```c
+int pmemobj_list_remove(PMEMobjpool *pop, size_t pe_offset,
+void *head, PMEMoid oid, int free);
+```
 
-  The **pmemobj_list_remove** function removes the object referenced by *oid* from the list pointed by *head*. If *free* flag is set, it also removes the object from the internal object container and frees the associated memory space. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. Both *head* and *oid* must point to the objects allocated from the same memory pool *pop* and cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
+  The `pmemobj_list_remove()` function removes the object referenced by *oid* from the list pointed by *head*. If *free* flag is set, it also removes the object from the internal object container and frees the associated memory space. The argument *pe_offset* declares an offset of the structure that connects the elements in the list. Both *head* and *oid* must point to the objects allocated from the same memory pool *pop* and cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
-* **int** **pmemobj_list_move**(**PMEMobjpool** \*pop,<br />
-**size_t** pe_old_offset, **void** \*head_old,<br />
-**size_t** pe_new_offset, **void** \*head_new,<br />
-**PMEMoid** dest, **int** before, **PMEMoid** oid);
+* ```c
+int pmemobj_list_move(PMEMobjpool *pop,
+size_t pe_old_offset, void *head_old,
+size_t pe_new_offset, void *head_new,
+PMEMoid dest, int before, PMEMoid oid);
+```
 
-
-  The **pmemobj_list_move** function moves the object represented by *oid* from the list pointed by *head_old* to the list pointed by *head_new*. Depending on the value of flag *before*, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the second list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through **POBJ_LIST_DEST_HEAD** and **POBJ_LIST_DEST_TAIL** defines respectively. The arguments *pe_old_offset* and *pe_new_offset* declare the offsets of the structures that connects the elements in the old and new lists respectively. All the handles *head_old*, *head_new*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. *head_old*, *head_new* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
+  The `pmemobj_list_move()` function moves the object represented by *oid* from the list pointed by *head_old* to the list pointed by *head_new*. Depending on the value of flag *before*, the newly allocated object is added before or after the element *dest*. If *dest* value is OID_NULL, the object is inserted at the head or at the end of the second list, depending on the *before* flag value. If value is 1 the object is inserted at the head, if value is 0 the object is inserted at the end of the list. The relevant values are available through `POBJ_LIST_DEST_HEAD` and `POBJ_LIST_DEST_TAIL` defines respectively. The arguments *pe_old_offset* and *pe_new_offset* declare the offsets of the structures that connects the elements in the old and new lists respectively. All the handles *head_old*, *head_new*, *dest* and *oid* must point to the objects allocated from the same memory pool *pop*. *head_old*, *head_new* and *oid* cannot be OID_NULL. On success, zero is returned. On error, -1 is returned and errno is set.
 
 
 ### TYPE-SAFE NON-TRANSACTIONAL PERSISTENT ATOMIC LISTS ###
@@ -1128,7 +1169,7 @@ The functionality and semantics of those macros is similar to circular queues de
 
 The majority of the macros must specify the handle to the memory pool *pop* and the name of the *field* in the user-defined structure, which must be of type *POBJ_LIST_ENTRY* and is used to connect the elements in the list.
 
-A list is headed by a structure defined by the *POBJ_LIST_HEAD* macro. This structure contains an object handle of the first element on the list. The elements are doubly linked so that an arbitrary element can be removed without a need to traverse the list. New elements can be added to the list before or after an existing element, at the head of the list, or at the end of the list. A list may be traversed in either direction. A **POBJ_LIST_HEAD** structure is declared as follows:
+A list is headed by a structure defined by the *POBJ_LIST_HEAD* macro. This structure contains an object handle of the first element on the list. The elements are doubly linked so that an arbitrary element can be removed without a need to traverse the list. New elements can be added to the list before or after an existing element, at the head of the list, or at the end of the list. A list may be traversed in either direction. A `POBJ_LIST_HEAD` structure is declared as follows:
 
 ```c
 #define POBJ_LIST_HEAD(HEADNAME, TYPE)
@@ -1140,9 +1181,9 @@ struct HEADNAME
 };
 ```
 
-In the macro definitions, *TYPE* is the name of a user-defined structure, that must contain a field of type *POBJ_LIST_ENTRY*. The argument *HEADNAME* is the name of a user-defined structure that must be declared using the macro *POBJ_LIST_HEAD*. See the examples below for further explanation of how these macros are used.
+In the macro definitions, *TYPE* is the name of a user-defined structure, that must contain a field of type `POBJ_LIST_ENTRY`. The argument *HEADNAME* is the name of a user-defined structure that must be declared using the macro `POBJ_LIST_HEAD`. See the examples below for further explanation of how these macros are used.
 
-The macro **POBJ_LIST_ENTRY** declares a structure that connects the elements in the list.
+The macro `POBJ_LIST_ENTRY` declares a structure that connects the elements in the list.
 
 ```c
 #define POBJ_LIST_ENTRY(TYPE)
