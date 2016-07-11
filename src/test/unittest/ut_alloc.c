@@ -197,5 +197,13 @@ ut_munmap_anon_aligned(const char *file, int line, const char *func,
 	return ut_munmap(file, line, func, (char *)start - Ut_pagesize,
 			size + 2 * Ut_pagesize);
 }
-
+#else
+	void *
+		ut_mmap_anon_aligned(const char *file, int line, const char *func,
+			size_t alignment, size_t size)
+	{
+	//TODO
+		void * test; 
+		return (test);
+	}
 #endif

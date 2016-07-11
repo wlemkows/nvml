@@ -147,7 +147,6 @@ vmem_create(const char *dir, size_t size)
 {
 	vmem_init();
 	LOG(3, "dir \"%s\" size %zu", dir, size);
-
 	if (size < VMEM_MIN_POOL) {
 		ERR("size %zu smaller than %zu", size, VMEM_MIN_POOL);
 		errno = EINVAL;
@@ -156,7 +155,7 @@ vmem_create(const char *dir, size_t size)
 
 	/* silently enforce multiple of page size */
 	size = roundup(size, Pagesize);
-
+	__debugbreak();
 	void *addr;
 	if ((addr = util_map_tmpfile(dir, size, 4 << 20)) == NULL)
 		return NULL;

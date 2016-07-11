@@ -67,16 +67,16 @@ util_tmpfile(const char *dir, const char *templ)
 	int oerrno;
 	int fd = -1;
 
-	char *fullname = alloca(strlen(dir) + sizeof(templ));
+	char *fullname = alloca(strlen(dir) + strlen(templ) + 1);
 
-	(void) strcpy(fullname, dir);
-	(void) strcat(fullname, templ);
+	(void)strcpy(fullname, dir);
+	(void)strcat(fullname, templ);
 
 	/*
-	 * XXX - block signals and modify file creation mask for the time
-	 * of mkstmep() execution.  Restore previous settings once the file
-	 * is created.
-	 */
+	* XXX - block signals and modify file creation mask for the time
+	* of mkstmep() execution.  Restore previous settings once the file
+	* is created.
+	*/
 
 	fd = mkstemp(fullname);
 
@@ -85,16 +85,21 @@ util_tmpfile(const char *dir, const char *templ)
 		goto err;
 	}
 
-	(void) unlink(fullname);
+	if (_unlink(fullname) == -1) {
+		oerrno = errno;
+		ERR("!unlink");
+	}
 	LOG(3, "unlinked file is \"%s\"", fullname);
 
 	return fd;
 
 err:
 	oerrno = errno;
-	if (fd != -1)
-		(void) close(fd);
 	errno = oerrno;
+	if (_close(fd) != 0) {
+		oerrno = errno;
+		ERR("!close");
+	}
 	return -1;
 }
 

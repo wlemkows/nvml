@@ -37,6 +37,8 @@
  */
 
 #include "unittest.h"
+#include "platform.h"
+#include <intrin.h>
 
 VMEM *Vmp;
 
@@ -57,12 +59,12 @@ int
 main(int argc, char *argv[])
 {
 	START(argc, argv, "vmem_create");
-
 	if (argc < 2 || argc > 3)
 		UT_FATAL("usage: %s directory", argv[0]);
 
-	Vmp = vmem_create(argv[1], VMEM_MIN_POOL);
+	__debugbreak();
 
+	Vmp = vmem_create(argv[1], VMEM_MIN_POOL);
 	if (Vmp == NULL)
 		UT_OUT("!vmem_create");
 	else {
@@ -71,7 +73,9 @@ main(int argc, char *argv[])
 		v.sa_flags = 0;
 		v.sa_handler = signal_handler;
 		if (sigaction(SIGSEGV, &v, NULL) < 0)
+		{
 			UT_FATAL("!sigaction");
+		}
 
 		/* try to dereference the opaque handle */
 		char x = *(char *)Vmp;

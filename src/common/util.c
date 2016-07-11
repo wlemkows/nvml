@@ -152,7 +152,7 @@ void *
 util_map(int fd, size_t len, int cow, size_t req_align)
 {
 	LOG(3, "fd %d len %zu cow %d req_align %zu", fd, len, cow, req_align);
-
+	__debugbreak();
 	void *base;
 	void *addr = util_map_hint(len, req_align);
 	if (addr == MAP_FAILED) {
@@ -199,20 +199,20 @@ void *
 util_map_tmpfile(const char *dir, size_t size, size_t req_align)
 {
 	int oerrno;
-
+	__debugbreak();
 	if (((off_t)size) < 0) {
 		ERR("invalid size (%zu) for off_t", size);
 		errno = EFBIG;
 		return NULL;
 	}
 
-	int fd = util_tmpfile(dir, "/vmem.XXXXXX");
+	int fd = util_tmpfile(dir, "\\vmem.XXXXXX");
 	if (fd == -1) {
 		LOG(2, "cannot create temporary file in dir %s", dir);
 		goto err;
 	}
-
-	if ((errno = posix_fallocate(fd, 0, (off_t)size)) != 0) {
+	errno = posix_fallocate(fd, 0, (off_t)size);
+	if (errno != 0) {
 		ERR("!posix_fallocate");
 		goto err;
 	}
@@ -224,7 +224,7 @@ util_map_tmpfile(const char *dir, size_t size, size_t req_align)
 	}
 
 	(void) close(fd);
-	return base;
+ 	return base;
 
 err:
 	oerrno = errno;

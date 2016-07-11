@@ -210,6 +210,32 @@ sigismember(const sigset_t *set, int signum)
 	return ((*set & (1ULL << (signum - 1))) ? 1 : 0);
 }
 
+__inline int
+sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
+{
+	if (signal(signum, act->sa_handler) == SIG_ERR) {
+		errno = EINVAL;
+		return -1;
+	}
+	else {
+		return 0;
+	}
+}
+
+__inline char *
+strsignal(int sig)
+{
+	char *msg;
+
+	switch (sig) {
+	case SIGSEGV:
+		msg = "Segmentation fault\0";
+		break;
+	default:
+		msg = "No signal msg defined\0";
+	}
+	return msg;
+}
 /* sched.h */
 
 /*

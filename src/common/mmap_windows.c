@@ -152,6 +152,7 @@ mmap_fini(void)
 void *
 mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 {
+	__debugbreak();
 	if (len == 0) {
 		errno = EINVAL;
 		return MAP_FAILED;
