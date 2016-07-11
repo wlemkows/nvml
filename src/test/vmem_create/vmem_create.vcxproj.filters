@@ -8,7 +8,7 @@
     <Filter Include="Match Files">
       <UniqueIdentifier>{4d39e0e5-0c47-48a1-8ceb-6c174a170013}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Test scripts">
+    <Filter Include="Test Scripts">
       <UniqueIdentifier>{bdfb5bc0-aa19-4831-b79b-359182bd4c74}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -20,11 +20,8 @@
     <None Include="out0.log.match">
       <Filter>Match Files</Filter>
     </None>
-    <None Include="TEST0">
-      <Filter>Test scripts</Filter>
-    </None>
     <None Include="TEST0.PS1">
-      <Filter>Test scripts</Filter>
+      <Filter>Test Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -44,7 +44,6 @@ $Env:PMEM_IS_PMEM = $true
 $Env:NON_PMEM_IS_PMEM = $true
 
 # standard unit test setup
-
 . ..\unittest\unittest.ps1
 
 require_fs_type any
@@ -52,8 +51,7 @@ require_fs_type any
 setup
 
 # this test invokes sigsegvs by design
-#export ASAN_OPTIONS=handle_segv=0
-$Env:ASAN_OPTIONS = "handle_segv"
+$Env:ASAN_OPTIONS="handle_segv=0"
 
 expect_normal_exit ..\..\x64\debug\vmem_create$Env:EXESUFFIX $DIR `
 
