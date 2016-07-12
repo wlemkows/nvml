@@ -214,7 +214,7 @@ void *
 util_map_tmpfile(const char *dir, size_t size, size_t req_align)
 {
 	int oerrno;
-
+	//__debugbreak();
 	if (((off_t)size) < 0) {
 		ERR("invalid size (%zu) for off_t", size);
 		errno = EFBIG;
@@ -246,6 +246,9 @@ err:
 	if (fd != -1)
 		(void) close(fd);
 	errno = oerrno;
+	#ifdef _WIN32
+		SetLastError(oerrno);
+	#endif
 	return NULL;
 }
 

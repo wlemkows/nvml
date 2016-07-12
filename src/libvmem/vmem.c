@@ -50,6 +50,18 @@
 #include "sys_util.h"
 #include "vmem.h"
 
+#ifdef _WIN32
+#define set_error(x) SetLastError(x)
+#else
+#define set_error(x) errno=x
+#endif
+
+#ifdef _WIN32
+#define get_error GetLastError()
+#else
+#define get_error errno
+#endif
+
 /*
  * private to this file...
  */
@@ -146,16 +158,20 @@ VMEM *
 vmem_create(const char *dir, size_t size)
 {
 	vmem_init();
+	//__debugbreak();
 	LOG(3, "dir \"%s\" size %zu", dir, size);
 	if (size < VMEM_MIN_POOL) {
 		ERR("size %zu smaller than %zu", size, VMEM_MIN_POOL);
-		errno = EINVAL;
+		#ifdef _WIN32
+			SetLastError(EINVAL);
+		#else
+			errno = EINVAL;
+		#endif
 		return NULL;
 	}
 
 	/* silently enforce multiple of page size */
 	size = roundup(size, Pagesize);
-	__debugbreak();
 	void *addr;
 	if ((addr = util_map_tmpfile(dir, size, 4 << 20)) == NULL)
 		return NULL;
@@ -194,18 +210,27 @@ vmem_create(const char *dir, size_t size)
 VMEM *
 vmem_create_in_region(void *addr, size_t size)
 {
+//	__debugbreak();
 	vmem_init();
 	LOG(3, "addr %p size %zu", addr, size);
 
 	if (((uintptr_t)addr & (Pagesize - 1)) != 0) {
 		ERR("addr %p not aligned to pagesize %llu", addr, Pagesize);
-		errno = EINVAL;
+		#ifdef _WIN32
+			SetLastError(EINVAL);
+		#else
+			errno = EINVAL;
+		#endif
 		return NULL;
 	}
 
 	if (size < VMEM_MIN_POOL) {
 		ERR("size %zu smaller than %zu", size, VMEM_MIN_POOL);
-		errno = EINVAL;
+		#ifdef _WIN32
+			SetLastError(EINVAL);
+		#else
+			errno = EINVAL;
+		#endif
 		return NULL;
 	}
 
@@ -247,7 +272,11 @@ vmem_delete(VMEM *vmp)
 	int ret = je_vmem_pool_delete((pool_t *)((uintptr_t)vmp + Header_size));
 	if (ret != 0) {
 		ERR("invalid pool handle: %p", vmp);
-		errno = EINVAL;
+		#ifdef _WIN32
+			SetLastError(EINVAL);
+		#else
+			errno = EINVAL;
+		#endif
 		return;
 	}
 

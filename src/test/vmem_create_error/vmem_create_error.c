@@ -38,6 +38,18 @@
 
 #include "unittest.h"
 
+#ifdef _WIN32
+	#define set_error(x) SetLastError(x)
+#else
+	#define set_error(x) errno=x
+#endif
+
+#ifdef _WIN32
+	#define get_error GetLastError()
+#else
+	#define get_error errno
+#endif
+
 static char mem_pool[VMEM_MIN_POOL];
 
 int
@@ -45,25 +57,26 @@ main(int argc, char *argv[])
 {
 	VMEM *vmp;
 
+	//__debugbreak();
 	START(argc, argv, "vmem_create_error");
 
 	if (argc > 1)
 		UT_FATAL("usage: %s", argv[0]);
 
-	errno = 0;
+	set_error(0);
 	vmp = vmem_create_in_region(mem_pool, 0);
 	UT_ASSERTeq(vmp, NULL);
-	UT_ASSERTeq(errno, EINVAL);
+	UT_ASSERTeq(get_error, EINVAL);
 
-	errno = 0;
+	set_error(0);
 	vmp = vmem_create("./", 0);
 	UT_ASSERTeq(vmp, NULL);
-	UT_ASSERTeq(errno, EINVAL);
+	UT_ASSERTeq(get_error, EINVAL);
 
-	errno = 0;
+	set_error(0);
 	vmp = vmem_create("invalid dir !@#$%^&*()=", VMEM_MIN_POOL);
 	UT_ASSERTeq(vmp, NULL);
-	UT_ASSERTne(errno, 0);
+	UT_ASSERTne(get_error, 0);
 
 	DONE(NULL);
 }

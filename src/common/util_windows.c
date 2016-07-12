@@ -94,7 +94,7 @@ util_tmpfile(const char *dir, const char *templ)
 
 	int oerrno;
 	int fd = -1;
-
+	//__debugbreak();
 	char *fullname = alloca(strlen(dir) + strlen(templ) + 1);
 
 	(void)strcpy(fullname, dir);
@@ -115,6 +115,7 @@ util_tmpfile(const char *dir, const char *templ)
 
 	if (_unlink(fullname) == -1) {
 		oerrno = errno;
+		SetLastError(oerrno);
 		ERR("!unlink");
 	}
 	LOG(3, "unlinked file is \"%s\"", fullname);
@@ -124,8 +125,10 @@ util_tmpfile(const char *dir, const char *templ)
 err:
 	oerrno = errno;
 	errno = oerrno;
-	if (_close(fd) != 0) {
+	SetLastError(oerrno);
+	if ((fd != -1) && (_close(fd) != 0)) {
 		oerrno = errno;
+		SetLastError(oerrno);
 		ERR("!close");
 	}
 	return -1;
