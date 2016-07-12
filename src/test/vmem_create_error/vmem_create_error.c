@@ -57,7 +57,6 @@ main(int argc, char *argv[])
 {
 	VMEM *vmp;
 
-	//__debugbreak();
 	START(argc, argv, "vmem_create_error");
 
 	if (argc > 1)
@@ -70,6 +69,7 @@ main(int argc, char *argv[])
 
 	set_error(0);
 	vmp = vmem_create("./", 0);
+
 	UT_ASSERTeq(vmp, NULL);
 	UT_ASSERTeq(get_error, EINVAL);
 
