@@ -40,9 +40,7 @@ vpath %.c ../../rpmem_common/
 vpath %.c ../../tools/rpmemd
 vpath %.c ../../common/
 
-HAS_LIBFABRIC=$(call check_package, libfabric)
-
-ifeq ($(HAS_LIBFABRIC), y)
+ifeq ($(BUILD_RPMEM), y)
 TARGET = rpmem_fip
 OBJS = rpmem_fip_test.o\
        rpmem_fip_sock.o\
@@ -54,7 +52,7 @@ OBJS = rpmem_fip_test.o\
        rpmemd_fip_worker.o\
        rpmemd_obc.o\
        rpmemd_log.o\
-       out.o util.o util_linux.o
+       out.o util.o util_linux.o base64.o
 
 out.o: CFLAGS += -DDEBUG -DSRCVERSION=\"utversion\"
 endif
@@ -63,7 +61,7 @@ LIBPMEM=y
 
 include ../Makefile.inc
 
-ifeq ($(HAS_LIBFABRIC), y)
+ifeq ($(BUILD_RPMEM), y)
 LIBS += $(shell $(PKG_CONFIG) --libs libfabric)
 CFLAGS += $(shell $(PKG_CONFIG) --cflags libfabric)
 CFLAGS += -DDEBUG

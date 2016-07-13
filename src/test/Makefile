@@ -113,6 +113,9 @@ OBJ_TESTS = \
 	obj_tx_strdup\
 	obj_constructor
 
+OBJ_REMOTE_TESTS = \
+	obj_rpmem_basic_integration
+
 OBJ_CPP_TESTS = \
 	obj_cpp_ptr\
 	obj_cpp_p_ext\
@@ -162,7 +165,8 @@ OTHER_TESTS = \
 	util_is_absolute \
 	util_is_poolset\
 	util_poolset_size\
-	util_poolset_foreach
+	util_poolset_foreach\
+	base64
 
 PMEM_TESTS = \
 	pmem_is_pmem\
@@ -192,7 +196,8 @@ RPMEM_TESTS =\
 	rpmemd_obc\
 	rpmem_obc_int\
 	rpmemd_db\
-	rpmem_fip
+	rpmem_fip\
+	rpmem_basic
 
 VMEM_TESTS = \
 	vmem_aligned_alloc\
@@ -244,6 +249,7 @@ CPP_EXAMPLE_TESTS = \
 REMOTE_TESTS = \
 	remote_basic\
 	remote_obj_basic\
+	$(OBJ_REMOTE_TESTS)\
 	$(RPMEM_TESTS)
 
 LIBPMEMPOOL_DEPS = libpmempool_api

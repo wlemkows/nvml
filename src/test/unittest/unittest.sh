@@ -40,6 +40,7 @@
 [ "$CHECK_POOL" ] || export CHECK_POOL=0
 [ "$VERBOSE" ] || export VERBOSE=0
 
+
 TOOLS=../tools
 # Paths to some useful tools
 [ "$PMEMPOOL" ] || PMEMPOOL=../../tools/pmempool/pmempool
@@ -66,12 +67,10 @@ DIR_SRC="../.."
 FILES_COMMON_DIR="$DIR_SRC/test/*.supp"
 FILES_CURRTEST_DIR="\
 $DIR_SRC/test/tools/ctrld/ctrld \
+$DIR_SRC/tools/rpmemd/rpmemd \
 $DIR_SRC/tools/pmempool/pmempool"
 OPT_FILES_CURRTEST_DIR="
 $DIR_SRC/test/tools/fip/fip"
-
-[ -z "$RPMEM_PORT" ] && RPMEM_PORT=$(cat $DIR_SRC/rpmem_common/rpmem_proto.h |\
-	grep '#define\sRPMEM_PORT' | grep -o '[0-9]\+')
 
 # array of lists of PID files to be cleaned in case of an error
 NODE_PID_FILES[0]=""
@@ -1166,7 +1165,16 @@ function require_node_libfabric() {
 		echo "NODE $N: require_libfabric $*: $fip_out"
 		exit 1
 	fi
+}
 
+# require_rpmem_port -- only allow script to continue if RPMEM_PORT variable
+#                       is set.
+#
+function require_rpmem_port() {
+	if [ -z "$RPMEM_PORT" ]; then
+		echo "$UNITTEST_NAME: SKIP: requires RPMEM_PORT"
+		exit 0
+	fi
 }
 
 #
@@ -1211,6 +1219,7 @@ function require_nodes() {
 
 		# clear the list of PID files for each node
 		NODE_PID_FILES[$N]=""
+		NODE_TEST_DIR[$N]=${NODE_WORKING_DIR[$N]}/$curtestdir
 
 		require_node_log_files $N err$UNITTEST_NUM.log out$UNITTEST_NUM.log trace$UNITTEST_NUM.log
 
@@ -1232,7 +1241,12 @@ function require_nodes() {
 	# add debug or nondebug libraries to the 'to-copy' list
 	local BUILD_TYPE=$(echo $BUILD | cut -d"-" -f1)
 	[ "$BUILD_TYPE" == "static" ] && BUILD_TYPE=$(echo $BUILD | cut -d"-" -f2)
-	FILES_TO_COPY="$FILES_TO_COPY $DIR_SRC/$BUILD_TYPE/*.so.1"
+	local LIBS_TAR=libs.tar
+	local LIBS_TAR_DIR=$(pwd)/$LIBS_TAR
+	cd $DIR_SRC/$BUILD_TYPE
+	tar -cf $LIBS_TAR_DIR *.so*
+	cd - > /dev/null
+	FILES_TO_COPY="$FILES_TO_COPY $LIBS_TAR"
 
 	for f in $OPT_FILES_CURRTEST_DIR; do
 		if [ -f $f ]; then
@@ -1253,11 +1267,15 @@ function require_nodes() {
 		run_command scp $SCP_OPTS $FILES_COMMON_DIR ${NODE[$N]}:${NODE_WORKING_DIR[$N]}
 
 		# copy all required files
-		[ "$FILES_TO_COPY" != "" ] &&\
+		if [ "$FILES_TO_COPY" != "" ]; then
 			run_command scp $SCP_OPTS $FILES_TO_COPY ${NODE[$N]}:$DIR
+			run_command ssh $SSH_OPTS ${NODE[$N]} "cd $DIR && tar -xf $LIBS_TAR && rm -f $LIBS_TAR"
+		fi
 
 		export_vars_node $N $REMOTE_VARS
 	done
+
+	rm -f $LIBS_TAR
 
 	# remove all log files from required nodes
 	for (( N=$NODES_MAX ; $(($N + 1)) ; N=$(($N - 1)) )); do
@@ -1268,6 +1286,23 @@ function require_nodes() {
 
 	# register function to clean all remote nodes in case of an error or SIGINT
 	trap clean_all_remote_nodes ERR SIGINT
+
+	return 0
+}
+
+#
+# copy_file_to_node -- copy file to the given remote node
+#
+function copy_file_to_node() {
+
+	validate_node_number $1
+
+	local N=$1
+	shift
+
+	# copy all required files
+	local DIR=${NODE_WORKING_DIR[$N]}/$curtestdir
+	run_command scp $SCP_OPTS $1 ${NODE[$N]}:$DIR/$2
 
 	return 0
 }
@@ -1288,6 +1323,35 @@ function copy_files_to_node() {
 	# copy all required files
 	local DIR=${NODE_WORKING_DIR[$N]}/$curtestdir
 	run_command scp $SCP_OPTS $FILES_TO_COPY ${NODE[$N]}:$DIR
+
+	return 0
+}
+
+#
+# copy_files_from_node -- copy all required files from the given remote node
+#    usage: copy_files_from_node <node> <destination dir> <file_1> [<file_2>] ...
+#
+function copy_files_from_node() {
+
+	validate_node_number $1
+
+	local N=$1
+	local DIR=$2
+	shift 2
+	[ "$*" == "" ] &&\
+		echo "error: copy_files_from_node(): no files provided" >&2 && exit 1
+
+	# copy all required files
+	local REMOTE_DIR=${NODE_WORKING_DIR[$N]}/$curtestdir
+
+	if [ $# -ne 1 ]; then
+		FILE_STRING=$(printf ",%s" "$@")
+		FILE_STRING=\{${FILE_STRING:1}\}
+	else
+		FILE_STRING=$1
+	fi
+
+	run_command scp $SCP_OPTS ${NODE[$N]}:$REMOTE_DIR/$FILE_STRING $DIR
 
 	return 0
 }
@@ -1467,6 +1531,26 @@ function kill_on_node() {
 }
 
 #
+# create_holey_file_on_node -- create holey files of a given length in megs
+#   usage: create_holey_file_on_node <node> <size>
+#
+# example, to create two files, each 1GB in size on node 0:
+#	create_holey_file_on_node 0 1024 testfile1 testfile2
+#
+function create_holey_file_on_node() {
+
+	validate_node_number $1
+
+	local N=$1
+	size=$2
+	shift 2
+	for file in $*
+	do
+		run_on_node $N truncate -s ${size}M $file >> prep$UNITTEST_NUM.log
+	done
+}
+
+#
 # setup -- print message that test setup is commencing
 #
 function setup() {
@@ -1511,11 +1595,18 @@ function setup() {
 }
 
 #
-# check -- check test results (using .match files)
+# check_local -- check local test results (using .match files)
+#
+function check_local() {
+	../match $(find . -regex "[^0-9w]*${UNITTEST_NUM}\.log\.match" | xargs)
+}
+
+#
+# check -- check local or remote test results (using .match files)
 #
 function check() {
 	if [ $NODES_MAX -lt 0 ]; then
-		../match $(find . -regex "[^0-9w]*${UNITTEST_NUM}\.log\.match" | xargs)
+		check_local
 	else
 		FILES=$(find . -regex "./node_[0-9]+_[^0-9w]*${UNITTEST_NUM}\.log\.match" | xargs)
 		for file in $FILES; do
@@ -1768,4 +1859,77 @@ function rpmem_foreach_persist() {
 	else
 		return 0
 	fi
+}
+
+#
+# get_node_dir -- returns node dir for current test
+#    usage: get_node_dir <node>
+#
+function get_node_dir() {
+	validate_node_number $1
+	echo ${NODE_WORKING_DIR[$1]}/$curtestdir
+}
+
+#
+# init_rpmem_on_node -- prepare rpmem environment variables on node
+#    usage: init_rpmem_on_node <master node> <slave node> [<slave poolset dir>]
+#
+# example:
+#    The following command initialize rpmem environment variables on the node 1
+#    to perform replication to the node 0. rpmemd on node 0 would use
+#    /custom/poolset-dir/on/node0/ as poolset directory instead of
+#    $NODE_TEST_DIR value used by default.
+#
+#       init_rpmem_on_node 1 0 /custom/poolset-dir/on/node0/
+#
+function init_rpmem_on_node() {
+	local NODE=$1
+	local TARGET=$2
+	shift 2
+
+	validate_node_number $NODE
+	validate_node_number $TARGET
+
+	local POOLS_DIR_NODE=${NODE_TEST_DIR[$TARGET]}
+	if [ $# -gt 0 ]; then
+		POOLS_DIR_NODE=$1
+	fi
+
+	RPMEM_CMD="\"cd ${NODE_TEST_DIR[$TARGET]} && "
+	RPMEM_CMD="$RPMEM_CMD LD_LIBRARY_PATH=.:${NODE_LD_LIBRARY_PATH[$TARGET]}"
+	RPMEM_CMD="$RPMEM_CMD ./rpmemd"
+	RPMEM_CMD="$RPMEM_CMD --log-file=$RPMEMD_LOG_FILE"
+	RPMEM_CMD="$RPMEM_CMD --poolset-dir=$POOLS_DIR_NODE"
+
+	if [ "$RPMEM_PM" == "APM" ]; then
+		RPMEM_CMD="$RPMEM_CMD --persist-apm"
+	fi
+
+	RPMEM_CMD="$RPMEM_CMD \""
+
+	RPMEM_ENABLE_SOCKETS=0
+	RPMEM_ENABLE_VERBS=0
+
+	case $RPMEM_PROVIDER in
+	sockets)
+		RPMEM_ENABLE_SOCKETS=1
+		;;
+	verbs)
+		RPMEM_ENABLE_VERBS=1
+		;;
+	esac
+
+	export_vars_node $NODE RPMEM_CMD
+	export_vars_node $NODE RPMEM_ENABLE_SOCKETS
+	export_vars_node $NODE RPMEM_ENABLE_VERBS
+	export_vars_node $NODE RPMEM_LOG_LEVEL
+	export_vars_node $NODE RPMEM_LOG_FILE
+
+	# Workaround for SIGSEGV in the infinipath-psm during abort
+	# The infinipath-psm is registering a signal handler and do not unregister
+	# it when rpmem handle is dlclosed. SIGABRT (potentially any other signal)
+	# would try to call the signal handler which does not exist after dlclose.
+	# Issue require a fix in the infinipath-psm or the libfabric.
+	IPATH_NO_BACKTRACE=1
+	export_vars_node $NODE IPATH_NO_BACKTRACE
 }

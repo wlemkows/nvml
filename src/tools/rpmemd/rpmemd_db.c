@@ -52,15 +52,6 @@
 #include "rpmemd_log.h"
 
 /*
- * struct rpmemd_db_pool -- remote pool context
- */
-struct rpmemd_db_pool {
-	void *pool_addr;
-	size_t pool_size;
-	struct pool_set *set;
-};
-
-/*
  * struct rpmemd_db -- pool set database structure
  */
 struct rpmemd_db {
@@ -199,11 +190,13 @@ rpmemd_db_pool_create(struct rpmemd_db *db, const char *pool_desc,
 					attr->compat_features,
 					attr->incompat_features,
 					attr->ro_compat_features,
+					NULL,
 					attr->poolset_uuid,
 					attr->uuid,
 					attr->prev_uuid,
 					attr->next_uuid,
-					attr->user_flags);
+					attr->user_flags,
+					POOL_REMOTE);
 	if (ret) {
 		RPMEMD_LOG(ERR, "!cannot create pool set -- '%s'", path);
 		goto err_free_path;
