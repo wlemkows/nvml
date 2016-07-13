@@ -94,7 +94,7 @@ util_tmpfile(const char *dir, const char *templ)
 
 	int oerrno;
 	int fd = -1;
-	//__debugbreak();
+
 	char *fullname = alloca(strlen(dir) + strlen(templ) + 1);
 
 	(void)strcpy(fullname, dir);

@@ -63,13 +63,14 @@ main(int argc, char *argv[])
 
 	START(argc, argv, "vmem_pages_purging");
 
-	while ((opt = getopt(argc, argv, "z")) != -1) {
+#ifndef _WIN32
+	while ((opt = getopt(argc, argv, "z")) != -1) { //jesli z jest w argumentach
 		switch (opt) {
 		case 'z':
 			use_calloc = 1;
 			break;
 		default:
-			usage(argv[0]);
+			usage(argv[0]);	//wystapil nieznany parametr
 		}
 	}
 
@@ -78,6 +79,25 @@ main(int argc, char *argv[])
 	} else {
 		usage(argv[0]);
 	}
+#else
+	for (i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-z") == 0) {
+			use_calloc = 1;
+
+			if (i < argc) {
+				dir = argv[i + 1];
+			}
+			else {
+				usage(argv[0]);
+			}
+			break;
+		}
+		else {
+			dir = argv[i];
+		}
+	}
+
+#endif
 
 	vmp = vmem_create(dir, VMEM_MIN_POOL);
 	if (vmp == NULL)

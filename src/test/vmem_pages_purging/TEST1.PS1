@@ -1,5 +1,3 @@
-#!/bin/bash -e
-#
 # Copyright 2016, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,32 +30,31 @@
 #
 
 #
-# src/test/vmem_create_error/TEST0.PS1 -- unit test for vmem_create_error
+# src/test/vmem_pages_purging/TEST1.PS1 -- unit test for vmem_pages_purging
 #
+# This test covers the issue related to zeroing pages mapped to
+# underlying file.
 
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [alias("d")]
     $DIR = ""
     )
-$Env:UNITTEST_NAME = "vmem_create_error\TEST0"
-$Env:UNITTEST_NUM = "0"
-
+$Env:UNITTEST_NAME = "vmem_pages_purging\TEST1"
+$Env:UNITTEST_NUM = "1"
 # XXX:  bash has a few calls to tools that we don't have on
 # windows (yet) that set PMEM_IS_PMEM and NON_PMEM_IS_PMEM based
 # on their output
-
 $Env:PMEM_IS_PMEM = $true
 $Env:NON_PMEM_IS_PMEM = $true
 
 # standard unit test setup
 . ..\unittest\unittest.ps1
 
-require_fs_type none
-require_build_type debug nondebug
+require_fs_type any
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_create_error$Env:EXESUFFIX `
+expect_normal_exit ..\..\x64\debug\vmem_pages_purging$Env:EXESUFFIX -z $DIR `
 
 check

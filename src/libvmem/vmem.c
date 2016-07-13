@@ -158,7 +158,7 @@ VMEM *
 vmem_create(const char *dir, size_t size)
 {
 	vmem_init();
-	//__debugbreak();
+
 	LOG(3, "dir \"%s\" size %zu", dir, size);
 	if (size < VMEM_MIN_POOL) {
 		ERR("size %zu smaller than %zu", size, VMEM_MIN_POOL);
@@ -210,7 +210,6 @@ vmem_create(const char *dir, size_t size)
 VMEM *
 vmem_create_in_region(void *addr, size_t size)
 {
-//	__debugbreak();
 	vmem_init();
 	LOG(3, "addr %p size %zu", addr, size);
 
