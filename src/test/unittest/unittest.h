@@ -375,10 +375,10 @@ void *ut_mmap(const char *file, int line, const char *func, void *addr,
 int ut_munmap(const char *file, int line, const char *func, void *addr,
     size_t length);
 
-#ifndef _WIN32
+
 int ut_mprotect(const char *file, int line, const char *func, void *addr,
     size_t len, int prot);
-
+#ifndef _WIN32
 int ut_symlink(const char *file, int line, const char *func,
     const char *oldpath, const char *newpath);
 

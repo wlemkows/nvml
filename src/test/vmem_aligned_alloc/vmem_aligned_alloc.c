@@ -170,7 +170,7 @@ main(int argc, char *argv[])
 
 		vmem_delete(vmp);
 	}
-
+	__debugbreak();
 	/* check memory leaks */
 	UT_ASSERTne(custom_alloc_calls, 0);
 	UT_ASSERTeq(custom_allocs, 0);

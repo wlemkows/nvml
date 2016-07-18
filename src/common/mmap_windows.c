@@ -156,7 +156,7 @@ mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 		errno = EINVAL;
 		return MAP_FAILED;
 	}
-
+	//__debugbreak();
 	if ((prot & ~PROT_ALL) != 0) {
 		/* invalid protection flags */
 		errno = EINVAL;
@@ -248,7 +248,7 @@ mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 	}
 
 	HANDLE fileMapping = CreateFileMapping(fh,
-					NULL, /* security attributes */
+					NULL, /* default security attributes */
 					protect,
 					(DWORD) ((len + offset) >> 32),
 					(DWORD) ((len + offset) & 0xFFFFFFFF),
@@ -414,6 +414,7 @@ err:
 int
 munmap(void *addr, size_t len)
 {
+	//__debugbreak();
 	if (((uintptr_t)addr % Mmap_align) != 0) {
 		errno = EINVAL;
 		return -1;
@@ -607,9 +608,11 @@ mprotect(void *addr, size_t len, int prot)
 		DWORD oldprot = 0;
 		BOOL ret;
 		ret = VirtualProtect(begin2, len2, protect, &oldprot);
+		//ret = VirtualProtect(begin2, len2, 0x3, PAGE_EXECUTE_READWRITE);
 		if (ret == FALSE) {
 			/* translate error code */
-			switch (GetLastError()) {
+			DWORD err = GetLastError();
+			switch (err) {
 				case ERROR_INVALID_PARAMETER:
 					errno = EACCES;
 					break;

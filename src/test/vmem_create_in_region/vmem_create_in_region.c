@@ -53,6 +53,7 @@ main(int argc, char *argv[])
 	if (argc > 1)
 		UT_FATAL("usage: %s", argv[0]);
 
+	__debugbreak();
 	/* allocate memory for function vmem_create_in_region() */
 	void *mem_pool = MMAP_ANON_ALIGNED(VMEM_MIN_POOL, 4 << 20);
 
