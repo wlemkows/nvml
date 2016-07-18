@@ -37,7 +37,6 @@
 #include <stddef.h>
 
 #include "unittest.h"
-#include "libpmemobj.h"
 #include "util.h"
 #include "lane.h"
 #include "obj.h"
@@ -510,6 +509,22 @@ test_tx_corruption_bug(PMEMobjpool *pop)
 	pmemobj_free(&obj.oid);
 }
 
+static void
+do_tx_add_range_too_large(PMEMobjpool *pop)
+{
+	TOID(struct object) obj;
+	TOID_ASSIGN(obj, do_tx_zalloc(pop, TYPE_OBJ));
+
+	TX_BEGIN(pop) {
+		pmemobj_tx_add_range_direct(pmemobj_direct(obj.oid),
+			PMEMOBJ_MAX_ALLOC_SIZE + 1);
+	} TX_ONCOMMIT {
+		UT_ASSERT(0);
+	} TX_END
+
+	UT_ASSERTne(errno, 0);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -547,6 +562,9 @@ main(int argc, char *argv[])
 	test_add_direct_macros(pop);
 	VALGRIND_WRITE_STATS;
 	test_tx_corruption_bug(pop);
+	VALGRIND_WRITE_STATS;
+	do_tx_add_range_too_large(pop);
+	VALGRIND_WRITE_STATS;
 
 	pmemobj_close(pop);
 

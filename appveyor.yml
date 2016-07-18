@@ -10,6 +10,7 @@ before_build:
 - ps: >-
     if ($env:CONFIGURATION -eq "Debug") {
         utils/CSTYLE.ps1
+        utils/CHECK_WHITESPACE.ps1
     }
 build:
   project: src/NVML.sln
@@ -22,5 +23,5 @@ test_script:
         echo "`$NON_PMEM_FS_DIR = '\temp'" > testconfig.ps1
         echo "`$PMEM_FS_DIR = '\temp'" >> testconfig.ps1
         echo "`$PMEM_FS_DIR_FORCE_PMEM = 1" >> testconfig.ps1
-        ./RUNTESTS.ps1 -b debug -o 60s -v
+        ./RUNTESTS.ps1 -b debug -o 60s
     }

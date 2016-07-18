@@ -41,7 +41,6 @@
 
 #include "libpmem.h"
 #include "libpmemobj.h"
-#include "util.h"
 #include "lane.h"
 #include "redo.h"
 #include "memops.h"
@@ -1560,6 +1559,11 @@ static int
 pmemobj_tx_add_common(struct tx_add_range_args *args)
 {
 	LOG(15, NULL);
+
+	if (args->size > PMEMOBJ_MAX_ALLOC_SIZE) {
+		ERR("snapshot size too large");
+		return pmemobj_tx_abort_err(EINVAL);
+	}
 
 	if (args->offset < args->pop->heap_offset ||
 		(args->offset + args->size) >

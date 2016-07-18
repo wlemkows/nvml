@@ -441,12 +441,28 @@ function require_binary() {
 #
 function check {
     #	../match $(find . -regex "[^0-9]*${UNITTEST_NUM}\.log\.match" | xargs)
+    $perl = Get-Command -Name perl -ErrorAction SilentlyContinue
+    If ($perl -eq $null) {
+        Write-Error "Perl is missing, cannot check test results"
+        fail 1
+    }
     [string]$listing = Get-ChildItem -File | Where-Object  {$_.Name -match "[^0-9]${Env:UNITTEST_NUM}.log.match"}
     if ($listing) {
-        $p = start-process -PassThru -Wait -NoNewWindow -FilePath perl -ArgumentList '..\..\..\src\test\match', $listing
+        $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+        $pinfo.FileName = "perl"
+        $pinfo.RedirectStandardError = $true
+        $pinfo.RedirectStandardOutput = $true
+        $pinfo.UseShellExecute = $false
+        $pinfo.Arguments = "..\..\..\src\test\match $listing"
+        $p = New-Object System.Diagnostics.Process
+        $p.StartInfo = $pinfo
+        $p.Start() | Out-Null
+        $p.WaitForExit()
+
         if ($p.ExitCode -eq 0) {
             pass
         } else {
+            $p.StandardError.ReadToEnd()
             fail $p.ExitCode
         }
     } else {
@@ -800,7 +816,7 @@ if (! $Env:TEST_LD_LIBRARY_PATH) {
 # defined in testconfig.sh, the test is skipped.
 #
 # This behavior can be overridden by passin in DIR with -d.  Example:
-#	.\TEST0 -d \force\test\dir 
+#	.\TEST0 -d \force\test\dir
 #
 
 sv -Name curtestdir (Get-Item -Path ".\").BaseName

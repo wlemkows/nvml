@@ -41,7 +41,6 @@
 
 #include "libpmem.h"
 #include "libpmemobj.h"
-#include "util.h"
 #include "redo.h"
 #include "memops.h"
 #include "heap_layout.h"
@@ -496,11 +495,11 @@ heap_run_is_empty(struct chunk_run *run)
 static uint8_t
 heap_find_first_free_bucket_slot(struct pmalloc_heap *h)
 {
-	uint8_t n;
+	int n;
 	for (n = 0; n < MAX_BUCKETS; ++n)
 		if (__sync_bool_compare_and_swap(&h->buckets[n],
 			NULL, BUCKET_RESERVED))
-			return n;
+			return (uint8_t)n;
 
 	return MAX_BUCKETS;
 }
@@ -581,7 +580,7 @@ heap_get_create_bucket_idx_by_unit_size(struct pmalloc_heap *h,
 		bucket_idx = heap_create_alloc_class_buckets(h, unit_size,
 			RUN_UNIT_MAX);
 
-		if (unit_size == MAX_BUCKETS) {
+		if (bucket_idx == MAX_BUCKETS) {
 			ERR("Failed to allocate new bucket class");
 			return MAX_BUCKETS;
 		}
@@ -599,6 +598,7 @@ heap_get_create_bucket_idx_by_unit_size(struct pmalloc_heap *h,
 			supported_block, supported_block);
 	}
 
+	ASSERTne(bucket_idx, MAX_BUCKETS);
 	return bucket_idx;
 }
 
@@ -627,6 +627,12 @@ heap_register_active_run(struct pmalloc_heap *h, struct chunk_run *run,
 
 	uint8_t bucket_idx = heap_get_create_bucket_idx_by_unit_size(h,
 		run->block_size);
+
+	if (bucket_idx == MAX_BUCKETS) {
+		ASSERT(0);
+		return;
+	}
+
 	SLIST_INSERT_HEAD(&h->active_runs[bucket_idx], arun, run);
 }
 
@@ -895,9 +901,11 @@ heap_drain_to_auxiliary(PMEMobjpool *pop, struct bucket *auxb,
 
 	struct memory_block m;
 	struct bucket *b;
-	int b_id = auxb->id;
+	uint8_t b_id = auxb->id;
 
+	ASSERTne(b_id, MAX_BUCKETS);
 	ASSERTeq(auxb->type, BUCKET_RUN);
+
 	struct bucket_run *auxr = (struct bucket_run *)auxb;
 
 	/* max units drained from a single bucket cache */
@@ -992,9 +1000,8 @@ static int
 heap_buckets_init(PMEMobjpool *pop)
 {
 	struct pmalloc_heap *h = pop->heap;
-	size_t i;
 
-	for (i = 0; i < MAX_BUCKETS; ++i)
+	for (size_t i = 0; i < MAX_BUCKETS; ++i)
 		SLIST_INIT(&h->active_runs[i]);
 
 	h->last_run_max_size = MAX_RUN_SIZE;
