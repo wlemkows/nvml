@@ -30,15 +30,14 @@
 #
 
 #
-# src/test/vmem_check_version/TEST0.PS1 -- unit test for vmem_check_version
+# src/test/vmem_calloc/TEST0.PS1 -- unit test for vmem_calloc
 #
-
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [alias("d")]
     $DIR = ""
     )
-$Env:UNITTEST_NAME = "vmem_check_version\TEST0"
+$Env:UNITTEST_NAME = "vmem_calloc\TEST0"
 $Env:UNITTEST_NUM = "0"
 
 # XXX:  bash has a few calls to tools that we don't have on
@@ -55,6 +54,8 @@ require_fs_type none
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_check_version$Env:EXESUFFIX `
+expect_normal_exit ..\..\x64\debug\vmem_calloc$Env:EXESUFFIX `
 
 check
+
+pass
