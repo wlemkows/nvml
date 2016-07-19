@@ -416,10 +416,6 @@ err:
 int
 munmap(void *addr, size_t len)
 {
-	/*uintptr_t addri = (uintptr_t)addr;
-	addri = roundup(addri, Mmap_align);
-	addr = (void *)addri;*/
-
 	if (((uintptr_t)addr % Mmap_align) != 0) {
 		errno = EINVAL;
 		return -1;
@@ -428,7 +424,6 @@ munmap(void *addr, size_t len)
 	int retval = -1;
 
 	len = roundup(len, Mmap_align);
-	//len = len & ~(Mmap_align - 1);
 
 	PVOID *begin = addr;
 	PVOID *end = (PVOID *)((char *)addr + len);

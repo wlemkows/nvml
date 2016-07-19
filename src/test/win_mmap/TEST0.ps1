@@ -31,7 +31,7 @@
 #
 # src/test/win_mmap/TEST0 -- unit test for memory mapping routines
 #
-$Env:UNITTEST_NAME = "win_mmap/TEST0"
+$Env:UNITTEST_NAME = "win_mmap\TEST0"
 $Env:UNITTEST_NUM = "0"
 # XXX:  bash has a few calls to tools that we don't have on
 # windows (yet) that set PMEM_IS_PMEM and NON_PMEM_IS_PMEM based
@@ -41,16 +41,16 @@ $Env:NON_PMEM_IS_PMEM = $true
 $DIR = ""
 
 # standard unit test setup
-. ../unittest/unittest.ps1
+. ..\unittest\unittest.ps1
 
 require_fs_type any
 
 setup
 
 # create zero-length file
-fsutil file createnew $DIR/testfile 0
+fsutil file createnew $DIR\testfile 0
 
-expect_normal_exit ../../x64/debug/win_mmap$EXESUFFIX $DIR/testfile
+expect_normal_exit ..\..\x64\debug\win_mmap$EXESUFFIX $DIR\testfile
 
 # check will print the appropriate pass/fail message
 #check

@@ -365,6 +365,10 @@ test_mmap_anon(int fd)
 			MAP_SHARED, -1, 0);
 	UT_ASSERTeq(ptr1, MAP_FAILED);
 
+	/* fd == -1,  MAP_ANONYMOUS and MAP_PRIVATE - should pass*/
+	ptr1 = mmap(NULL, FILE_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+	UT_ASSERTne(ptr1, MAP_FAILED);
+
 	/* fd should be ignored */
 	ptr1 = mmap(NULL, FILE_SIZE, PROT_READ|PROT_WRITE,
 			MAP_ANON|MAP_SHARED, fd, 0);
@@ -483,6 +487,11 @@ test_mmap_prot_anon()
 			MAP_SHARED|MAP_ANON, -1, 0);
 	UT_ASSERTne(ptr1, MAP_FAILED);
 	check_mapping(-1, ptr1, FILE_SIZE, PROT_READ|PROT_WRITE, 0, 0);
+
+	/* read/write anon mapping | private*/
+	ptr1 = mmap(NULL, FILE_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+	UT_ASSERTne(ptr1, MAP_FAILED);
+	check_mapping(-1, ptr1, FILE_SIZE, PROT_READ | PROT_WRITE, 0, 0);
 
 	/* read-only */
 	ptr1 = mmap(NULL, FILE_SIZE, PROT_READ, MAP_SHARED|MAP_ANON, -1, 0);
@@ -676,6 +685,11 @@ test_mprotect(int fd, int fd_ro)
 	UT_ASSERTeq(mprotect(ptr1, MMAP_SIZE, PROT_ALL + 1), 0);
 	check_access(ptr1, MMAP_SIZE, PROT_NONE);
 	UT_ASSERTeq(munmap(ptr1, MMAP_SIZE), 0);
+
+	/*map anonymous and prot none*/
+	ptr1 = mmap(NULL, FILE_SIZE, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+	UT_ASSERTne(ptr1, MAP_FAILED);
+	UT_ASSERTeq(mprotect(ptr1, MMAP_SIZE, PROT_NONE), 0);
 
 	/* len == 0 - should succeed */
 	ptr1 = mmap(NULL, MMAP_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
