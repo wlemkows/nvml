@@ -840,9 +840,10 @@ malloc_init_hard(void)
 	}
 
 	pools_shared_data_initialized = false;
-
-	je_base_malloc = base_malloc_default;
-	je_base_free = base_free_default;
+	if (je_base_malloc == NULL && je_base_free == NULL) {
+		je_base_malloc = base_malloc_default;
+		je_base_free = base_free_default;
+	}
 
 	if (chunk_global_boot()) {
 		malloc_mutex_unlock(&init_lock);

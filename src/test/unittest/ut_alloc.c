@@ -198,49 +198,58 @@ ut_munmap_anon_aligned(const char *file, int line, const char *func,
 			size + 2 * Ut_pagesize);
 }
 #else
-	void *
-		ut_mmap_anon_aligned(const char *file, int line, const char *func,
-			size_t alignment, size_t size)
-	{
-		//__debugbreak();
-		char *d, *d_aligned;
-		uintptr_t di, di_aligned;
-		size_t sz;
 
-		if (alignment == 0)
-			alignment = Ut_pagesize;
+void * ut_mmap_anon_aligned(const char *file, int line, const char *func, 
+	size_t alignment, size_t size)
+{
+	unsigned long Ut_mmap_align;
+#ifdef _WIN32
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	Ut_mmap_align = si.dwAllocationGranularity;
+#else
+	Ut_mmap_align = Ut_pagesize;
+#endif
 
-		/* alignment must be a multiple of page size */
-		if (alignment & (Ut_pagesize - 1))
-			return NULL;
+	char *d, *d_aligned;
+	uintptr_t di, di_aligned;
+	size_t sz;
 
-		/* power of two */
-		if (alignment & (alignment - 1))
-			return NULL;
+	if (alignment == 0)
+		alignment = Ut_mmap_align;
 
-		d = ut_mmap(file, line, func, NULL, size + 2 * alignment,
-			PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-		di = (uintptr_t)d;
-		di_aligned = (di + alignment - 1) & ~(alignment - 1);
+	/* alignment must be a multiple of page size */
+	if (alignment & (Ut_mmap_align - 1))
+		return NULL;
 
-		if (di == di_aligned)
-			di_aligned += alignment;
-		d_aligned = (void *)di_aligned;
+	/* power of two */
+	if (alignment & (alignment - 1))
+		return NULL;
 
-		sz = di_aligned - di;
-		if (sz - Ut_pagesize)
-			ut_munmap(file, line, func, d, sz - Ut_pagesize);
+	d = ut_mmap(file, line, func, NULL, size + 2 * alignment,
+		PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+	di = (uintptr_t)d;
+	di_aligned = (di + alignment - 1) & ~(alignment - 1);
 
-		/* guard page before */
-//		ut_mprotect(file, line, func, d_aligned - Ut_pagesize, Ut_pagesize, PROT_NONE);
+	if (di == di_aligned)
+		di_aligned += alignment;
+	d_aligned = (void *)di_aligned;
 
-		/* guard page after */
-//		ut_mprotect(file, line, func, d_aligned + size, Ut_pagesize, PROT_NONE);
+	sz = di_aligned - di;
+	if (sz - Ut_mmap_align)
+		ut_munmap(file, line, func, d, sz - Ut_mmap_align);
 
-		sz = di + size + 2 * alignment - (di_aligned + size) - Ut_pagesize;
-		//if (sz)
-		//	ut_munmap(file, line, func, d_aligned + size + Ut_pagesize, sz);
+	/* guard page before */
+	ut_mprotect(file, line, func, d_aligned - Ut_mmap_align, Ut_mmap_align,
+		PROT_NONE);
 
-		return d_aligned;
-	}
+	/* guard page after */
+	ut_mprotect(file, line, func, d_aligned + size, Ut_mmap_align, PROT_NONE);
+
+	sz = di + size + 2 * alignment - (di_aligned + size) - Ut_mmap_align;
+	if (sz)
+		ut_munmap(file, line, func, d_aligned + size + Ut_mmap_align, sz);
+
+	return d_aligned;
+}
 #endif

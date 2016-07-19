@@ -315,7 +315,6 @@ int
 ut_mprotect(const char *file, int line, const char *func, void *addr,
     size_t len, int prot)
 {
-	//__debugbreak();
 	int retval = mprotect(addr, len, prot);
 
 	if (retval < 0)
