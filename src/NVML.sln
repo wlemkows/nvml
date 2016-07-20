@@ -254,6 +254,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_check", "test\vmem_che
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_custom_alloc", "test\vmem_custom_alloc\vmem_custom_alloc.vcxproj", "{4ED1E400-CF16-48C2-B176-2BF186E73531}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_delete", "test\vmem_delete\vmem_delete.vcxproj", "{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_malloc", "test\vmem_malloc\vmem_malloc.vcxproj", "{40DC66AD-F66D-4194-B9A4-A3A2222516FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1242,6 +1246,48 @@ Global
 		{4ED1E400-CF16-48C2-B176-2BF186E73531}.Static-Release|x64.Build.0 = Release|x64
 		{4ED1E400-CF16-48C2-B176-2BF186E73531}.Static-Release|x86.ActiveCfg = Release|x64
 		{4ED1E400-CF16-48C2-B176-2BF186E73531}.Static-Release|x86.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug|x64.ActiveCfg = Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug|x64.Build.0 = Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug|x86.ActiveCfg = Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug-static|x64.ActiveCfg = Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug-static|x64.Build.0 = Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug-static|x86.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Debug-static|x86.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release|x64.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release|x64.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release|x86.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release-static|x64.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release-static|x64.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release-static|x86.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Release-static|x86.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Debug|x64.ActiveCfg = Static-Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Debug|x64.Build.0 = Static-Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Debug|x86.ActiveCfg = Static-Debug|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Release|x64.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Release|x64.Build.0 = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Release|x86.ActiveCfg = Release|x64
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32}.Static-Release|x86.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug|x64.ActiveCfg = Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug|x64.Build.0 = Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug|x86.ActiveCfg = Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug-static|x64.ActiveCfg = Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug-static|x64.Build.0 = Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug-static|x86.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Debug-static|x86.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release|x64.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release|x64.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release|x86.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release-static|x64.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release-static|x64.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release-static|x86.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Release-static|x86.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Debug|x64.ActiveCfg = Static-Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Debug|x64.Build.0 = Static-Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Debug|x86.ActiveCfg = Static-Debug|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Release|x64.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Release|x64.Build.0 = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Release|x86.ActiveCfg = Release|x64
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE}.Static-Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1295,5 +1341,7 @@ Global
 		{7C9DDBAC-28ED-4D9B-93C0-6B41D2237B61} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 		{FF374D62-CBCF-401E-9A02-1D3DB8BE16E4} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 		{4ED1E400-CF16-48C2-B176-2BF186E73531} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
+		{0DE1C3AD-719A-4C0C-B751-EBCD57C19A32} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
+		{40DC66AD-F66D-4194-B9A4-A3A2222516FE} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 	EndGlobalSection
 EndGlobal
