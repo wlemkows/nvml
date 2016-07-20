@@ -213,8 +213,6 @@ pmemlog_create(const char *path, size_t poolsize, mode_t mode)
 	if (util_poolset_chmod(set, mode))
 		goto err;
 
-	util_poolset_fdclose(set);
-
 	LOG(3, "plp %p", plp);
 	return plp;
 
@@ -277,8 +275,6 @@ pmemlog_open_common(const char *path, int cow)
 		ERR("pool initialization failed");
 		goto err;
 	}
-
-	util_poolset_fdclose(set);
 
 	LOG(3, "plp %p", plp);
 	return plp;

@@ -459,8 +459,6 @@ pmemblk_create(const char *path, size_t bsize, size_t poolsize,
 	if (util_poolset_chmod(set, mode))
 		goto err;
 
-	util_poolset_fdclose(set);
-
 	LOG(3, "pbp %p", pbp);
 	return pbp;
 
@@ -527,8 +525,6 @@ pmemblk_open_common(const char *path, size_t bsize, int cow)
 		ERR("pool initialization failed");
 		goto err;
 	}
-
-	util_poolset_fdclose(set);
 
 	LOG(3, "pbp %p", pbp);
 	return pbp;

@@ -233,20 +233,6 @@ mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
 			return MAP_FAILED;
 		}
 		fh = (HANDLE)_get_osfhandle(fd);
-#if 0
-		/*
-		 * XXX - We need to keep file handle open for proper
-		 * implementation of msync() and to hold the file lock.
-		 * Need to verify if duplicate handle is enough.
-		 */
-		if (DuplicateHandle(GetCurrentProcess(),
-				(HANDLE)_get_osfhandle(fd),
-				GetCurrentProcess(), &fh,
-				0, FALSE, DUPLICATE_SAME_ACCESS) == FALSE) {
-				errno = EINVAL; /* XXX */
-			return MAP_FAILED;
-		}
-#endif
 	}
 
 	HANDLE fileMapping = CreateFileMapping(fh,
@@ -434,7 +420,7 @@ munmap(void *addr, size_t len)
 	PFILE_MAPPING_TRACKER mt;
 	mt = (PFILE_MAPPING_TRACKER)LIST_FIRST(&FileMappingListHead);
 	while (len > 0 && mt != NULL) {
-		if (begin >= mt->EndAddress || end < mt->BaseAddress) {
+		if (begin >= mt->EndAddress || end <= mt->BaseAddress) {
 			/* range not in the mapping */
 			mt = (PFILE_MAPPING_TRACKER)LIST_NEXT(mt, ListEntry);
 			continue;
@@ -511,7 +497,7 @@ msync(void *addr, size_t len, int flags)
 	PFILE_MAPPING_TRACKER mt;
 	mt = (PFILE_MAPPING_TRACKER)LIST_FIRST(&FileMappingListHead);
 	while (len > 0 && mt != NULL) {
-		if (begin >= mt->EndAddress || end < mt->BaseAddress) {
+		if (begin >= mt->EndAddress || end <= mt->BaseAddress) {
 			/* range not in the mapping */
 			mt = (PFILE_MAPPING_TRACKER)LIST_NEXT(mt, ListEntry);
 			continue;
@@ -593,7 +579,7 @@ mprotect(void *addr, size_t len, int prot)
 	PFILE_MAPPING_TRACKER mt;
 	mt = (PFILE_MAPPING_TRACKER)LIST_FIRST(&FileMappingListHead);
 	while (len > 0 && mt != NULL) {
-		if (begin >= mt->EndAddress || end < mt->BaseAddress) {
+		if (begin >= mt->EndAddress || end <= mt->BaseAddress) {
 			/* range not in the mapping */
 			mt = (PFILE_MAPPING_TRACKER)LIST_NEXT(mt, ListEntry);
 			continue;

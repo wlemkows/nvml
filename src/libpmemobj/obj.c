@@ -229,7 +229,7 @@ obj_remote_persist(PMEMobjpool *pop, const void *addr, size_t len,
 {
 	LOG(15, "pop %p addr %p len %zu lane %u", pop, addr, len, lane);
 
-	ASSERTne(pop->remote, NULL);
+	ASSERTne(pop->rpp, NULL);
 
 	/*
 	 * The pool header is not visible on remote node from the local host
@@ -238,11 +238,11 @@ obj_remote_persist(PMEMobjpool *pop, const void *addr, size_t len,
 	 */
 	uintptr_t offset = (uintptr_t)addr - pop->pop_desc;
 
-	int rv = Rpmem_persist(pop->remote, offset, len, lane);
+	int rv = Rpmem_persist(pop->rpp, offset, len, lane);
 	if (rv) {
 		ERR("!rpmem_persist(rpp %p offset %zu length %zu lane %u)"
 			" FATAL ERROR (returned value %i)",
-			pop->remote, offset, len, lane, rv);
+			pop->rpp, offset, len, lane, rv);
 		return NULL;
 	}
 
@@ -311,7 +311,7 @@ obj_norep_drain(PMEMobjpool *pop)
 	pop->drain_local();
 }
 
-static void pmemobj_cleanup(PMEMobjpool *pop);
+static void obj_pool_cleanup(PMEMobjpool *pop);
 
 /*
  * obj_handle_remote_persist_error -- (internal) handle remote persist
@@ -323,7 +323,7 @@ obj_handle_remote_persist_error(PMEMobjpool *pop)
 	LOG(1, "pop %p", pop);
 
 	ERR("error clean up...");
-	pmemobj_cleanup(pop);
+	obj_pool_cleanup(pop);
 
 	FATAL("Fatal error of remote persist. Aborting...");
 }
@@ -347,7 +347,7 @@ obj_rep_memcpy_persist(PMEMobjpool *pop, void *dest, const void *src,
 	PMEMobjpool *rep = pop->replica;
 	while (rep) {
 		void *rdest = (char *)rep + (uintptr_t)dest - (uintptr_t)pop;
-		if (rep->remote == NULL) {
+		if (rep->rpp == NULL) {
 			rep->memcpy_persist_local(rdest, src, len);
 		} else {
 			if (rep->persist_remote(rep, rdest, len, lane) == NULL)
@@ -380,7 +380,7 @@ obj_rep_memset_persist(PMEMobjpool *pop, void *dest, int c, size_t len)
 	PMEMobjpool *rep = pop->replica;
 	while (rep) {
 		void *rdest = (char *)rep + (uintptr_t)dest - (uintptr_t)pop;
-		if (rep->remote == NULL) {
+		if (rep->rpp == NULL) {
 			rep->memset_persist_local(rdest, c, len);
 		} else {
 			if (rep->persist_remote(rep, rdest, len, lane) == NULL)
@@ -413,7 +413,7 @@ obj_rep_persist(PMEMobjpool *pop, const void *addr, size_t len)
 	PMEMobjpool *rep = pop->replica;
 	while (rep) {
 		void *raddr = (char *)rep + (uintptr_t)addr - (uintptr_t)pop;
-		if (rep->remote == NULL) {
+		if (rep->rpp == NULL) {
 			rep->memcpy_persist_local(raddr, addr, len);
 		} else {
 			if (rep->persist_remote(rep, raddr, len, lane) == NULL)
@@ -444,7 +444,7 @@ obj_rep_flush(PMEMobjpool *pop, const void *addr, size_t len)
 	PMEMobjpool *rep = pop->replica;
 	while (rep) {
 		void *raddr = (char *)rep + (uintptr_t)addr - (uintptr_t)pop;
-		if (rep->remote == NULL) {
+		if (rep->rpp == NULL) {
 			memcpy(raddr, addr, len);
 			rep->flush_local(raddr, len);
 		} else {
@@ -470,7 +470,7 @@ obj_rep_drain(PMEMobjpool *pop)
 
 	PMEMobjpool *rep = pop->replica;
 	while (rep) {
-		if (rep->remote == NULL)
+		if (rep->rpp == NULL)
 			rep->drain_local();
 		rep = rep->replica;
 	}
@@ -705,7 +705,7 @@ pmemobj_descr_check(PMEMobjpool *pop, const char *layout, size_t poolsize)
 
 	void *dscp = (void *)((uintptr_t)(&pop->hdr) + sizeof(struct pool_hdr));
 
-	if (pop->remote) {
+	if (pop->rpp) {
 		/* read remote descriptor */
 		if (obj_read_remote(pop, dscp, dscp, OBJ_DSC_P_SIZE)) {
 			ERR("!obj_read_remote");
@@ -822,7 +822,7 @@ pmemobj_replica_init_remote(PMEMobjpool *rep, struct pool_set *set,
 		return -1;
 	}
 
-	rep->remote = repset->remote->rpp;
+	rep->rpp = repset->remote->rpp;
 
 	/* pop_desc - beginning of the pool's descriptor */
 	rep->pop_desc = (uintptr_t)rep->addr + sizeof(struct pool_hdr);
@@ -970,10 +970,10 @@ pmemobj_cleanup_remote(PMEMobjpool *pop)
 	LOG(3, "pop %p", pop);
 
 	for (; pop != NULL; pop = pop->replica) {
-		if (pop->remote != NULL) {
+		if (pop->rpp != NULL) {
 			Free(pop->node_addr);
 			Free(pop->pool_desc);
-			pop->remote = NULL;
+			pop->rpp = NULL;
 		}
 	}
 }
@@ -1031,7 +1031,7 @@ pmemobj_create(const char *path, const char *layout, size_t poolsize,
 		rep->addr = rep;
 		rep->size = repset->repsize;
 		rep->replica = NULL;
-		rep->remote = NULL;
+		rep->rpp = NULL;
 
 		/* initialize replica runtime - is_pmem, funcs, ... */
 		if (pmemobj_replica_init(rep, set, r, &runtime_nlanes,
@@ -1045,6 +1045,7 @@ pmemobj_create(const char *path, const char *layout, size_t poolsize,
 			rep->replica = set->replica[r + 1]->part[0].addr;
 	}
 
+	pop->set = set;
 
 	/* create pool descriptor */
 	if (pmemobj_descr_create(pop, layout, set->poolsize) != 0) {
@@ -1063,8 +1064,6 @@ pmemobj_create(const char *path, const char *layout, size_t poolsize,
 
 	if (util_poolset_chmod(set, mode))
 		goto err;
-
-	util_poolset_fdclose(set);
 
 	LOG(3, "pop %p", pop);
 
@@ -1089,7 +1088,7 @@ pmemobj_check_basic_local(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
 
-	ASSERTeq(pop->remote, NULL);
+	ASSERTeq(pop->rpp, NULL);
 
 	int consistent = 1;
 
@@ -1122,11 +1121,11 @@ obj_read_remote(PMEMobjpool *pop, void *dest, void *addr, size_t length)
 {
 	LOG(3, "pop %p dest %p addr %p length %zu", pop, dest, addr, length);
 
-	ASSERTne(pop->remote, NULL);
+	ASSERTne(pop->rpp, NULL);
 	ASSERT((uintptr_t)addr >= pop->pop_desc);
 
 	uintptr_t offset = (uintptr_t)addr - pop->pop_desc;
-	if (Rpmem_read(pop->remote, dest, offset, length)) {
+	if (Rpmem_read(pop->rpp, dest, offset, length)) {
 		ERR("!rpmem_read");
 		return -1;
 	}
@@ -1143,7 +1142,7 @@ pmemobj_check_basic_remote(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
 
-	ASSERTne(pop->remote, NULL);
+	ASSERTne(pop->rpp, NULL);
 
 	int consistent = 1;
 
@@ -1179,7 +1178,7 @@ pmemobj_check_basic(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
 
-	if (pop->remote == NULL)
+	if (pop->rpp == NULL)
 		return pmemobj_check_basic_local(pop);
 	else
 		return pmemobj_check_basic_remote(pop);
@@ -1240,7 +1239,7 @@ pmemobj_open_common(const char *path, const char *layout, int cow, int boot)
 		rep->addr = rep;
 		rep->size = repset->repsize;
 		rep->replica = NULL;
-		rep->remote = NULL;
+		rep->rpp = NULL;
 
 		/* initialize replica runtime - is_pmem, funcs, ... */
 		if (pmemobj_replica_init(rep, set, r, &runtime_nlanes,
@@ -1259,6 +1258,8 @@ pmemobj_open_common(const char *path, const char *layout, int cow, int boot)
 		if (r < set->nreplicas - 1)
 			rep->replica = set->replica[r + 1]->part[0].addr;
 	}
+
+	pop->set = set;
 
 	if (boot) {
 		/* check consistency of 'master' replica */
@@ -1291,7 +1292,7 @@ pmemobj_open_common(const char *path, const char *layout, int cow, int boot)
 			rep = set->replica[r]->part[0].addr;
 			void *dst = (void *)((uintptr_t)rep +
 						pop->lanes_offset);
-			if (rep->remote == NULL) {
+			if (rep->rpp == NULL) {
 				rep->memcpy_persist_local(dst, src, len);
 			} else {
 				if (rep->persist_remote(rep, dst, len,
@@ -1318,8 +1319,6 @@ pmemobj_open_common(const char *path, const char *layout, int cow, int boot)
 		ERR("pool initialization failed");
 		goto err;
 	}
-
-	util_poolset_fdclose(set);
 
 #ifdef USE_VG_MEMCHECK
 	if (boot)
@@ -1352,43 +1351,36 @@ pmemobj_open(const char *path, const char *layout)
 }
 
 /*
- * pmemobj_unmap_replicas -- (internal) unmap all the local replicas,
- *                           close remote ones and free their headers
+ * obj_replicas_cleanup -- (internal) free resources allocated for replicas
  */
 static void
-pmemobj_unmap_replicas(PMEMobjpool *pop)
+obj_replicas_cleanup(struct pool_set *set)
 {
-	LOG(3, "pop %p", pop);
+	LOG(3, "set %p", set);
 
-	while (pop) {
-		PMEMobjpool *next_replica = pop->replica;
+	for (unsigned r = 0; r < set->nreplicas; r++) {
+		struct pool_replica *rep = set->replica[r];
 
+		PMEMobjpool *pop = rep->part[0].addr;
 		redo_log_config_delete(pop->redo);
 
-		if (pop->remote == NULL) {
-			VALGRIND_REMOVE_PMEM_MAPPING(pop->addr, pop->size);
-			util_unmap(pop->addr, pop->size);
-		} else {
-			LOG(4, "closing remote replica %p", pop->remote);
-			util_pool_close_remote(pop->remote);
-			pop->remote = NULL;
+		if (pop->rpp != NULL) {
+			/*
+			 * remote replica will be closed in util_poolset_close
+			 */
+			pop->rpp = NULL;
 
 			Free(pop->node_addr);
 			Free(pop->pool_desc);
-
-			LOG(4, "freeing remote pool's header %p", pop->addr);
-			Free(pop->addr);
 		}
-		pop = next_replica;
 	}
-	util_remote_unload();
 }
 
 /*
- * pmemobj_cleanup -- (internal) cleanup the pool and unmap
+ * obj_pool_cleanup -- (internal) cleanup the pool and unmap
  */
 static void
-pmemobj_cleanup(PMEMobjpool *pop)
+obj_pool_cleanup(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
 
@@ -1398,8 +1390,9 @@ pmemobj_cleanup(PMEMobjpool *pop)
 
 	VALGRIND_DO_DESTROY_MEMPOOL(pop);
 
-	pmemobj_unmap_replicas(pop);
-
+	/* unmap all the replicas */
+	obj_replicas_cleanup(pop->set);
+	util_poolset_close(pop->set, 0);
 }
 
 /*
@@ -1439,7 +1432,7 @@ pmemobj_close(PMEMobjpool *pop)
 
 #endif /* _WIN32 */
 
-	pmemobj_cleanup(pop);
+	obj_pool_cleanup(pop);
 }
 
 /*
@@ -1469,9 +1462,11 @@ pmemobj_check(const char *path, const char *layout)
 	}
 
 	if (consistent) {
-		pmemobj_cleanup(pop);
+		obj_pool_cleanup(pop);
 	} else {
-		pmemobj_unmap_replicas(pop);
+		/* unmap all the replicas */
+		obj_replicas_cleanup(pop->set);
+		util_poolset_close(pop->set, 0);
 	}
 
 	if (consistent)
@@ -1541,18 +1536,14 @@ constructor_alloc_bytype(PMEMobjpool *pop, void *ptr,
 	pobj->type_num = carg->user_type;
 	pobj->size = 0;
 	memset(pobj->unused, 0, sizeof(pobj->unused));
-	pop->flush(pop, pobj, sizeof(*pobj));
-
-	VALGRIND_DO_MAKE_MEM_NOACCESS(pop, pobj->unused, sizeof(pobj->unused));
 
 	if (carg->zero_init)
 		pop->memset_persist(pop, ptr, 0, usable_size);
-	else
-		pop->drain(pop);
 
 	int ret = 0;
 	if (carg->constructor)
 		ret = carg->constructor(pop, ptr, carg->arg);
+
 	return ret;
 }
 
@@ -1675,13 +1666,6 @@ constructor_realloc(PMEMobjpool *pop, void *ptr, size_t usable_size, void *arg)
 		pobj->undo_entry_offset = 0;
 		pobj->type_num = carg->user_type;
 		pobj->size = 0;
-		VALGRIND_DO_MAKE_MEM_NOACCESS(pop, pobj->unused,
-			sizeof(pobj->unused));
-
-		pop->flush(pop, &pobj->undo_entry_offset,
-			sizeof(pobj->undo_entry_offset) +
-			sizeof(pobj->type_num) +
-			sizeof(pobj->size));
 	}
 
 	if (!carg->zero_init)
@@ -1777,7 +1761,6 @@ constructor_zrealloc_root(PMEMobjpool *pop, void *ptr,
 	constructor_realloc(pop, ptr, usable_size, arg);
 	if (ptr != carg->ptr) {
 		pobj->size = carg->new_size | OBJ_INTERNAL_OBJECT_MASK;
-		pop->flush(pop, &pobj->size, sizeof(pobj->size));
 	}
 
 	int ret = 0;

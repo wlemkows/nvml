@@ -42,9 +42,6 @@
 
 #define PROCMAXLEN 2048 /* maximum expected line length in /proc files */
 
-#define MEGABYTE ((uintptr_t)1 << 20)
-#define GIGABYTE ((uintptr_t)1 << 30)
-
 /*
  * util_map_hint_unused -- use /proc to determine a hint address for mmap()
  *

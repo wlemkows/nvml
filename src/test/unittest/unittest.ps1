@@ -283,10 +283,9 @@ function expect_normal_exit {
     [string]$expression =  @($Args)
     #$expression = $expression -replace " ", " ; "
     Invoke-Expression $expression
-    sv -Name ret $?
 
-    if (-Not $ret) {
-        sv -Name msg "failed with exit code FALSE"
+    if ($LASTEXITCODE -ne 0) {
+        sv -Name msg "failed with exit code $LASTEXITCODE"
 
         if (Test-Path ("err" + $Env:UNITTEST_NUM + ".log")) {
             if ($Env:UNITTEST_QUIET) {
@@ -927,3 +926,7 @@ if (! $UT_DUMP_LINES) {
 }
 
 $Env:CHECK_POOL_LOG_FILE = "check_pool_${Env:BUILD}_${Env:UNITTEST_NUM}.log"
+
+if ($Env:EXE_DIR -eq $null) {
+	$Env:EXE_DIR = "..\..\x64\debug"
+}
