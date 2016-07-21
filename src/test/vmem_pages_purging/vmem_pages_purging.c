@@ -64,13 +64,13 @@ main(int argc, char *argv[])
 	START(argc, argv, "vmem_pages_purging");
 
 #ifndef _WIN32
-	while ((opt = getopt(argc, argv, "z")) != -1) { //jesli z jest w argumentach
+	while ((opt = getopt(argc, argv, "z")) != -1) {
 		switch (opt) {
 		case 'z':
 			use_calloc = 1;
 			break;
 		default:
-			usage(argv[0]);	//wystapil nieznany parametr
+			usage(argv[0]);
 		}
 	}
 
