@@ -50,7 +50,7 @@ setup
 # create zero-length file
 fsutil file createnew $DIR\testfile 0
 
-expect_normal_exit ..\..\x64\debug\win_mmap$EXESUFFIX $DIR\testfile
+expect_normal_exit $Env:EXE_DIR\win_mmap$EXESUFFIX $DIR\testfile
 
 # check will print the appropriate pass/fail message
 #check

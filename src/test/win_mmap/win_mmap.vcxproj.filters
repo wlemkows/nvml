@@ -4,13 +4,18 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{8d8f2f00-0fff-43fb-a7ca-7ad92eac11a5}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TEST0.ps1" />
+    <Filter Include="Test Scripts">
+      <UniqueIdentifier>{3c6c5916-7f9f-40d8-8d4f-337540eae66d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="win_mmap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TEST0.ps1">
+      <Filter>Test Scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
