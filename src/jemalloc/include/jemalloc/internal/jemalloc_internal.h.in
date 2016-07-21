@@ -1066,26 +1066,23 @@ malloc_tsd_funcs(JEMALLOC_ALWAYS_INLINE, thread_allocated, thread_allocated_t,
 #endif /* JEMALLOC_INTERNAL_H */
 
 # ifdef _MSC_VER
-static inline int msc_clz(unsigned int val)
+static inline int 
+msc_clz(unsigned int val)
 {
 	unsigned int res = 0;
-	  //  _BitScanReverse64
+
 # if LG_SIZEOF_INT == 2
-	if (_BitScanReverse(&res, val))
-	{
+	if (_BitScanReverse(&res, val)) {
 		return 31 - res;
 	}
-	else
-	{
+	else {
 		return 32;
 	}
 # elif LG_SIZEOF_INT == 3
-	if (_BitScanReverse64(&res, val))
-	{
+	if (_BitScanReverse64(&res, val)) {
 		return 63 - res;
 	}
-	else
-	{
+	else {
 		return 64;
 	}
 # else
