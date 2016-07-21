@@ -1,5 +1,3 @@
-#!/bin/bash -e
-#
 # Copyright 2016, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
@@ -58,6 +56,6 @@ require_build_type debug nondebug
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_create_error$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_create_error$Env:EXESUFFIX `
 
 check

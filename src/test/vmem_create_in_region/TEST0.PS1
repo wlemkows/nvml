@@ -54,6 +54,6 @@ require_fs_type none
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_create_in_region$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_create_in_region$Env:EXESUFFIX `
 
 check

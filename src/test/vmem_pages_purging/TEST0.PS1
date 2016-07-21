@@ -55,6 +55,6 @@ require_fs_type any
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_pages_purging$Env:EXESUFFIX $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_pages_purging$Env:EXESUFFIX $DIR `
 
 check

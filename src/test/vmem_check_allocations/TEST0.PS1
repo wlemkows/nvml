@@ -30,15 +30,15 @@
 #
 
 #
-# src/test/vmem_malloc/TEST1.PS1 -- unit test for vmem_malloc
+# src/test/vmem_check_allocations/TEST0.PS1 -- unit test for vmem_check_allocations
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [alias("d")]
     $DIR = ""
     )
-$Env:UNITTEST_NAME = "vmem_malloc\TEST1"
-$Env:UNITTEST_NUM = "1"
+$Env:UNITTEST_NAME = "vmem_check_allocations\TEST0"
+$Env:UNITTEST_NUM = "0"
 # XXX:  bash has a few calls to tools that we don't have on
 # windows (yet) that set PMEM_IS_PMEM and NON_PMEM_IS_PMEM based
 # on their output
@@ -48,10 +48,14 @@ $Env:NON_PMEM_IS_PMEM = $true
 # standard unit test setup
 . ..\unittest\unittest.ps1
 
-require_fs_type any
+require_fs_type none
+require_build_type debug nondebug
 
 setup
 
-expect_normal_exit $Env:EXE_DIR\vmem_malloc$Env:EXESUFFIX $DIR `
+# limit output for file vmem*.log to reduce time of test execution
+$Env:VMEM_LOG_LEVEL = $2
+
+expect_normal_exit $Env:EXE_DIR\vmem_check_allocations$Env:EXESUFFIX `
 
 check

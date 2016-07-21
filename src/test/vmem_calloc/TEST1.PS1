@@ -30,7 +30,7 @@
 #
 
 #
-# src/test/vmem_calloc/TEST1 -- unit test for vmem_calloc
+# src/test/vmem_calloc/TEST1.PS1 -- unit test for vmem_calloc
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
@@ -54,7 +54,7 @@ require_fs_type any
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_calloc$Env:EXESUFFIX $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_calloc$Env:EXESUFFIX $DIR `
 
 check
 

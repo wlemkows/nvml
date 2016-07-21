@@ -30,14 +30,14 @@
 #
 
 #
-# src/test/vmem_malloc/TEST1.PS1 -- unit test for vmem_malloc
+# src/test/vmem_mix_allocations/TEST1.PS1 -- unit test for vmem_mix_allocations
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [alias("d")]
     $DIR = ""
     )
-$Env:UNITTEST_NAME = "vmem_malloc\TEST1"
+$Env:UNITTEST_NAME = "vmem_mix_allocations\TEST1"
 $Env:UNITTEST_NUM = "1"
 # XXX:  bash has a few calls to tools that we don't have on
 # windows (yet) that set PMEM_IS_PMEM and NON_PMEM_IS_PMEM based
@@ -49,9 +49,10 @@ $Env:NON_PMEM_IS_PMEM = $true
 . ..\unittest\unittest.ps1
 
 require_fs_type any
+require_build_type debug nondebug
 
 setup
 
-expect_normal_exit $Env:EXE_DIR\vmem_malloc$Env:EXESUFFIX $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_mix_allocations$Env:EXESUFFIX $DIR `
 
 check

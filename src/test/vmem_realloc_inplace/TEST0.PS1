@@ -52,6 +52,6 @@ require_fs_type none
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_realloc_inplace$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_realloc_inplace$Env:EXESUFFIX `
 
 check

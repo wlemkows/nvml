@@ -52,6 +52,6 @@ require_fs_type none
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_malloc_usable_size$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_malloc_usable_size$Env:EXESUFFIX `
 
 check

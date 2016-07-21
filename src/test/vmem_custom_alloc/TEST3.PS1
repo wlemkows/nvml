@@ -30,7 +30,7 @@
 #
 
 #
-# src/test/vmem_custom_alloc/TEST3 -- unit test for vmem_custom_alloc
+# src/test/vmem_custom_alloc/TEST3.PS1 -- unit test for vmem_custom_alloc
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
@@ -52,6 +52,6 @@ require_fs_type any
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_custom_alloc$Env:EXESUFFIX 0 $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_custom_alloc$Env:EXESUFFIX 0 $DIR `
 
 check

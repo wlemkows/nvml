@@ -30,7 +30,7 @@
 #
 
 #
-# src/test/vmem_aligned_alloc/TEST1 -- unit test for vmem_aligned_alloc
+# src/test/vmem_aligned_alloc/TEST1.PS1 -- unit test for vmem_aligned_alloc
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
@@ -52,6 +52,6 @@ require_fs_type any
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_aligned_alloc$Env:EXESUFFIX $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_aligned_alloc$Env:EXESUFFIX $DIR `
 
 check

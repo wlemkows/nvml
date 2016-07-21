@@ -30,7 +30,7 @@
 #
 
 #
-# src/test/vmem_realloc/TEST0 -- unit test for vmem_realloc
+# src/test/vmem_realloc/TEST0.PS1 -- unit test for vmem_realloc
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
@@ -51,6 +51,6 @@ require_fs_type none
 
 setup
 
-expect_normal_exit ..\..\x64\debug\vmem_realloc$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_realloc$Env:EXESUFFIX `
 
 check
