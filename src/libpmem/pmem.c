@@ -454,7 +454,7 @@ pmem_is_pmem_init(void)
 {
 	LOG(3, NULL);
 
-	static volatile unsigned init;
+	static volatile uint64_t init;
 
 	while (init != 2) {
 		if (!__sync_bool_compare_and_swap(&init, 0, 1))

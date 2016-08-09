@@ -73,7 +73,7 @@ ut_sigaction(const char *file, int line, const char *func,
 		ut_fatal(file, line, func, "!sigaction: %s", strsignal(signum));
 	return retval;
 #else
-	if (signum == SIGSEGV) {
+	if (signum == SIGSEGV || signum == SIGABRT) {
 		Sa_handler = act->sa_handler;
 		Signum = signum;
 		AddVectoredExceptionHandler(0, exception_handler);

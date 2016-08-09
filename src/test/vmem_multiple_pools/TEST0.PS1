@@ -30,20 +30,18 @@
 #
 
 #
-# src/test/vmem_calloc/TEST1.PS1 -- unit test for vmem_calloc
+# src/test/vmem_multiple_pools/TEST0.PS1 -- unit test for vmem_multiple_pools
 #
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [alias("d")]
     $DIR = ""
     )
-$Env:UNITTEST_NAME = "vmem_calloc\TEST1"
-$Env:UNITTEST_NUM = "1"
-
+$Env:UNITTEST_NAME = "vmem_multiple_pools\TEST0"
+$Env:UNITTEST_NUM = "0"
 # XXX:  bash has a few calls to tools that we don't have on
 # windows (yet) that set PMEM_IS_PMEM and NON_PMEM_IS_PMEM based
 # on their output
-
 $Env:PMEM_IS_PMEM = $true
 $Env:NON_PMEM_IS_PMEM = $true
 
@@ -51,9 +49,10 @@ $Env:NON_PMEM_IS_PMEM = $true
 . ..\unittest\unittest.ps1
 
 require_fs_type any
+require_build_type debug nondebug
 
 setup
 
-expect_normal_exit $Env:EXE_DIR\vmem_calloc$Env:EXESUFFIX $DIR `
+expect_normal_exit $Env:EXE_DIR\vmem_multiple_pools$Env:EXESUFFIX $DIR 128 1 `
 
 check

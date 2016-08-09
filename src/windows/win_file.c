@@ -66,7 +66,7 @@ mkstemp(char *temp)
 	if (path == NULL)
 		return -1;
 
-	return open(path, O_RDWR | O_CREAT | O_EXCL, S_IWRITE | S_IREAD);
+	return open(path, O_RDWR | O_CREAT | O_EXCL | _O_TEMPORARY, S_IWRITE | S_IREAD);
 }
 
 /*

@@ -139,6 +139,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_create_error", "test\vmem_create_error\vmem_create_error.vcxproj", "{CD4B9690-7A06-4F7A-8492-9336979EE7E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_create_in_region", "test\vmem_create_in_region\vmem_create_in_region.vcxproj", "{24899F49-051A-49D7-BB22-7BE1996701A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B011232E-3187-4388-ACC4-A9A071669749} = {B011232E-3187-4388-ACC4-A9A071669749}
+		{CE3F2DFB-8470-4802-AD37-21CAF6CB2681} = {CE3F2DFB-8470-4802-AD37-21CAF6CB2681}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vmem_check_version", "test\vmem_check_version\vmem_check_version.vcxproj", "{04345B7D-B0A1-405B-8BB2-5B98A3400FEF}"
 EndProject

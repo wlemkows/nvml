@@ -48,14 +48,14 @@ $Env:NON_PMEM_IS_PMEM = $true
 # standard unit test setup
 . ..\unittest\unittest.ps1
 
-require_fs_type none
+require_fs_type any
 require_build_type debug nondebug
 
 setup
 
 # limit output for file vmem*.log to reduce time of test execution
-$Env:VMEM_LOG_LEVEL = $2
+$Env:VMEM_LOG_LEVEL = 2
 
-expect_normal_exit $Env:EXE_DIR\vmem_check_allocations$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\vmem_check_allocations$Env:EXESUFFIX $DIR `
 
 check

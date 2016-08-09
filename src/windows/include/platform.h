@@ -236,6 +236,9 @@ strsignal(int sig)
 	case SIGSEGV:
 		msg = "Segmentation fault\0";
 		break;
+	case SIGABRT:
+		msg = "Abort call\0";
+		break;
 	default:
 		msg = "No signal msg defined\0";
 	}

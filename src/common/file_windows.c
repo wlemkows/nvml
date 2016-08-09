@@ -87,7 +87,6 @@ util_tmpfile(const char *dir, const char *templ)
 		goto err;
 	}
 
-	(void) unlink(fullname);
 	LOG(3, "unlinked file is \"%s\"", fullname);
 
 	return fd;

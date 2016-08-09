@@ -9,9 +9,9 @@ typedef malloc_mutex_t malloc_rwlock_t;
 typedef struct malloc_rwlock_s malloc_rwlock_t;
 #endif
 
-#ifdef _WIN32
-#  define MALLOC_MUTEX_INITIALIZER {0}
-#elif (defined(JEMALLOC_OSSPIN))
+//#ifdef _WIN32
+//#  define MALLOC_MUTEX_INITIALIZER 
+#if (defined(JEMALLOC_OSSPIN))
 #  define MALLOC_MUTEX_INITIALIZER {0}
 #elif (defined(JEMALLOC_MUTEX_INIT_CB))
 #  define MALLOC_MUTEX_INITIALIZER {PTHREAD_MUTEX_INITIALIZER, NULL}
@@ -99,6 +99,7 @@ malloc_mutex_lock(malloc_mutex_t *mutex)
 {
 	if (isthreaded) {
 #ifdef _WIN32
+		malloc_mutex_init(&mutex->lock);
 		EnterCriticalSection(&mutex->lock);
 #elif (defined(JEMALLOC_OSSPIN))
 		OSSpinLockLock(&mutex->lock);
