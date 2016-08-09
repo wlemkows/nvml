@@ -721,7 +721,11 @@ function require_node_pkg() {
 	shift
 
 	local DIR=${NODE_WORKING_DIR[$N]}/$curtestdir
-	local COMMAND="$COMMAND PKG_CONFIG_PATH+=:${NODE_LD_LIBRARY_PATH[$N]}/pkgconfig"
+	local COMMAND=""
+	if [ -n "${NODE_LD_LIBRARY_PATH[$N]}" ]; then
+		COMMAND="PKG_CONFIG_PATH=\$PKG_CONFIG_PATH:${NODE_LD_LIBRARY_PATH[$N]}/pkgconfig"
+	fi
+
 	COMMAND="$COMMAND pkg-config $1"
 
 	set +e
@@ -1924,6 +1928,9 @@ function init_rpmem_on_node() {
 	export_vars_node $NODE RPMEM_ENABLE_VERBS
 	export_vars_node $NODE RPMEM_LOG_LEVEL
 	export_vars_node $NODE RPMEM_LOG_FILE
+
+	require_node_log_files $NODE rpmem$UNITTEST_NUM.log
+	require_node_log_files $TARGET rpmemd$UNITTEST_NUM.log
 
 	# Workaround for SIGSEGV in the infinipath-psm during abort
 	# The infinipath-psm is registering a signal handler and do not unregister

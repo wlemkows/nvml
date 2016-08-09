@@ -54,7 +54,7 @@ check_flag = $(shell echo "int main(){return 0;}" |\
 
 # Check for issues with older clang compilers which assert on delete persistent<[][]>.
 check_clang_template_bug = $(shell echo "using namespace nvml::obj; int main() { delete_persistent<int[][3]>(make_persistent<int[][3]>(2), 2); return 0; }" |\
-	$(CXX) --std=c++11 -x c++ -I$(TOP)/src/include/ -include libpmemobj/make_persistent_array.hpp -L$(TOP)/src/debug/ -c -o /dev/null - 2>/dev/null && echo y || echo n)
+	$(CXX) --std=c++11 -x c++ -I$(TOP)/src/include/ -include libpmemobj++/make_persistent_array.hpp -L$(TOP)/src/debug/ -c -o /dev/null - 2>/dev/null && echo y || echo n)
 
 # Check for issues with older gcc compilers which do not expand variadic template
 # variables in lambda expressions.
@@ -79,7 +79,7 @@ check_Wconversion = $(shell echo "long random(void); char test(void); char test(
 check_librt = $(shell echo "int main() { struct timespec t; return clock_gettime(CLOCK_MONOTONIC, &t); }" |\
 	$(CC) $(CFLAGS) -x c -include time.h -o /dev/null - 2>/dev/null && echo y || echo n)
 
-install_recursive = $(shell find $(1) -type f -exec install -m $(2) -D {} $(3)/{} \;)
+install_recursive = $(shell cd $(1) && find . -type f -exec install -m $(2) -D {} $(3)/{} \;)
 
 install_recursive_filter = $(shell cd $(1) && find . -type f -name "$(2)" -exec install -m $(3) -D {} $(4)/{} \;)
 

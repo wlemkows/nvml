@@ -75,8 +75,8 @@ function convert_changelog() {
 
 function experimental_install_triggers_overrides() {
 cat << EOF > debian/${OBJ_CPP_NAME}.install
-usr/include/libpmemobj/*.hpp
-usr/include/libpmemobj/detail/*.hpp
+usr/include/libpmemobj++/*.hpp
+usr/include/libpmemobj++/detail/*.hpp
 usr/share/doc/${OBJ_CPP_DOC_DIR}/*
 EOF
 
@@ -518,6 +518,7 @@ usr/lib/nvml_debug/libpmemobj.so.* usr/lib/nvml_dbg/
 usr/lib/libpmemobj.so
 usr/lib/pkgconfig/libpmemobj.pc
 usr/include/libpmemobj.h
+usr/include/libpmemobj/*.h
 usr/share/man/man3/libpmemobj.3.gz
 EOF
 

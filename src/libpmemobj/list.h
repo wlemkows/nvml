@@ -34,6 +34,18 @@
  * list.h -- internal definitions for persistent atomic lists module
  */
 
+#ifndef LIBPMEMOBJ_LIST_H
+#define LIBPMEMOBJ_LIST_H 1
+
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/types.h>
+
+#include "libpmemobj.h"
+#include "lane.h"
+#include "pmalloc.h"
+#include "redo.h"
+
 /*
  * lane_list_layout -- structure of list section in lane
  *
@@ -57,7 +69,7 @@ struct list_head {
 
 int list_insert_new_user(PMEMobjpool *pop,
 	size_t pe_offset, struct list_head *user_head, PMEMoid dest, int before,
-	size_t size, pmalloc_constr constructor, void *arg, PMEMoid *oidp);
+	size_t size, palloc_constr constructor, void *arg, PMEMoid *oidp);
 
 int list_insert(PMEMobjpool *pop,
 	ssize_t pe_offset, struct list_head *head, PMEMoid dest, int before,
@@ -79,3 +91,5 @@ int list_move(PMEMobjpool *pop,
 void list_move_oob(PMEMobjpool *pop,
 	struct list_head *head_old, struct list_head *head_new,
 	PMEMoid oid);
+
+#endif
