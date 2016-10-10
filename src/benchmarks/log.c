@@ -190,7 +190,7 @@ do_warmup(struct log_bench *lb, size_t nops)
 
 	} else {
 		for (size_t i = 0; i < nops; i++) {
-			if (write(lb->fd, buf, lb->args->el_size) !=
+			if (write(lb->fd, buf, (unsigned)lb->args->el_size) !=
 					lb->args->el_size) {
 				ret = -1;
 				perror("write");
@@ -270,7 +270,7 @@ fileio_append(struct benchmark *bench, struct operation_info *info)
 		worker_info->rand_sizes[info->index] :
 		lb->args->el_size;
 
-	if (write(lb->fd, worker_info->buf, size) != size) {
+	if (write(lb->fd, worker_info->buf, (unsigned)size) != size) {
 		perror("write");
 		return -1;
 	}

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pmem_movnt_align", "test\pmem_movnt_align\pmem_movnt_align.vcxproj", "{025E7D51-41F2-4CBA-956E-C37A4443DB1B}"
 EndProject
@@ -497,6 +497,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "obj_cpp_p_ext", "test\obj_c
 		{CE3F2DFB-8470-4802-AD37-21CAF6CB2681} = {CE3F2DFB-8470-4802-AD37-21CAF6CB2681}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchamrks", "Benchamrks", "{9C37B8CC-F810-4787-924D-65BC227091A3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pmembench", "benchmarks\pmembench.vcxproj", "{CB906E89-1313-4929-AFF7-86FBF1CC301F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -976,6 +980,10 @@ Global
 		{FD86DEA2-449E-44CD-A014-BFC30ED3FDF2}.Debug|x64.Build.0 = Debug|x64
 		{FD86DEA2-449E-44CD-A014-BFC30ED3FDF2}.Release|x64.ActiveCfg = Release|x64
 		{FD86DEA2-449E-44CD-A014-BFC30ED3FDF2}.Release|x64.Build.0 = Release|x64
+		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Debug|x64.ActiveCfg = Debug|x64
+		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Debug|x64.Build.0 = Debug|x64
+		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Release|x64.ActiveCfg = Release|x64
+		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1109,5 +1117,7 @@ Global
 		{FB6AFFAA-0279-41F7-A698-F81C90BBD987} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 		{FBB77433-639E-42DC-9355-EA94CAE294D2} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 		{FD86DEA2-449E-44CD-A014-BFC30ED3FDF2} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
+		{9C37B8CC-F810-4787-924D-65BC227091A3} = {853D45D8-980C-4991-B62A-DAC6FD245402}
+		{CB906E89-1313-4929-AFF7-86FBF1CC301F} = {9C37B8CC-F810-4787-924D-65BC227091A3}
 	EndGlobalSection
 EndGlobal
