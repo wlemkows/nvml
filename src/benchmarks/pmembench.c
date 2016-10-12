@@ -57,9 +57,6 @@
 #include "clo.h"
 #include "config_reader.h"
 #include "util.h"
-#include "rpmem_common.h"
-#include "rpmem_ssh.h"
-#include "rpmem_util.h"
 
 /*
  * struct pmembench -- main context
@@ -416,7 +413,7 @@ pmembench_print_header(struct pmembench *pb, struct benchmark *bench,
 			bench->info->name,
 			clovec->nargs,
 			pb->scenario->group ? " [group: " : "",
-			pb->scenario->group ? : "",
+			pb->scenario->group ? "" : "",
 			pb->scenario->group ? "]" : "");
 	} else {
 		printf("%s [%ld]\n", bench->info->name, clovec->nargs);

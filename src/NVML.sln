@@ -501,6 +501,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchamrks", "Benchamrks", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pmembench", "benchmarks\pmembench.vcxproj", "{CB906E89-1313-4929-AFF7-86FBF1CC301F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "config_reader", "test\config_reader\config_reader.vcxproj", "{8E10909F-AA7A-4076-9B15-C85EA341B764}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -984,6 +986,10 @@ Global
 		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Debug|x64.Build.0 = Debug|x64
 		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Release|x64.ActiveCfg = Release|x64
 		{CB906E89-1313-4929-AFF7-86FBF1CC301F}.Release|x64.Build.0 = Release|x64
+		{8E10909F-AA7A-4076-9B15-C85EA341B764}.Debug|x64.ActiveCfg = Debug|x64
+		{8E10909F-AA7A-4076-9B15-C85EA341B764}.Debug|x64.Build.0 = Debug|x64
+		{8E10909F-AA7A-4076-9B15-C85EA341B764}.Release|x64.ActiveCfg = Release|x64
+		{8E10909F-AA7A-4076-9B15-C85EA341B764}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1119,5 +1125,6 @@ Global
 		{FD86DEA2-449E-44CD-A014-BFC30ED3FDF2} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 		{9C37B8CC-F810-4787-924D-65BC227091A3} = {853D45D8-980C-4991-B62A-DAC6FD245402}
 		{CB906E89-1313-4929-AFF7-86FBF1CC301F} = {9C37B8CC-F810-4787-924D-65BC227091A3}
+		{8E10909F-AA7A-4076-9B15-C85EA341B764} = {746BA101-5C93-42A5-AC7A-64DCEB186572}
 	EndGlobalSection
 EndGlobal

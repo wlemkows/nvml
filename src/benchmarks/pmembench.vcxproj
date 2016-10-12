@@ -11,21 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="benchmark_time.c" />
     <ClCompile Include="benchmark_worker.c" />
-    <ClCompile Include="blk.c" />
-    <ClCompile Include="clo.c" />
-    <ClCompile Include="clo_vec.c" />
     <ClCompile Include="config_reader.c" />
-    <ClCompile Include="log.c" />
-    <ClCompile Include="pmembench.c" />
+    <ClCompile Include="config_reader_win.c" />
+    <ClCompile Include="scenario.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="benchmark.h" />
-    <ClInclude Include="benchmark_time.h" />
     <ClInclude Include="benchmark_worker.h" />
-    <ClInclude Include="clo.h" />
-    <ClInclude Include="clo_vec.h" />
     <ClInclude Include="config_reader.h" />
     <ClInclude Include="scenario.h" />
   </ItemGroup>
@@ -68,7 +60,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>$(SolutionDir)\common;$(SolutionDir)\test\unittest;$(SolutionDir)\windows\include;$(SolutionDir)\include;$(SolutionDir)\libpmemblk;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\common;$(SolutionDir)\test\unittest;$(SolutionDir)\windows\include;$(SolutionDir)\include;$(SolutionDir)\windows\getopt;$(SolutionDir)\libpmemblk;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
@@ -82,6 +74,7 @@
       <ForcedIncludeFiles>platform.h</ForcedIncludeFiles>
       <CompileAs>CompileAsC</CompileAs>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)windows\getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
