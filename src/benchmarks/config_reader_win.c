@@ -208,6 +208,33 @@ get_groups(struct config_reader *cr, int *length)
 	return groups;
 }
 
+static wchar_t*
+char_to_wchar_t(char *var)
+{
+	const size_t size = strlen(var) + 1;
+	wchar_t* group_name_converted = malloc(sizeof(wchar_t) * size);
+	mbstowcs(group_name_converted, var, size);
+
+	return group_name_converted;
+}
+
+static char **
+get_keys(struct config_reader *cr,
+	char * group_name, int *length)
+{
+	TCHAR keys_buffer[1024];
+	wchar_t *name = char_to_wchar_t(group_name);
+	GetPrivateProfileString(name,
+		NULL,
+		TEXT("Error: cannot find key"),
+		keys_buffer,
+		1024,
+		TEXT("..\\..\\test\\config_reader\\config_test.cfg"));
+	free(name);
+	char ** keys = table_from_profile_string(keys_buffer, length);
+	return keys;
+}
+
 static int
 has_groups(char **groups, int *length, char *name)
 {
@@ -224,26 +251,21 @@ has_groups(char **groups, int *length, char *name)
 	return 0;
 }
 
-
-static char **
-get_keys(struct config_reader *cr,
-	char * group_name, int *length)
+static int
+has_key(struct config_reader *cr, char *group, char *key)
 {
-	const size_t size = strlen(group_name) + 1;
-	wchar_t* group_name_converted = malloc(sizeof(wchar_t) * size);
-	mbstowcs(group_name_converted, group_name, size);
-
-	TCHAR keys_buffer[1024];
-	GetPrivateProfileString(group_name_converted,
-		NULL,
-		TEXT("Error: cannot find key"),
-		keys_buffer,
-		1024,
+	TCHAR ret_key[100];
+	wchar_t *name = char_to_wchar_t(group);
+	GetPrivateProfileString(char_to_wchar_t(group),
+		char_to_wchar_t(key),
+		TEXT(""),
+		ret_key,
+		100,
 		TEXT("..\\..\\test\\config_reader\\config_test.cfg"));
-	free(group_name_converted);
 
-	char ** keys = table_from_profile_string(keys_buffer, length);
-	return keys;
+	if (ret_key)
+		return 0;
+	return 1;
 }
 
 int
@@ -302,13 +324,13 @@ config_reader_get_scenarios(struct config_reader *cr,
 		 * name of the section.
 		 */
 		struct scenario *scenario = NULL;
-		if (g_key_file_has_key(cr->key_file, groups[g], KEY_BENCHMARK,
+		if (has_key(cr->lpFileName, groups[g], KEY_BENCHMARK,
 					NULL) == FALSE) {
 			scenario = scenario_alloc(groups[g], groups[g]);
 			assert(scenario != NULL);
 		} else {
-			gchar *benchmark = g_key_file_get_value(cr->key_file,
-					groups[g], KEY_BENCHMARK, NULL);
+			char *benchmark = get_value(cr->lpFileName,
+					groups[g], KEY_BENCHMARK);
 			assert(benchmark != NULL);
 			if (!benchmark) {
 				ret = -1;
@@ -319,20 +341,20 @@ config_reader_get_scenarios(struct config_reader *cr,
 			free(benchmark);
 		}
 
-		gsize k;
+		int k;
 		if (has_global) {
 			/*
 			 * Merge key/values from global section.
 			 */
-			for (k = 0; k < ngkeys; k++) {
-				if (g_key_file_has_key(cr->key_file, groups[g],
+			for (k = 0; k < nkeys; k++) {
+				if (has_key(cr->lpFileName, groups[g],
 						gkeys[k], NULL) == TRUE)
 					continue;
 
 				if (!is_argument(gkeys[k]))
 					continue;
 
-				char *value = g_key_file_get_value(cr->key_file,
+				char *value = get_value(cr->lpFileName,
 							SECTION_GLOBAL,
 							gkeys[k], NULL);
 				assert(NULL != value);
@@ -355,21 +377,21 @@ config_reader_get_scenarios(struct config_reader *cr,
 		}
 
 		/* check for group name */
-		if (g_key_file_has_key(cr->, groups[g],
+		if (has_key(cr->lpFileName, groups[g],
 				KEY_GROUP, NULL) != FALSE) {
-			gchar *group = g_key_file_get_value(cr->key_file,
+			char *group =get_value(cr->lpFileName,
 					groups[g], KEY_GROUP, NULL);
 			assert(group != NULL);
 			scenario_set_group(scenario, group);
-		} else if (g_key_file_has_key(cr->key_file, SECTION_GLOBAL,
+		} else if (has_key(cr->lpFileName, SECTION_GLOBAL,
 				KEY_GROUP, NULL) != FALSE) {
-			gchar *group = g_key_file_get_value(cr->key_file,
+			char *group = get_value(cr->lpFileName,
 					SECTION_GLOBAL, KEY_GROUP, NULL);
 			scenario_set_group(scenario, group);
 		}
 
-		gsize nkeys;
-		gchar **keys = g_key_file_get_keys(cr->key_file, groups[g],
+		int nkeys;
+		char **keys = get_keys(cr->lpFileName, groups[g],
 				&nkeys, NULL);
 		assert(NULL != keys);
 		if (!keys) {
@@ -383,7 +405,7 @@ config_reader_get_scenarios(struct config_reader *cr,
 		for (k = 0; k < nkeys; k++) {
 			if (!is_argument(keys[k]))
 				continue;
-			char *value = g_key_file_get_value(cr->key_file,
+			char *value = get_value(cr->lpFileName,
 						groups[g],
 						keys[k], NULL);
 			assert(NULL != value);
