@@ -506,6 +506,10 @@ ut_done(const char *file, int line, const char *func,
 
 	va_end(ap);
 
+#ifdef _WIN32
+	FREE(Sa_handler_tab);
+#endif
+
 	if (Outfp != NULL)
 		fclose(Outfp);
 
