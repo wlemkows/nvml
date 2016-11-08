@@ -13,7 +13,6 @@
   <ItemGroup>
     <None Include="err0.log.match" />
     <None Include="err1.log.match" />
-    <None Include="out0.log.match" />
     <None Include="out1.log.match" />
     <None Include="TEST0.PS1" />
     <None Include="TEST1.PS1" />
@@ -25,8 +24,8 @@
     <ProjectReference Include="..\..\libvmem\libvmem.vcxproj">
       <Project>{08762559-e9df-475b-ba99-49f4b5a1d80b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\windows\getopt\getopt.vcxproj">
-      <Project>{9186eac4-2f34-4f17-b940-6585d7869bcd}</Project>
+    <ProjectReference Include="..\unittest\libut.vcxproj">
+      <Project>{ce3f2dfb-8470-4802-ad37-21caf6cb2681}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -85,7 +84,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DbgHelp.lib;libut.lib;libpmem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
@@ -105,7 +104,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DbgHelp.lib;libut.lib;libpmem.lib;libvmem.lib;liblinux.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
