@@ -11,10 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\file.h" />
+    <ClInclude Include="..\common\mmap.h" />
+    <ClInclude Include="..\common\out.h" />
+    <ClInclude Include="..\common\util.h" />
+    <ClInclude Include="..\windows\include\pthread.h" />
+    <ClInclude Include="..\windows\include\win_mmap.h" />
     <ClInclude Include="..\windows\jemalloc_gen\include\jemalloc\jemalloc.h" />
     <ClInclude Include="vmem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\file.c" />
+    <ClCompile Include="..\common\file_windows.c" />
+    <ClCompile Include="..\common\mmap.c" />
+    <ClCompile Include="..\common\mmap_windows.c" />
+    <ClCompile Include="..\common\out.c" />
+    <ClCompile Include="..\common\pthread_windows.c" />
+    <ClCompile Include="..\common\util.c" />
+    <ClCompile Include="..\common\util_windows.c" />
+    <ClCompile Include="..\windows\win_mmap.c" />
     <ClCompile Include="libvmem.c" />
     <ClCompile Include="libvmem_main.c" />
     <ClCompile Include="vmem.c" />
@@ -23,14 +38,8 @@
     <None Include="libvmem.def" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\common\libpmemcommon.vcxproj">
-      <Project>{492baa3d-0d5d-478e-9765-500463ae69aa}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\jemalloc\msvc\jemalloc.vcxproj">
       <Project>{8d6bb292-9e1c-413d-9f98-4864bdc1514a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\libpmem\libpmem.vcxproj">
-      <Project>{9e9e3d25-2139-4a5d-9200-18148ddead45}</Project>
     </ProjectReference>
     <ProjectReference Include="..\windows\liblinux\liblinux.vcxproj">
       <Project>{b3ff772d-f2ff-4e6e-abd8-763407bb6a5c}</Project>
@@ -88,7 +97,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>$(SolutionDir)\windows\include;$(SolutionDir)\include;$(SolutionDir)\common;$(SolutionDir)windows\jemalloc_gen\include\jemalloc;$(SolutionDir)\jemalloc\include\jemalloc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;DEBUG;_CRT_USE_WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_SYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_USE_WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_SYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <BrowseInformation>true</BrowseInformation>
       <CompileAs>CompileAsC</CompileAs>
@@ -100,7 +109,7 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(PlatformTarget)\kernel32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(PlatformTarget)\kernel32.lib;shlwapi.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>libvmem.def</ModuleDefinitionFile>
       <GenerateMapFile>true</GenerateMapFile>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
