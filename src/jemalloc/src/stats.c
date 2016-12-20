@@ -20,7 +20,9 @@
 #define	CTL_PI_GET(n, v, t) do {					\
 	size_t mib[8];							\
 	char buf[256];							\
-	snprintf(buf, sizeof(buf), n, p);				\
+	int ret = snprintf(buf, sizeof(buf), n, p);				\
+	if (ret < 0)						\
+		goto err;					\
 	size_t miblen = sizeof(mib) / sizeof(size_t);			\
 	size_t sz = sizeof(t);						\
 	xmallctlnametomib(buf, mib, &miblen);				\
@@ -32,7 +34,9 @@
 #define	CTL_PJ_GET(n, v, t) do {					\
 	size_t mib[8];							\
 	char buf[256];							\
-	snprintf(buf, sizeof(buf), n, p);				\
+	int ret = snprintf(buf, sizeof(buf), n, p);				\
+	if (ret < 0)						\
+		goto err;					\
 	size_t miblen = sizeof(mib) / sizeof(size_t);			\
 	size_t sz = sizeof(t);						\
 	xmallctlnametomib(buf, mib, &miblen);				\
@@ -44,7 +48,9 @@
 #define	CTL_PIJ_GET(n, v, t) do {					\
 	size_t mib[8];							\
 	char buf[256];							\
-	snprintf(buf, sizeof(buf), n, p);				\
+	int ret = snprintf(buf, sizeof(buf), n, p);				\
+	if (ret < 0)						\
+		goto err;				\
 	size_t miblen = sizeof(mib) / sizeof(size_t);			\
 	size_t sz = sizeof(t);						\
 	xmallctlnametomib(buf, mib, &miblen);				\
@@ -171,6 +177,8 @@ stats_arena_bins_print(void (*write_cb)(void *, const char *), void *cbopaque,
 			malloc_cprintf(write_cb, cbopaque, "[%u]\n", gap_start);
 		}
 	}
+err:
+	return;
 }
 
 static void
@@ -217,6 +225,8 @@ stats_arena_lruns_print(void (*write_cb)(void *, const char *), void *cbopaque,
 	}
 	if (gap_start != -1)
 		malloc_cprintf(write_cb, cbopaque, "[%zu]\n", j - gap_start);
+err:
+	return;
 }
 
 static void
@@ -290,6 +300,8 @@ stats_arena_print(void (*write_cb)(void *, const char *), void *cbopaque,
 		stats_arena_bins_print(write_cb, cbopaque, p, i);
 	if (large)
 		stats_arena_lruns_print(write_cb, cbopaque, p, i);
+err:
+	return;
 }
 
 void

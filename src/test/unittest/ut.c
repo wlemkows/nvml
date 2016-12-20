@@ -235,7 +235,9 @@ vout(int flags, const char *prepend, const char *fmt, va_list ap)
 		cc += (unsigned)sn;
 	}
 
-	snprintf(&buf[cc], MAXPRINT - cc, "%s%s%s", sep, errstr, nl);
+	sn = snprintf(&buf[cc], MAXPRINT - cc, "%s%s%s", sep, errstr, nl);
+	if (sn < 0)
+		abort();
 
 	/* buf has the fully-baked output, send it everywhere it goes... */
 	fputs(buf, Tracefp);
@@ -459,7 +461,7 @@ ut_start(const char *file, int line, const char *func,
 	int saveerrno = errno;
 	char logname[MAXLOGNAME];
 	char *logsuffix;
-
+	int ret = 0;
 	va_start(ap, fmt);
 
 	long long sc = sysconf(_SC_PAGESIZE);
@@ -493,19 +495,31 @@ ut_start(const char *file, int line, const char *func,
 	if ((logsuffix = getenv("UNITTEST_NUM")) == NULL)
 		logsuffix = "";
 
-	snprintf(logname, MAXLOGNAME, "out%s.log", logsuffix);
+	ret = snprintf(logname, MAXLOGNAME, "out%s.log", logsuffix);
+	if (ret < 0) {
+		UT_ERR("!snprintf");
+		exit(1);
+	}
 	if ((Outfp = fopen(logname, "w")) == NULL) {
 		perror(logname);
 		exit(1);
 	}
 
-	snprintf(logname, MAXLOGNAME, "err%s.log", logsuffix);
+	ret = snprintf(logname, MAXLOGNAME, "err%s.log", logsuffix);
+	if (ret < 0) {
+		UT_ERR("!snprintf");
+		exit(1);
+	}
 	if ((Errfp = fopen(logname, "w")) == NULL) {
 		perror(logname);
 		exit(1);
 	}
 
-	snprintf(logname, MAXLOGNAME, "trace%s.log", logsuffix);
+	ret = snprintf(logname, MAXLOGNAME, "trace%s.log", logsuffix);
+	if (ret < 0) {
+		UT_ERR("!snprintf");
+		exit(1);
+	}
 	if ((Tracefp = fopen(logname, "w")) == NULL) {
 		perror(logname);
 		exit(1);

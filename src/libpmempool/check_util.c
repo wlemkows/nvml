@@ -359,8 +359,13 @@ check_status_create(PMEMpoolcheck *ppc, enum pmempool_check_msg_type type,
 			p > 0) {
 		char buff[UTIL_MAX_ERR_MSG];
 		util_strerror(errno, buff, UTIL_MAX_ERR_MSG);
-		snprintf(st->msg + p, MAX_MSG_STR_SIZE - (size_t)p,
+		int ret = snprintf(st->msg + p, MAX_MSG_STR_SIZE - (size_t)p,
 			": %s", buff);
+		if (ret < 0) {
+			char buff[UTIL_MAX_ERR_MSG];
+			util_strerror(errno, buff, UTIL_MAX_ERR_MSG);
+			abort();
+		}
 	}
 
 	st->status.type = type;
@@ -619,12 +624,17 @@ check_get_time_str(time_t time)
 {
 	static char str_buff[STR_MAX] = {0, };
 	struct tm *tm = localtime(&time);
+	int ret = 0;
 
 	if (tm)
 		strftime(str_buff, STR_MAX, TIME_STR_FMT, tm);
 	else
-		snprintf(str_buff, STR_MAX, "unknown");
+		ret = snprintf(str_buff, STR_MAX, "unknown");
 
+	if (ret < 0) {
+		ERR("!snprintf");
+		return NULL;
+	}
 	return str_buff;
 }
 
