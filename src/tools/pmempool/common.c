@@ -390,37 +390,39 @@ util_ranges_add(struct ranges *rangesp, struct range range)
 	struct range *rangep = malloc(sizeof(struct range));
 	if (!rangep)
 		err(1, "Cannot allocate memory for range\n");
-	memcpy(rangep, &range, sizeof(*rangep));
+	else {
+		memcpy(rangep, &range, sizeof(*rangep));
 
-	struct range *curp, *next;
-	uint64_t first = rangep->first;
-	uint64_t last = rangep->last;
+		struct range *curp, *next;
+		uint64_t first = rangep->first;
+		uint64_t last = rangep->last;
 
-	curp = LIST_FIRST(&rangesp->head);
-	while (curp) {
-		next = LIST_NEXT(curp, next);
-		if (util_ranges_overlap(curp, rangep)) {
-			LIST_REMOVE(curp, next);
-			if (curp->first < first)
-				first = curp->first;
-			if (curp->last > last)
-				last = curp->last;
-			free(curp);
+		curp = LIST_FIRST(&rangesp->head);
+		while (curp) {
+			next = LIST_NEXT(curp, next);
+			if (util_ranges_overlap(curp, rangep)) {
+				LIST_REMOVE(curp, next);
+				if (curp->first < first)
+					first = curp->first;
+				if (curp->last > last)
+					last = curp->last;
+				free(curp);
+			}
+			curp = next;
 		}
-		curp = next;
-	}
 
-	rangep->first = first;
-	rangep->last = last;
+		rangep->first = first;
+		rangep->last = last;
 
-	LIST_FOREACH(curp, &rangesp->head, next) {
-		if (curp->first < rangep->first) {
-			LIST_INSERT_AFTER(curp, rangep, next);
-			return 0;
+		LIST_FOREACH(curp, &rangesp->head, next) {
+			if (curp->first < rangep->first) {
+				LIST_INSERT_AFTER(curp, rangep, next);
+				return 0;
+			}
 		}
-	}
 
-	LIST_INSERT_HEAD(&rangesp->head, rangep, next);
+		LIST_INSERT_HEAD(&rangesp->head, rangep, next);
+	}
 
 	return 0;
 }
@@ -916,15 +918,15 @@ util_options_alloc(const struct option *options,
 	struct options *opts = calloc(1, sizeof(*opts));
 	if (!opts)
 		err(1, "Cannot allocate memory for options structure");
-
-	opts->opts = options;
-	opts->noptions = nopts;
-	opts->req = req;
-	size_t bitmap_size = howmany(nopts, 8);
-	opts->bitmap = calloc(bitmap_size, 1);
-	if (!opts->bitmap)
-		err(1, "Cannot allocate memory for options bitmap");
-
+	else {
+		opts->opts = options;
+		opts->noptions = nopts;
+		opts->req = req;
+		size_t bitmap_size = howmany(nopts, 8);
+		opts->bitmap = calloc(bitmap_size, 1);
+		if (!opts->bitmap)
+			err(1, "Cannot allocate memory for options bitmap");
+	}
 	return opts;
 }
 

@@ -215,51 +215,52 @@ info_btt_map(struct pmem_info *pip, int v,
 	uint32_t *map = malloc(mapsize);
 	if (!map)
 		err(1, "Cannot allocate memory for BTT map");
+	else {
+		/* read btt map area */
+		if (pmempool_info_read(pip, (uint8_t *)map, mapsize,
+			arena_off + infop->mapoff)) {
+			outv_err("wrong BTT Map size or offset\n");
+			ret = -1;
+			goto error;
+		}
 
-	/* read btt map area */
-	if (pmempool_info_read(pip, (uint8_t *)map, mapsize,
-				arena_off + infop->mapoff)) {
-		outv_err("wrong BTT Map size or offset\n");
-		ret = -1;
-		goto error;
-	}
+		uint32_t arena_count = 0;
 
-	uint32_t arena_count = 0;
+		uint64_t i;
+		struct range *curp = NULL;
+		struct range range;
+		FOREACH_RANGE(curp, &pip->args.ranges) {
+			if (pmempool_info_get_range(pip, &range, curp,
+				infop->external_nlba - 1, offset) == 0)
+				continue;
+			for (i = range.first; i <= range.last; i++) {
+				uint32_t entry = le32toh(map[i]);
+				int is_zero = (entry & ~BTT_MAP_ENTRY_LBA_MASK) ==
+					BTT_MAP_ENTRY_ZERO ||
+					(entry & ~BTT_MAP_ENTRY_LBA_MASK) == 0;
+				int is_error = (entry & ~BTT_MAP_ENTRY_LBA_MASK) ==
+					BTT_MAP_ENTRY_ERROR;
 
-	uint64_t i;
-	struct range *curp = NULL;
-	struct range range;
-	FOREACH_RANGE(curp, &pip->args.ranges) {
-		if (pmempool_info_get_range(pip, &range, curp,
-					infop->external_nlba - 1, offset) == 0)
-			continue;
-		for (i = range.first; i <= range.last; i++) {
-			uint32_t entry = le32toh(map[i]);
-			int is_zero = (entry & ~BTT_MAP_ENTRY_LBA_MASK) ==
-				BTT_MAP_ENTRY_ZERO ||
-				(entry & ~BTT_MAP_ENTRY_LBA_MASK) == 0;
-			int is_error = (entry & ~BTT_MAP_ENTRY_LBA_MASK) ==
-				BTT_MAP_ENTRY_ERROR;
-
-			if (info_blk_skip_block(pip,
+				if (info_blk_skip_block(pip,
 					is_zero, is_error) == 0) {
-				if (arena_count == 0)
-					outv_title(v, "PMEM BLK BTT Map");
+					if (arena_count == 0)
+						outv_title(v, "PMEM BLK BTT Map");
 
-				if (is_zero)
-					pip->blk.stats.zeros++;
-				if (is_error)
-					pip->blk.stats.errors++;
-				if (!is_zero && !is_error)
-					pip->blk.stats.noflag++;
+					if (is_zero)
+						pip->blk.stats.zeros++;
+					if (is_error)
+						pip->blk.stats.errors++;
+					if (!is_zero && !is_error)
+						pip->blk.stats.noflag++;
 
-				pip->blk.stats.total++;
+					pip->blk.stats.total++;
 
-				arena_count++;
-				(*count)++;
+					arena_count++;
+					(*count)++;
 
-				outv(v, "%010d: %s\n", offset + i,
-					out_get_btt_map_entry(entry));
+					outv(v, "%010d: %s\n", offset + i,
+						out_get_btt_map_entry(entry));
+				}
 			}
 		}
 	}
@@ -408,92 +409,92 @@ info_btt_layout(struct pmem_info *pip, off_t btt_off)
 	infop = malloc(sizeof(struct btt_info));
 	if (!infop)
 		err(1, "Cannot allocate memory for BTT Info structure");
+	else {
+		int narena = 0;
+		uint64_t cur_lba = 0;
+		uint64_t count_data = 0;
+		uint64_t count_map = 0;
+		uint64_t offset = (uint64_t)btt_off;
+		uint64_t nextoff = 0;
 
-	int narena = 0;
-	uint64_t cur_lba = 0;
-	uint64_t count_data = 0;
-	uint64_t count_map = 0;
-	uint64_t offset = (uint64_t)btt_off;
-	uint64_t nextoff = 0;
+		do {
+			/* read btt info area */
+			if (pmempool_info_read(pip, infop, sizeof(*infop), offset)) {
+				ret = -1;
+				outv_err("cannot read BTT Info header\n");
+				goto err;
+			}
 
-	do {
-		/* read btt info area */
-		if (pmempool_info_read(pip, infop, sizeof(*infop), offset)) {
-			ret = -1;
-			outv_err("cannot read BTT Info header\n");
-			goto err;
-		}
+			if (util_check_memory((uint8_t *)infop,
+				sizeof(*infop), 0) == 0) {
+				outv(1, "\n<No BTT layout>\n");
+				break;
+			}
 
-		if (util_check_memory((uint8_t *)infop,
-					sizeof(*infop), 0) == 0) {
-			outv(1, "\n<No BTT layout>\n");
-			break;
-		}
-
-		outv(1, "\n[ARENA %d]", narena);
-		outv_title(1, "PMEM BLK BTT Info Header");
-		outv_hexdump(pip->args.vhdrdump, infop,
+			outv(1, "\n[ARENA %d]", narena);
+			outv_title(1, "PMEM BLK BTT Info Header");
+			outv_hexdump(pip->args.vhdrdump, infop,
 				sizeof(*infop), offset, 1);
 
-		btt_info_convert2h(infop);
+			btt_info_convert2h(infop);
 
-		nextoff = infop->nextoff;
+			nextoff = infop->nextoff;
 
-		/* print btt info fields */
-		if (info_btt_info(pip, 1, infop)) {
-			ret = -1;
-			goto err;
-		}
+			/* print btt info fields */
+			if (info_btt_info(pip, 1, infop)) {
+				ret = -1;
+				goto err;
+			}
 
-		/* dump blocks data */
-		if (info_btt_data(pip, pip->args.vdata,
-					infop, offset, cur_lba, &count_data)) {
-			ret = -1;
-			goto err;
-		}
+			/* dump blocks data */
+			if (info_btt_data(pip, pip->args.vdata,
+				infop, offset, cur_lba, &count_data)) {
+				ret = -1;
+				goto err;
+			}
 
-		/* print btt map entries and get statistics */
-		if (info_btt_map(pip, pip->args.blk.vmap, infop,
-					offset, cur_lba, &count_map)) {
-			ret = -1;
-			goto err;
-		}
+			/* print btt map entries and get statistics */
+			if (info_btt_map(pip, pip->args.blk.vmap, infop,
+				offset, cur_lba, &count_map)) {
+				ret = -1;
+				goto err;
+			}
 
-		/* print flog entries */
-		if (info_btt_flog(pip, pip->args.blk.vflog, infop,
-					offset)) {
-			ret = -1;
-			goto err;
-		}
+			/* print flog entries */
+			if (info_btt_flog(pip, pip->args.blk.vflog, infop,
+				offset)) {
+				ret = -1;
+				goto err;
+			}
 
-		/* increment LBA's counter before reading info backup */
-		cur_lba += infop->external_nlba;
+			/* increment LBA's counter before reading info backup */
+			cur_lba += infop->external_nlba;
 
-		/* read btt info backup area */
-		if (pmempool_info_read(pip, infop, sizeof(*infop),
-			offset + infop->infooff)) {
-			outv_err("wrong BTT Info Backup size or offset\n");
-			ret = -1;
-			goto err;
-		}
+			/* read btt info backup area */
+			if (pmempool_info_read(pip, infop, sizeof(*infop),
+				offset + infop->infooff)) {
+				outv_err("wrong BTT Info Backup size or offset\n");
+				ret = -1;
+				goto err;
+			}
 
-		outv_title(pip->args.blk.vbackup,
+			outv_title(pip->args.blk.vbackup,
 				"PMEM BLK BTT Info Header Backup");
-		if (outv_check(pip->args.blk.vbackup))
-			outv_hexdump(pip->args.vhdrdump, infop,
-				sizeof(*infop),
-				offset + infop->infooff, 1);
+			if (outv_check(pip->args.blk.vbackup))
+				outv_hexdump(pip->args.vhdrdump, infop,
+					sizeof(*infop),
+					offset + infop->infooff, 1);
 
-		btt_info_convert2h(infop);
-		info_btt_info(pip, pip->args.blk.vbackup, infop);
+			btt_info_convert2h(infop);
+			info_btt_info(pip, pip->args.blk.vbackup, infop);
 
-		offset += nextoff;
-		narena++;
+			offset += nextoff;
+			narena++;
 
-	} while (nextoff > 0);
+		} while (nextoff > 0);
 
-	info_btt_stats(pip, pip->args.vstats);
-
+		info_btt_stats(pip, pip->args.vstats);
+	}
 err:
 	if (infop)
 		free(infop);
@@ -534,20 +535,20 @@ pmempool_info_blk(struct pmem_info *pip)
 	struct pmemblk *pbp = malloc(sizeof(struct pmemblk));
 	if (!pbp)
 		err(1, "Cannot allocate memory for pmemblk structure");
+	else {
+		if (pmempool_info_read(pip, pbp, sizeof(struct pmemblk), 0)) {
+			outv_err("cannot read pmemblk header\n");
+			free(pbp);
+			return -1;
+		}
 
-	if (pmempool_info_read(pip, pbp, sizeof(struct pmemblk), 0)) {
-		outv_err("cannot read pmemblk header\n");
+		info_blk_descriptor(pip, VERBOSE_DEFAULT, pbp);
+
+		ssize_t btt_off = (char *)pbp->data - (char *)pbp->addr;
+		ret = info_btt_layout(pip, btt_off);
+
 		free(pbp);
-		return -1;
 	}
-
-	info_blk_descriptor(pip, VERBOSE_DEFAULT, pbp);
-
-	ssize_t btt_off = (char *)pbp->data - (char *)pbp->addr;
-	ret = info_btt_layout(pip, btt_off);
-
-	free(pbp);
-
 	return ret;
 }
 

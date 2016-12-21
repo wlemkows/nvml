@@ -34,6 +34,7 @@
  * obj.c -- transactional object store implementation
  */
 #include <limits.h>
+#include <err.h>
 
 #include "valgrind_internal.h"
 #include "libpmem.h"
@@ -100,24 +101,32 @@ pmemobj_direct(PMEMoid oid)
 	struct _pobj_pcache *pcache = pthread_getspecific(Cached_pool_key);
 	if (pcache == NULL) {
 		pcache = malloc(sizeof(struct _pobj_pcache));
-		int ret = pthread_setspecific(Cached_pool_key, pcache);
-		if (ret)
-			FATAL("!pthread_setspecific");
-	}
-
-	if (_pobj_cache_invalidate != pcache->invalidate ||
-	    pcache->uuid_lo != oid.pool_uuid_lo) {
-		pcache->invalidate = _pobj_cache_invalidate;
-
-		if ((pcache->pop = pmemobj_pool_by_oid(oid)) == NULL) {
-			pcache->uuid_lo = 0;
-			return NULL;
+		if (pcache) {
+			int ret = pthread_setspecific(Cached_pool_key, pcache);
+			if (ret)
+				FATAL("!pthread_setspecific");
 		}
-
-		pcache->uuid_lo = oid.pool_uuid_lo;
+		else
+			err(1, "Cannot allocate memory for pcache\n");
 	}
+	if (pcache) {
+		if (_pobj_cache_invalidate != pcache->invalidate ||
+			pcache->uuid_lo != oid.pool_uuid_lo) {
+			pcache->invalidate = _pobj_cache_invalidate;
 
-	return (void *)((uintptr_t)pcache->pop + oid.off);
+			if ((pcache->pop = pmemobj_pool_by_oid(oid)) == NULL) {
+				pcache->uuid_lo = 0;
+				return NULL;
+			}
+
+			pcache->uuid_lo = oid.pool_uuid_lo;
+		} else
+			err(1, "Cannot allocate memory for pcache\n");
+
+		return (void *)((uintptr_t)pcache->pop + oid.off);
+	} else {
+		return NULL;
+	}
 }
 
 #endif /* _WIN32 */

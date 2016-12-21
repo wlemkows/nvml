@@ -837,28 +837,29 @@ info_obj_zones_chunks(struct pmem_info *pip)
 			sizeof(struct pmem_obj_zone_stats));
 	if (!pip->obj.stats.zone_stats)
 		err(1, "Cannot allocate memory for zone stats");
+	else {
+		for (size_t i = 0; i < maxzone; i++) {
+			struct zone *zone = ZID_TO_ZONE(layout, i);
 
-	for (size_t i = 0; i < maxzone; i++) {
-		struct zone *zone = ZID_TO_ZONE(layout, i);
+			if (util_ranges_contain(&pip->args.obj.zone_ranges, i)) {
+				int vvv = pip->args.obj.vheap &&
+					(pip->args.obj.vzonehdr ||
+						pip->args.obj.vchunkhdr);
 
-		if (util_ranges_contain(&pip->args.obj.zone_ranges, i)) {
-			int vvv = pip->args.obj.vheap &&
-				(pip->args.obj.vzonehdr ||
-				pip->args.obj.vchunkhdr);
+				outv_title(vvv, "Zone", "%lu", i);
 
-			outv_title(vvv, "Zone", "%lu", i);
+				if (zone->header.magic == ZONE_HEADER_MAGIC)
+					pip->obj.stats.n_zones_used++;
 
-			if (zone->header.magic == ZONE_HEADER_MAGIC)
-				pip->obj.stats.n_zones_used++;
-
-			info_obj_zone_hdr(pip, pip->args.obj.vheap &&
+				info_obj_zone_hdr(pip, pip->args.obj.vheap &&
 					pip->args.obj.vzonehdr,
 					&zone->header);
 
-			outv_indent(vvv, 1);
-			info_obj_zone_chunks(pip, zone,
+				outv_indent(vvv, 1);
+				info_obj_zone_chunks(pip, zone,
 					&pip->obj.stats.zone_stats[i]);
-			outv_indent(vvv, -1);
+				outv_indent(vvv, -1);
+			}
 		}
 	}
 }

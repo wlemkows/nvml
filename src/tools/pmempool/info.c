@@ -654,82 +654,84 @@ pmempool_info_pool_hdr(struct pmem_info *pip, int v)
 	struct pool_hdr *hdr = malloc(sizeof(struct pool_hdr));
 	if (!hdr)
 		err(1, "Cannot allocate memory for pool_hdr");
+	else {
+		if (pmempool_info_read(pip, hdr, sizeof(*hdr), 0)) {
+			outv_err("cannot read pool header\n");
+			free(hdr);
+			return -1;
+		}
 
-	if (pmempool_info_read(pip, hdr, sizeof(*hdr), 0)) {
-		outv_err("cannot read pool header\n");
-		free(hdr);
-		return -1;
-	}
+		struct arch_flags arch_flags;
+		if (util_get_arch_flags(&arch_flags)) {
+			outv_err("cannot read architecture flags\n");
+			free(hdr);
+			return -1;
+		}
 
-	struct arch_flags arch_flags;
-	if (util_get_arch_flags(&arch_flags)) {
-		outv_err("cannot read architecture flags\n");
-		free(hdr);
-		return -1;
-	}
+		outv_title(v, "POOL Header");
+		outv_hexdump(pip->args.vhdrdump, hdr, sizeof(*hdr), 0, 1);
 
-	outv_title(v, "POOL Header");
-	outv_hexdump(pip->args.vhdrdump, hdr, sizeof(*hdr), 0, 1);
+		util_convert2h_hdr_nocheck(hdr);
 
-	util_convert2h_hdr_nocheck(hdr);
-
-	outv_field(v, "Signature", "%.*s%s", POOL_HDR_SIG_LEN,
+		outv_field(v, "Signature", "%.*s%s", POOL_HDR_SIG_LEN,
 			hdr->signature,
 			pip->params.is_part ?
 			" [part file]" : "");
-	outv_field(v, "Major", "%d", hdr->major);
-	outv_field(v, "Mandatory features", "0x%x", hdr->incompat_features);
-	outv_field(v, "Not mandatory features", "0x%x", hdr->compat_features);
-	outv_field(v, "Forced RO", "0x%x", hdr->ro_compat_features);
-	outv_field(v, "Pool set UUID", "%s",
-				out_get_uuid_str(hdr->poolset_uuid));
-	outv_field(v, "UUID", "%s", out_get_uuid_str(hdr->uuid));
-	outv_field(v, "Previous part UUID", "%s",
-				out_get_uuid_str(hdr->prev_part_uuid));
-	outv_field(v, "Next part UUID", "%s",
-				out_get_uuid_str(hdr->next_part_uuid));
-	outv_field(v, "Previous replica UUID", "%s",
-				out_get_uuid_str(hdr->prev_repl_uuid));
-	outv_field(v, "Next replica UUID", "%s",
-				out_get_uuid_str(hdr->next_repl_uuid));
-	outv_field(v, "Creation Time", "%s",
+		outv_field(v, "Major", "%d", hdr->major);
+		outv_field(v, "Mandatory features", "0x%x", hdr->incompat_features);
+		outv_field(v, "Not mandatory features", "0x%x", hdr->compat_features);
+		outv_field(v, "Forced RO", "0x%x", hdr->ro_compat_features);
+		outv_field(v, "Pool set UUID", "%s",
+			out_get_uuid_str(hdr->poolset_uuid));
+		outv_field(v, "UUID", "%s", out_get_uuid_str(hdr->uuid));
+		outv_field(v, "Previous part UUID", "%s",
+			out_get_uuid_str(hdr->prev_part_uuid));
+		outv_field(v, "Next part UUID", "%s",
+			out_get_uuid_str(hdr->next_part_uuid));
+		outv_field(v, "Previous replica UUID", "%s",
+			out_get_uuid_str(hdr->prev_repl_uuid));
+		outv_field(v, "Next replica UUID", "%s",
+			out_get_uuid_str(hdr->next_repl_uuid));
+		outv_field(v, "Creation Time", "%s",
 			out_get_time_str((time_t)hdr->crtime));
 
-	uint64_t ad = hdr->arch_flags.alignment_desc;
-	uint64_t cur_ad = arch_flags.alignment_desc;
+		uint64_t ad = hdr->arch_flags.alignment_desc;
+		uint64_t cur_ad = arch_flags.alignment_desc;
 
-	outv_field(v, "Alignment Descriptor", "%s",
+		outv_field(v, "Alignment Descriptor", "%s",
 			out_get_alignment_desc_str(ad, cur_ad));
 
-	for (size_t i = 0; i < alignment_desc_n; i++) {
-		uint64_t a = GET_ALIGNMENT(ad, i);
-		if (ad == cur_ad) {
-			outv_field(v + 1, alignment_desc_str[i],
+		for (size_t i = 0; i < alignment_desc_n; i++) {
+			uint64_t a = GET_ALIGNMENT(ad, i);
+			if (ad == cur_ad) {
+				outv_field(v + 1, alignment_desc_str[i],
 					"%2d", a);
-		} else {
-			uint64_t av = GET_ALIGNMENT(cur_ad, i);
-			if (a == av) {
-				outv_field(v + 1, alignment_desc_str[i],
-					"%2d [OK]", a);
-			} else {
-				outv_field(v + 1, alignment_desc_str[i],
-					"%2d [wrong! should be %2d]", a, av);
+			}
+			else {
+				uint64_t av = GET_ALIGNMENT(cur_ad, i);
+				if (a == av) {
+					outv_field(v + 1, alignment_desc_str[i],
+						"%2d [OK]", a);
+				}
+				else {
+					outv_field(v + 1, alignment_desc_str[i],
+						"%2d [wrong! should be %2d]", a, av);
+				}
 			}
 		}
-	}
 
-	outv_field(v, "Class", "%s",
+		outv_field(v, "Class", "%s",
 			out_get_ei_class_str(hdr->arch_flags.ei_class));
-	outv_field(v, "Data", "%s",
+		outv_field(v, "Data", "%s",
 			out_get_ei_data_str(hdr->arch_flags.ei_data));
-	outv_field(v, "Machine", "%s",
+		outv_field(v, "Machine", "%s",
 			out_get_e_machine_str(hdr->arch_flags.e_machine));
 
-	outv_field(v, "Checksum", "%s", out_get_checksum(hdr, sizeof(*hdr),
-				&hdr->checksum));
+		outv_field(v, "Checksum", "%s", out_get_checksum(hdr, sizeof(*hdr),
+			&hdr->checksum));
 
-	free(hdr);
-
+		free(hdr);
+	}
 	return ret;
 }
 
