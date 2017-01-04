@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <malloc.h>
+#include <errno.h>
+#include "my_getline.h"
+
+
+size_t
+my_getline(char ** lineptr, size_t * n, FILE * stream)
+{
+/* n = 0;
+lineptr = NULL;
+int position = 1;*/
+
+/* if (lineptr ! = 0 || n == NULL) {
+	_set_errno(EINVAL);
+	return -1;
+}*/
+
+	*lineptr = malloc(sizeof(*n));
+	char element;
+	for (int i = 0; i < MAX_STDIN; i++) {
+
+		element = getc(stream);
+
+		if (element != '\n' && element != EOF) {
+				*lineptr = realloc((*lineptr),
+				sizeof(*n) + sizeof(element)*position);
+				lineptr[position] = element;
+			position++;
+		}
+		n++;
+	}
+
+	return position;
+}
