@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016, Intel Corporation
+ * Copyright 2014-2017, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,17 +213,23 @@ out_init(const char *log_prefix, const char *log_level_var,
 		char *log_file_pid = alloca(cc + 30);
 
 		if (cc > 0 && log_file[cc - 1] == '-') {
-			snprintf(log_file_pid, cc + 30, "%s%d",
+			int ret = snprintf(log_file_pid, cc + 30, "%s%d",
 				log_file, getpid());
+			if (ret < 0) {
+				ERR("!snprintf");
+				abort();
+			}
 			log_file = log_file_pid;
 		}
-		if ((Out_fp = fopen(log_file, "w")) == NULL) {
-			char buff[UTIL_MAX_ERR_MSG];
-			util_strerror(errno, buff, UTIL_MAX_ERR_MSG);
-			fprintf(stderr, "Error (%s): %s=%s: %s\n",
+		if (log_file) {
+			if ((Out_fp = fopen(log_file, "w")) == NULL) {
+				char buff[UTIL_MAX_ERR_MSG];
+				util_strerror(errno, buff, UTIL_MAX_ERR_MSG);
+				fprintf(stderr, "Error (%s): %s=%s: %s\n",
 					log_prefix, log_file_var,
 					log_file, buff);
-			abort();
+				abort();
+			}
 		}
 	}
 #endif	/* DEBUG */

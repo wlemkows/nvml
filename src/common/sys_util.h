@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Intel Corporation
+ * Copyright 2017, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +105,9 @@ util_mutex_unlock(pthread_mutex_t *m)
  * caller perspective. If pthread_rwlock_unlock failed, this function aborts
  * the program.
  */
+#ifdef _WIN32
+_Requires_lock_held_(m->lock)
+#endif
 static inline void
 util_rwlock_unlock(pthread_rwlock_t *m)
 {

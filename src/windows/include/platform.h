@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016, Intel Corporation
+ * Copyright 2015-2017, Intel Corporation
  * Copyright (c) 2016, Microsoft Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,10 @@ typedef long _off_t;		/* NOTE: _off_t must be defined as 'long'! */
 #define __func__ __FUNCTION__
 #ifdef _DEBUG
 #define DEBUG
+#endif
+#ifdef alloca
+#undef alloca
+#define alloca _malloca
 #endif
 
 /*
