@@ -1096,10 +1096,12 @@ function cmp {
 }
 #######################################################
 #######################################################
-
+Write-Host "Start here"
 # defaults
 if (-Not $Env:TEST_TYPE) { $Env:TEST_TYPE = 'check'}
-if (-Not $Env:TEST_FS) { $Env:TEST_FS = 'any'}
+if (-Not $Env:TEST_FS) { Write-Host "${Env:TEST_FS}: fs-type before"
+$Env:TEST_FS = 'any'
+Write-Host "${Env:TEST_FS}: fs-type after"}
 if (-Not $Env:TEST_BUILD) { $Env:TEST_BUILD = 'debug'}
 if (-Not $Env:MEMCHECK) { $Env:MEMCHECK = 'auto'}
 if (-Not $Env:CHECK_POOL) { $Env:CHECK_POOL = '0'}
