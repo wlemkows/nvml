@@ -1185,7 +1185,7 @@ if ($DIR) {
     $tail = "\" + $curtestdir + $Env:UNITTEST_NUM
     # choose based on FS env variable
     switch ($Env:TEST_FS) {
-        'pmem' { 
+        'pmem' {
         Write-Host "TEST FS pmem"
         sv -Name DIR ($Env:PMEM_FS_DIR + $tail)
                  if ($Env:PMEM_FS_DIR_FORCE_PMEM -eq "1") {
@@ -1195,7 +1195,7 @@ if ($DIR) {
         'non-pmem' {
         Write-Host "TEST FS non - pmem"
          sv -Name DIR ($Env:NON_PMEM_FS_DIR + $tail) }
-        'any' { 
+        'any' {
         Write-Host "TEST FS any"
         if ($Env:PMEM_FS_DIR) {
                     sv -Name DIR ($Env:PMEM_FS_DIR + $tail)
