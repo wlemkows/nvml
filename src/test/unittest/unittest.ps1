@@ -974,7 +974,7 @@ function require_fs_type {
     sv -Name req_fs_type 1 -Scope Global
     Get-ChildItem Env:
     Write-Host "----------------- ${Env:TEST_FS} ----------------"
-    Write-Host "----------------- ${REAL_FS} ----------------"
+    Write-Host "----------------- ${REAL_FS} -----------------"
     for ($i=0;$i -lt $args.count;$i++) {
         if ($args[$i] -eq $Env:TEST_FS) {
            # return
