@@ -972,6 +972,7 @@ function require_non_pmem {
 #
 function require_fs_type {
     sv -Name req_fs_type 1 -Scope Global
+    Get-ChildItem Env:
     Write-Host "----------------- ${Env:TEST_FS} ----------------"
     Write-Host "----------------- ${REAL_FS} ----------------"
     for ($i=0;$i -lt $args.count;$i++) {
@@ -1176,19 +1177,27 @@ if (-Not $Env:UNITTEST_NAME) {
 
 sv -Name REAL_FS $Env:TEST_FS
 if ($DIR) {
+    Write-Host "pass dir"
     # if user passed it in...
     sv -Name "DIR" ($DIR + "\" + $curtestdir + $Env:UNITTEST_NUM)
 } else {
+    Write-Host "not pass dir"
     $tail = "\" + $curtestdir + $Env:UNITTEST_NUM
     # choose based on FS env variable
     switch ($Env:TEST_FS) {
-        'pmem' { sv -Name DIR ($Env:PMEM_FS_DIR + $tail)
+        'pmem' { 
+        Write-Host "TEST FS pmem"
+        sv -Name DIR ($Env:PMEM_FS_DIR + $tail)
                  if ($Env:PMEM_FS_DIR_FORCE_PMEM -eq "1") {
                      $Env:PMEM_IS_PMEM_FORCE = "1"
                  }
                }
-        'non-pmem' { sv -Name DIR ($Env:NON_PMEM_FS_DIR + $tail) }
-        'any' { if ($Env:PMEM_FS_DIR) {
+        'non-pmem' {
+        Write-Host "TEST FS non - pmem"
+         sv -Name DIR ($Env:NON_PMEM_FS_DIR + $tail) }
+        'any' { 
+        Write-Host "TEST FS any"
+        if ($Env:PMEM_FS_DIR) {
                     sv -Name DIR ($Env:PMEM_FS_DIR + $tail)
                     $REAL_FS='pmem'
                     if ($Env:PMEM_FS_DIR_FORCE_PMEM -eq "1") {
@@ -1203,6 +1212,7 @@ if ($DIR) {
                 }
               }
         'none' {
+        Write-Host "TEST FS none"
             sv -Name DIR "/nul/not_existing_dir/${curtestdir}${Env:UNITTEST_NUM}" }
         default {
             if (-Not $Env:UNITTEST_QUIET) {
