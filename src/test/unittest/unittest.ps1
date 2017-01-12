@@ -977,8 +977,8 @@ function require_fs_type {
     Write-Host "----------------- ${REAL_FS} ----------------"
     for ($i=0;$i -lt $args.count;$i++) {
         if ($args[$i] -eq $Env:TEST_FS) {
-            return
-        } else {
+           # return
+        #} else {
         switch ($REAL_FS) {
                 'pmem' { if (require_pmem) { return } }
                 'non-pmem' { if (require_non_pmem) { return } }
