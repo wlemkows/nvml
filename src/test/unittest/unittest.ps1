@@ -974,7 +974,9 @@ function require_fs_type {
     sv -Name req_fs_type 1 -Scope Global
     for ($i=0;$i -lt $args.count;$i++) {
         if ($args[$i] -eq $Env:TEST_FS) {
-            switch ($REAL_FS) {
+            return
+        } else {
+        switch ($REAL_FS) {
                 'pmem' { if (require_pmem) { return } }
                 'non-pmem' { if (require_non_pmem) { return } }
                 'none' { return }
