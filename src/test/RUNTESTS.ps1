@@ -231,7 +231,7 @@ function runtest {
 			if ($verbose) {
 				Write-Host "RUNTESTS: Testing fs-type: $fs..."
 			}
-		  # for each build-type being tested...
+		    # for each build-type being tested...
 			Foreach ($build in $builds.split(" ").trim()) {
 				if ($verbose) {
 					Write-Host "RUNTESTS: Testing build-type: $build..."
@@ -294,9 +294,9 @@ function runtest {
                     cd ..
                     exit $p.ExitCode
                 }
-            } # for runscripts
-        } # for builds
-    } # for fss
+            } # for builds
+        } # for fss
+    } # for runscripts
     cd ..
 }
 
