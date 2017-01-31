@@ -209,53 +209,54 @@ function runtest {
         return
     }
 
-    Foreach ($fs in $fss.split(" ").trim()) {
-        # don't bother trying when fs-type isn't available...
-        if ($fs -eq "pmem" -And (-Not $Env:PMEM_FS_DIR)) {
-            $pmem_skip = 1
-            continue
-        }
-        if ($fs -eq "non-pmem" -And (-Not $Env:NON_PMEM_FS_DIR)) {
-            $non_pmem_skip = 1
-            continue
-        }
-        if ($fs -eq "any" -And (-Not $Env:NON_PMEM_FS_DIR) -And (-Not $Env:PMEM_FS_DIR)) {
-            continue
-        }
+	# for each TEST script found...
+	Foreach ($runscript in $runscripts.split(" ")) {
+		if ($verbose) {
+				Write-Host "RUNTESTS: Test: $testName/$runscript "
+			}
+		Foreach ($fs in $fss.split(" ").trim()) {
+			# don't bother trying when fs-type isn't available...
+			if ($fs -eq "pmem" -And (-Not $Env:PMEM_FS_DIR)) {
+				$pmem_skip = 1
+				continue
+			}
+			if ($fs -eq "non-pmem" -And (-Not $Env:NON_PMEM_FS_DIR)) {
+				$non_pmem_skip = 1
+				continue
+			}
+			if ($fs -eq "any" -And (-Not $Env:NON_PMEM_FS_DIR) -And (-Not $Env:PMEM_FS_DIR)) {
+				continue
+			}
 
-        if ($verbose) {
-            Write-Host "RUNTESTS: Testing fs-type: $fs..."
-        }
-        # for each build-type being tested...
-        Foreach ($build in $builds.split(" ").trim()) {
-            if ($verbose) {
-                Write-Host "RUNTESTS: Testing build-type: $build..."
-            }
-            $Env:CHECK_TYPE = $checktype
-            $Env:CHECK_POOL = $check_pool
-            $Env:VERBOSE = $verbose
-            $Env:TYPE = $testtype
-            $Env:FS = $fs
-            $Env:BUILD = $build
-            $Env:EXE_DIR = get_build_dir $build
+			if ($verbose) {
+				Write-Host "RUNTESTS: Testing fs-type: $fs..."
+			}
+		  # for each build-type being tested...
+			Foreach ($build in $builds.split(" ").trim()) {
+				if ($verbose) {
+					Write-Host "RUNTESTS: Testing build-type: $build..."
+				}
+				$Env:CHECK_TYPE = $checktype
+				$Env:CHECK_POOL = $check_pool
+				$Env:VERBOSE = $verbose
+				$Env:TYPE = $testtype
+				$Env:FS = $fs
+				$Env:BUILD = $build
+				$Env:EXE_DIR = get_build_dir $build
 
-            $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-            $pinfo.FileName = "powershell.exe"
-            $pinfo.RedirectStandardError = $true
-            $pinfo.RedirectStandardOutput = $true
-            $pinfo.UseShellExecute = $false
-            $pinfo.CreateNoWindow = $true
+				$pinfo = New-Object System.Diagnostics.ProcessStartInfo
+				$pinfo.FileName = "powershell.exe"
+				$pinfo.RedirectStandardError = $true
+				$pinfo.RedirectStandardOutput = $true
+				$pinfo.UseShellExecute = $false
+				$pinfo.CreateNoWindow = $true
 
-            # for each TEST script found...
-            Foreach ($runscript in $runscripts.split(" ")) {
-                if ($verbose) {
-                    Write-Host "RUNTESTS: Test: $testName/$runscript "
-                }
                 if ($dryrun -eq "1") {
                     Write-Host "(in ./$testName) TEST=$testtype FS=$fs BUILD=$build .\$runscript"
                     break
                 }
-                $pinfo.Arguments = ".\$runscript"
+
+				$pinfo.Arguments = ".\$runscript"
                 $pinfo.WorkingDirectory = $(pwd).Path
                 $p = New-Object System.Diagnostics.Process
                 $p.StartInfo = $pinfo
