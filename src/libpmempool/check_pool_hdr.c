@@ -302,8 +302,10 @@ pool_hdr_nondefault(PMEMpoolcheck *ppc, location *loc)
 {
 	LOG(3, NULL);
 
-	CHECK_INFO(ppc, "loc->hdr.crtime: %u", (uint64_t)ppc->pool->set_file->mtime);
-	CHECK_INFO(ppc, "(uint64_t)ppc->pool->set_file->mtime: %u", (uint64_t)ppc->pool->set_file->mtime);
+	CHECK_INFO(ppc, "loc->hdr.crtime: %u",
+		(uint64_t)ppc->pool->set_file->mtime);
+	CHECK_INFO(ppc, "(uint64_t)ppc->pool->set_file->mtime: %u",
+		(uint64_t)ppc->pool->set_file->mtime);
 	if (loc->hdr.crtime > (uint64_t)ppc->pool->set_file->mtime) {
 		const char *error = "%spool_hdr.crtime is not valid";
 		if (CHECK_IS_NOT(ppc, REPAIR)) {
