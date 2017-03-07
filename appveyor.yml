@@ -37,11 +37,10 @@ after_build:
 
 test_script:
 - ps: >-
-
+    cd src/test
     for($i=1; $i -le 100; $i++) {
         if ($Env:CONFIGURATION -eq "Debug") {
-            cd src/test
-            md /temp
+            md -force /temp
             echo "`$Env:NON_PMEM_FS_DIR = `"\temp`"" > testconfig.ps1
             echo "`$Env:PMEM_FS_DIR = `"\temp`"" >> testconfig.ps1
             echo "`$Env:PMEM_FS_DIR_FORCE_PMEM = `"1`"" >> testconfig.ps1
