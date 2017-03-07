@@ -40,7 +40,7 @@ test_script:
  
     cd src/test
   
-    for($i=1; $i -le 100; $i++) {
+    for($i=1; $i -le 1000; $i++) {
         if ($Env:CONFIGURATION -eq "Debug") {
             md -force /temp
             echo "`$Env:NON_PMEM_FS_DIR = `"\temp`"" > testconfig.ps1
