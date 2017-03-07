@@ -37,7 +37,8 @@ after_build:
 
 test_script:
 - ps: >-
-    cd src/test
+ 
+cd src/test
     for($i=1; $i -le 100; $i++) {
         if ($Env:CONFIGURATION -eq "Debug") {
             md -force /temp
