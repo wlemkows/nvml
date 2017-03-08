@@ -303,7 +303,7 @@ pool_hdr_nondefault(PMEMpoolcheck *ppc, location *loc)
 	LOG(3, NULL);
 
 	CHECK_INFO(ppc, "loc->hdr.crtime: %u",
-		(uint64_t)ppc->pool->set_file->mtime);
+		loc->hdr.crtime);
 	CHECK_INFO(ppc, "(uint64_t)ppc->pool->set_file->mtime: %u",
 		(uint64_t)ppc->pool->set_file->mtime);
 	if (loc->hdr.crtime > (uint64_t)ppc->pool->set_file->mtime) {
