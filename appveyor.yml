@@ -35,7 +35,7 @@ test_script:
         echo "`$env:PMEM_FS_DIR = `"\temp`"" >> testconfig.ps1
         echo "`$env:PMEM_FS_DIR_FORCE_PMEM = `"1`"" >> testconfig.ps1
         echo "`$Env:TM = `"1`"" >> testconfig.ps1
-        for ($i=0; $i -lt 50; &i++) {
+        for ($i=0; $i -lt 50; $i++) {
             ./RUNTESTS.ps1 -b debug -o 3m -i vmem_multiple_pools
         }
     }
