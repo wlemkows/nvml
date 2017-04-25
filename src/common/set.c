@@ -1651,7 +1651,22 @@ util_header_create(struct pool_set *set, unsigned repidx, unsigned partidx,
 			POOL_HDR_UUID_LEN);
 	}
 
-	hdrp->crtime = (uint64_t)time(NULL);
+	os_stat_t stbuf;
+	int fd = -1;
+
+	if (rep->remote) {
+		fd = set->replica[0]->part[0].fd;
+	} else {
+		fd = rep->part[partidx].fd;
+	}
+
+	if (os_fstat(fd, &stbuf) != 0) {
+		ERR("!fstat");
+		return -1;
+	}
+
+	ASSERT(stbuf.st_ctime);
+	hdrp->crtime = (uint64_t)stbuf.st_ctime;
 
 	if (!arch_flags) {
 		if (util_get_arch_flags(&hdrp->arch_flags)) {
