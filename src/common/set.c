@@ -1652,17 +1652,15 @@ util_header_create(struct pool_set *set, unsigned repidx, unsigned partidx,
 	}
 
 	os_stat_t stbuf;
-	int fd = -1;
 
-	if (rep->remote) {
-		fd = set->replica[0]->part[0].fd;
-	} else {
+	if (!rep->remote) {
+		int fd = -1;
 		fd = rep->part[partidx].fd;
-	}
 
-	if (os_fstat(fd, &stbuf) != 0) {
-		ERR("!fstat");
-		return -1;
+		if (os_fstat(fd, &stbuf) != 0) {
+			ERR("!fstat");
+			return -1;
+		}
 	}
 
 	ASSERT(stbuf.st_ctime);
