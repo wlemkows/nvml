@@ -1651,9 +1651,8 @@ util_header_create(struct pool_set *set, unsigned repidx, unsigned partidx,
 			POOL_HDR_UUID_LEN);
 	}
 
-	int fd_part = rep->part[partidx].fd;
 	os_stat_t stbuf;
-	if (os_fstat(fd_part, &stbuf) != 0) {
+	if (os_fstat(rep->part[partidx].fd, &stbuf) != 0) {
 		ERR("!fstat");
 		return -1;
 	}
