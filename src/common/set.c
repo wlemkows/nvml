@@ -1652,7 +1652,6 @@ util_header_create(struct pool_set *set, unsigned repidx, unsigned partidx,
 	}
 
 	os_stat_t stbuf;
-
 	if (!rep->remote) {
 		int fd = -1;
 		fd = rep->part[partidx].fd;
@@ -1661,10 +1660,10 @@ util_header_create(struct pool_set *set, unsigned repidx, unsigned partidx,
 			ERR("!fstat");
 			return -1;
 		}
+		ASSERT(stbuf.st_ctime);
+		hdrp->crtime = (uint64_t)stbuf.st_ctime;
 	}
 
-	ASSERT(stbuf.st_ctime);
-	hdrp->crtime = (uint64_t)stbuf.st_ctime;
 
 	if (!arch_flags) {
 		if (util_get_arch_flags(&hdrp->arch_flags)) {
