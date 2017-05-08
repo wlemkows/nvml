@@ -111,7 +111,7 @@ set_reg_env(wchar_t *subkey, wchar_t *var, wchar_t *out)
 
 	result = RegSetValueExW(
 		key, var, 0, REG_EXPAND_SZ,
-		(BYTE *)out, MAX_ENV_PATH);
+		(BYTE *)out, lstrlenW(out) * sizeof(wchar_t) + 1);
 	if (result != ERROR_SUCCESS) {
 		printf("Cannot set registry value, error: %ld\n", result);
 		return 1;
@@ -135,7 +135,7 @@ main()
 	wchar_t path_env[MAX_ENV_PATH];
 	unsigned long buffer_path_env = MAX_ENV_PATH;
 
-	wchar_t path_out[MAX_ENV_PATH] = { 0 };
+	wchar_t path_out[MAX_ENV_PATH + 2] = { 0 };
 
 	if (get_reg_env(HKLM_ENV, NVML_EXE,
 		nvml_exe, buffer_nvml_exe)) {
