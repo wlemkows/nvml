@@ -73,6 +73,3 @@ test_script:
 artifacts:
 - path: '%setup%\%configuration%\*.msi'
   name: NVML_msi
-
-- path: '%setup%\%configuration%\setup.exe'
-  name: NVML_setup
