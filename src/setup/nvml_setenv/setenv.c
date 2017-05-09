@@ -65,7 +65,7 @@ get_reg_env(wchar_t *subkey, wchar_t *var, wchar_t *data, unsigned long size)
 
 	result = RegGetValueW(
 		HKEY_LOCAL_MACHINE, subkey, var,
-		RRF_RT_REG_SZ, NULL, (PVOID)data, &size);
+		RRF_RT_ANY, NULL, (PVOID)data, &size);
 
 	if (result != ERROR_SUCCESS) {
 		printf("Cannot get registry value %S\n", subkey);
