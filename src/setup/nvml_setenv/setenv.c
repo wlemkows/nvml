@@ -155,9 +155,6 @@ main()
 		goto end;
 	}
 
-	if (set_reg_env(HKLM_ENV, PATH_ENV, path_out))
-		goto end;
-
 	return 0;
 
 end:
