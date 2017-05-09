@@ -499,20 +499,6 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_A2ACB8C22BDE4993A039D80E51577AD3"
-            {
-            "Name" = "8:Primary Output from nvml_setenv (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_35B153ADC9EA4E9980CBD82C17000CBC"
-            "FileType" = "3:2"
-            "InstallAction" = "3:2"
-            "Arguments" = "8:/Commit"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_7073FF3C_242E_44FE_B383_B0F5DD16047D"
-            "InstallerClass" = "11:FALSE"
-            "CustomActionData" = "8:"
-            }
         }
         "DefaultFeature"
         {
