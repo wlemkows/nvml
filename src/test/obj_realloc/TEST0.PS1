@@ -53,7 +53,7 @@ require_fs_type any
 
 setup
 
-_realloc\ $DIR\testfile1 -Force -ErrorAction SilentlyContinue
+Remove-Item $DIR\testfile1 -Force -ErrorAction SilentlyContinue
 
 expect_normal_exit $PMEMPOOL create obj --layout realloc --size=128M $DIR\testfile1
 
