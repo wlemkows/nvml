@@ -277,10 +277,10 @@ function runtest {
                 }
 
                 $sb = {
-                    cd $args[0]
+                    Set-Location $args[0]
                     Invoke-Expression $args[1]
                 }
-                $j1 = Start-Job -Name $name -ScriptBlock $sb -ArgumentList (pwd).Path, ".\$runscript"
+                $j1 = Start-Job -Name $name -ScriptBlock $sb -ArgumentList (Get-Location).Path, ".\$runscript"
 
                 If ($use_timeout -And $testtype -eq "check") {
                     # execute with timeout
@@ -295,7 +295,7 @@ function runtest {
                         Stop-Job -Job $j1
                         Receive-Job -Job $j1
                         Remove-Job -Job $j1 -Force
-                        cd ..
+                        Set-Location ..
                         throw "RUNTESTS: stopping: $testName/$runscript TIMED OUT, TEST=$testtype FS=$fs BUILD=$build"
                     }
                 } Else {
@@ -304,7 +304,7 @@ function runtest {
 
                 if ($j1.State -ne "Completed") {
                     Remove-Job -Job $j1 -Force
-                    cd ..
+                    Set-Location ..
                     throw "RUNTESTS: stopping: $testName/$runscript $msg TEST=$testtype FS=$fs BUILD=$build"
                 }
                 Remove-Job -Job $j1 -Force
@@ -392,7 +392,7 @@ if ($testdir -eq "all") {
 
             # script block - job's start function
             $sb = {
-                cd $args[0]
+                Set-Location $args[0]
                 $LASTEXITCODE = 0
                 .\RUNTESTS.ps1 -dryrun $args[1] -buildtype $args[2] -testtype $args[3] -fstype $args[4] -time $args[5] -testdir $args[6]
                 if ($LASTEXITCODE -ne 0) {
@@ -401,9 +401,9 @@ if ($testdir -eq "all") {
             }
 
             # start worker jobs
-            1..$jobs | % {
+            1..$jobs | ForEach-Object {
                 if ($it -lt $tests.Length) {
-                    $j1 = Start-Job -Name $name -ScriptBlock $sb -ArgumentList (pwd).ToString(), $dryrun, $buildtype, $testtype, $fstype, $time, $tests[$it].Name | out-null
+                    $Script:j1 = Start-Job -Name $name -ScriptBlock $sb -ArgumentList (Get-Location).ToString(), $dryrun, $buildtype, $testtype, $fstype, $time, $tests[$it].Name | out-null
                     $it++
                     $threads++
                 }
@@ -414,7 +414,7 @@ if ($testdir -eq "all") {
             # control loop for receiving job outputs and starting new jobs
             while ($threads -ne 0) {
                 Get-Job -name $name | Receive-Job
-                Get-Job -name $name | % {
+                Get-Job -name $name | ForEach-Object {
                     if ($_.State -eq "Running" -or $_.State -eq "NotStarted") {
                         return
                     }
@@ -426,7 +426,7 @@ if ($testdir -eq "all") {
                     $threads--
                     if ($fail -eq $false) {
                         if ($it -lt $tests.Length) {
-                            Start-Job -Name $name -ScriptBlock $sb -ArgumentList (pwd).ToString(), $dryrun, $buildtype, $testtype, $fstype, $time, $tests[$it].Name | out-null
+                            Start-Job -Name $name -ScriptBlock $sb -ArgumentList (Get-Location).ToString(), $dryrun, $buildtype, $testtype, $fstype, $time, $tests[$it].Name | out-null
                             $it++
                             $threads++
                         }
@@ -444,7 +444,7 @@ if ($testdir -eq "all") {
             }
         }
     } else {
-        Get-ChildItem -Directory | % {
+        Get-ChildItem -Directory | ForEach-Object {
             $LASTEXITCODE = 0
             runtest $_.Name
         }
