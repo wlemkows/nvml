@@ -75,7 +75,7 @@ for ($i=0; $i -lt $POOL_TYPES.Count; $i++ ) {
 	backup_and_compare $POOLSET $POOL_TYPES[$i]
 
 	# one of parts does not exist
-	rm ${POOL_PART}3${BACKUP}
+	rm ${POOL_PART}2${BACKUP}
 	backup_and_compare $POOLSET $POOL_TYPES[$i]
 }
 
