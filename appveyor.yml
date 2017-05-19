@@ -7,9 +7,10 @@ install:
 - ps: Install-Module PsScriptAnalyzer -Force
 
 configuration:
-- Setup
 - Debug
 - Release
+- Setup
+
 environment:
     solutionname: NVML.sln
     setup: src\setup
