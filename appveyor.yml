@@ -41,7 +41,7 @@ before_build:
 build_script:
 - ps: >-
     if ($Env:CONFIGURATION -ne "Setup") {
-        #msbuild src\$Env:solutionname /property:Configuration=$Env:CONFIGURATION /m /v:m
+        msbuild src\$Env:solutionname /property:Configuration=$Env:CONFIGURATION /m /v:m
     } else {
         msbuild src\$Env:solutionname /property:Configuration=Debug /m /v:m
         msbuild src\$Env:solutionname /property:Configuration=Release /m /v:m
@@ -88,5 +88,5 @@ deploy:
   draft: true
   prerelease: false
   on:
-    branch: master                 # release from master branch only
+    branch: win-appveyor-github-publish
     appveyor_repo_tag: true        # deploy on tag push only
