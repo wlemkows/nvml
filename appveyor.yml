@@ -89,4 +89,4 @@ deploy:
   prerelease: false
   on:
     branch: win-appveyor-github-publish
-    appveyor_repo_tag: true        # deploy on tag push only
+    appveyor_repo_tag: true
