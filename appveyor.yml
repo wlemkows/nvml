@@ -41,7 +41,7 @@ before_build:
 build_script:
 - ps: >-
     if ($Env:CONFIGURATION -ne "Setup") {
-        msbuild src\$Env:solutionname /property:Configuration=$Env:CONFIGURATION /m /v:m
+        #msbuild src\$Env:solutionname /property:Configuration=$Env:CONFIGURATION /m /v:m
     } else {
         msbuild src\$Env:solutionname /property:Configuration=Debug /m /v:m
         msbuild src\$Env:solutionname /property:Configuration=Release /m /v:m
@@ -69,7 +69,7 @@ test_script:
         echo "`$Env:PMEM_FS_DIR_FORCE_PMEM = `"1`"" >> testconfig.ps1
         echo "`$Env:UNITTEST_NO_ABORT_MSG = `"1`"" >> testconfig.ps1
         echo "`$Env:TM = `"1`"" >> testconfig.ps1
-        ./RUNTESTS.ps1 -b debug -o 4m
+        #./RUNTESTS.ps1 -b debug -o 4m
     }
 
 artifacts:
@@ -78,3 +78,15 @@ artifacts:
 
 - path: 'src\x64\*.zip'
   name: NVML
+  
+ deploy:
+  description: 'Release description'
+  provider: GitHub
+  auth_token:
+    secure: d5e5549f2132b55af30b84b69cf29e69f0686d4a
+  artifact: /.*\.msi/
+  draft: true
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
