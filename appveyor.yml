@@ -84,7 +84,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: yHRuJzMFAUL594XPUpqUGjAvxrf00Kd5P656C3tlRkOPINlRBu409nSZqSteIdmj
-  artifact: /.*\.msi/
+  artifact: /.*\.zip/
   draft: true
   prerelease: false
   on:
