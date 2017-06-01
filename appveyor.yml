@@ -79,7 +79,7 @@ artifacts:
 - path: 'src\x64\*.zip'
   name: NVML
   
- deploy:
+deploy:
   description: 'Release description'
   provider: GitHub
   auth_token:
