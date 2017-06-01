@@ -83,7 +83,7 @@ deploy:
   description: 'Release description'
   provider: GitHub
   auth_token:
-    secure: d5e5549f2132b55af30b84b69cf29e69f0686d4a
+    secure: yHRuJzMFAUL594XPUpqUGjAvxrf00Kd5P656C3tlRkOPINlRBu409nSZqSteIdmj
   artifact: /.*\.msi/
   draft: true
   prerelease: false
