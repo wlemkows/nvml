@@ -71,6 +71,16 @@ void *pmem_map_file(const char *path, size_t len, int flags,
 	mode_t mode, size_t *mapped_lenp, int *is_pmemp);
 int pmem_unmap(void *addr, size_t len);
 ```
+!ifdef{WIN32}{
+
+Windows specific declarations for UTF-8 and Unicode:
+```c
+void *pmem_map_fileU(const char *path, size_t len, int flags,
+	mode_t mode, size_t *mapped_lenp, int *is_pmemp)
+void *pmem_map_fileW(const wchar_t *path, size_t len, int flags, mode_t mode,
+		size_t *mapped_lenp, int *is_pmemp)
+```
+}
 
 ##### Partial flushing operations: #####
 
