@@ -204,7 +204,7 @@ function runtest {
         cd ..
         return
     }
-
+	try {
     # for each TEST script found...
     Foreach ($runscript in $runscripts.split(" ")) {
         if ($verbose) {
@@ -310,6 +310,14 @@ function runtest {
             } # for builds
         } # for fss
     } # for runscripts
+	}
+	finally {
+            # cleanup jobs in case of exception or C-c
+            if ($threads -ne 0) {
+                Get-Job -name $name | Remove-Job -Force
+            }
+			Exit 1
+        }
     cd ..
 }
 
