@@ -60,7 +60,7 @@ setup
 #
 # TEST0 non-existing file, poolsize > 0
 #
-expect_normal_exit $Env:EXE_DIR\blk_pool$Env:EXESUFFIX `
+expect_normal_exit $Env:EXE_DIR\blk_pooll$Env:EXESUFFIX `
     c $DIR\testfile 4096 20 0600
 
 check_files $DIR\testfile
