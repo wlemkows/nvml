@@ -75,7 +75,7 @@ check_file $POOL
 Invoke-Expression "$PMEMSPOIL -v $POOL pool_hdr.signature=ERROR >> $LOG"
 expect_abnormal_exit $PMEMPOOL check $POOL >> $LOG
 
-echo "PMEMLOG: pmemlog" >> $LOG
+echo "PMEMLOG: pmemlogg" >> $LOG
 rm $POOL -Force -Recurse
 expect_normal_exit $PMEMPOOL create log $POOL
 check_file $POOL
