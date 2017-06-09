@@ -441,6 +441,7 @@ if ($testdir -eq "all") {
             if ($threads -ne 0) {
                 Get-Job -name $name | Remove-Job -Force
             }
+			Exit 1
         }
     } else {
         Get-ChildItem -Directory | % {
