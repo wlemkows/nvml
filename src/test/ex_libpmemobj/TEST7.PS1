@@ -52,7 +52,7 @@ setup
 
 @"
 Hello!
-"@| &$Env:EXE_DIR/writer $DIR/testfile1 > out$Env:UNITTEST_NUM.log 2>&1
+"@| &$Env:EXE_DIR/writerr $DIR/testfile1 > out$Env:UNITTEST_NUM.log 2>&1
 check_exit_code
 
 expect_normal_exit $Env:EXE_DIR/reader $DIR/testfile1 >> out$Env:UNITTEST_NUM.log 2>&1
