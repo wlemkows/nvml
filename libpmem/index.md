@@ -14,7 +14,7 @@ to pmem and needs to flush those changes to durability.  Most
 developers will find higher level libraries like
 [libpmemobj](../libpmemobj) to be much more convenient.
 
-Man pages that contains a list of the interfaces provided:
+Man pages that contains a list of the **Linux** interfaces provided:
 
 <ul>
   <li>Man page for <a href="../manpages/master/{{ page.title }}.3.html">{{ page.title }} current master</a></li>
@@ -22,6 +22,19 @@ Man pages that contains a list of the interfaces provided:
     <ul>
       {% for release in site.data.releases %}{% if release.libs contains page.title %}
       <li><a href="../manpages/v{{ release.tag }}/{{ page.title }}.3.html">{{ page.title }} version {{ release.tag }}</a></li>
+      {% endif %}{% endfor %}
+    </ul>
+  </li>
+</ul>
+
+Man pages that contains a list of the **Windows** interfaces provided:
+
+<ul>
+  <li>Man page for <a href="../manpages/master/windows{{ page.title }}.3.html">{{ page.title }} current master</a></li>
+  <li>Latest releases:
+    <ul>
+      {% for release in site.data.releases %}{% if release.libs contains page.title %}
+      <li><a href="../manpages/v{{ release.tag }}/windows/{{ page.title }}.3.html">{{ page.title }} version {{ release.tag }}</a></li>
       {% endif %}{% endfor %}
     </ul>
   </li>
