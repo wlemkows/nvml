@@ -59,6 +59,8 @@
     <ResourceCompile Include="libpmem.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
+    <VcpkgTriplet Condition="'$(Configuration)'=='x64'">x64-windows</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Configuration)'=='x86'">x64-windows</VcpkgTriplet>
     <ProjectGuid>{9e9e3d25-2139-4a5d-9200-18148ddead45}</ProjectGuid>
     <Keyword>DynamicLibrary</Keyword>
     <ProjectName>libpmem</ProjectName>
