@@ -37,7 +37,7 @@
 SCRIPT_DIR=$(dirname $0)
 source $SCRIPT_DIR/pkg-common.sh
 
-if [ $# -lt 6 -o $# -gt 7 ]
+if [ $# -lt 6 -o $# -gt 9 ]
 then
 	echo "Usage: $(basename $0) VERSION_TAG SOURCE_DIR WORKING_DIR"\
 					"OUT_DIR EXPERIMENTAL RUN_CHECK"\
