@@ -65,10 +65,6 @@ BUILD_RPMEM=$7
 TEST_CONFIG_FILE=$8
 DISTRO=$9
 
-if [ -z "$TEST_CONFIG_FILE" ]
-then
-	DISTRO=$8
-fi
 
 # detected distro or defined in cmd
 if [ -z "${DISTRO}" ]
@@ -83,6 +79,7 @@ then
 		exit 1
 	fi
 fi
+
 
 if [ "$EXTRA_CFLAGS_RELEASE" = "" ]; then
 	export EXTRA_CFLAGS_RELEASE="-ggdb -fno-omit-frame-pointer"
@@ -123,7 +120,7 @@ then
 	RPM_GROUP_DEV_LIBS="Development\/Libraries\/C and C++"
 	RPM_PKG_NAME_SUFFIX="1"
 	RPM_MAKE_FLAGS="BINDIR=""%_bindir"" NORPATH=1"
-	RPM_MAKE_INSTALL="%fdupes %{buildroot}/%{_prefix}"
+	RPM_MAKE_INSTALL="%fdupes %{buildroot}\/%{_prefix}"
 	sed -i '/^#.*bugzilla.redhat/d' \
 		$OLDPWD/$SCRIPT_DIR/nvml.spec.in
 else
@@ -179,6 +176,7 @@ else
 	 TEST_CONFIG_VAL="default"
 fi
 
+exit 1
 # run make check or not
 if [ "${BUILD_PACKAGE_CHECK}" = "y" ]
 then
