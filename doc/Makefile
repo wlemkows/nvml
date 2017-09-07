@@ -36,6 +36,7 @@
 
 include ../src/common.inc
 
+
 MANPAGES_7_MD = libpmem/libpmem.7.md libpmemblk/libpmemblk.7.md libpmemlog/libpmemlog.7.md \
 		libpmemobj/libpmemobj.7.md libpmempool/libpmempool.7.md libvmem/libvmem.7.md \
 		libvmmalloc/libvmmalloc.7.md
@@ -105,6 +106,7 @@ MANPAGES_7_MD += librpmem/librpmem.7.md
 MANPAGES_3_MD += librpmem/rpmem_create.3.md
 MANPAGES_3_MD += librpemm/rpmem_persist.3.md
 MANPAGES_1_MD += rpmemd/rpmemd.1.md
+MANPAGES_3_DUMMY += rpmem_open.3 rpmem_set_attr.3 rpmem_close.3 rpmem_read.3 rpmem_remove.3
 endif
 
 MANPAGES_7_GROFF = $(MANPAGES_7_MD:.7.md=.7)
@@ -146,15 +148,19 @@ GZFILES_7_NOINSTALL = $(MANPAGES_7_NOINSTALL:=.gz)
 GZFILES_5_NOINSTALL = $(MANPAGES_5_NOINSTALL:=.gz)
 GZFILES_3_NOINSTALL = $(MANPAGES_3_NOINSTALL:=.gz)
 GZFILES_1_NOINSTALL = $(MANPAGES_1_NOINSTALL:=.gz)
+GZFILES_3_DUMMY = $(MANPAGES_3_DUMMY:=.gz)
 
 GZFILES = $(GZFILES_7) $(GZFILES_5) $(GZFILES_3) $(GZFILES_1) \
-	  $(GZFILES_7_NOINSTALL) $(GZFILES_5_NOINSTALL) $(GZFILES_3_NOINSTALL) $(GZFILES_1_NOINSTALL)
+	  $(GZFILES_7_NOINSTALL) $(GZFILES_5_NOINSTALL) $(GZFILES_3_NOINSTALL) $(GZFILES_1_NOINSTALL) \
+	  $(GZFILES_3_DUMMY)
 
 GZFILES_BUILD = $(addprefix $(MANPAGES_BUILDDIR)/, $(notdir $(GZFILES)))
 GZFILES_7_BUILD = $(addprefix $(MANPAGES_BUILDDIR)/, $(notdir $(GZFILES_7)))
 GZFILES_5_BUILD = $(addprefix $(MANPAGES_BUILDDIR)/, $(notdir $(GZFILES_5)))
 GZFILES_3_BUILD = $(addprefix $(MANPAGES_BUILDDIR)/, $(notdir $(GZFILES_3)))
 GZFILES_1_BUILD = $(addprefix $(MANPAGES_BUILDDIR)/, $(notdir $(GZFILES_1)))
+
+GZFILES_3_BUILD += $(addprefix $(MANPAGES_BUILDDIR)/, $(GZFILES_3_DUMMY))
 
 DOXYGEN_HTMLDIR=cpp_html
 
@@ -191,18 +197,6 @@ md2man:
 	$(foreach f, $(MANPAGES_5_MD), ../utils/md2man.sh $(f) default.man $(MANPAGES_BUILDDIR)/$(basename $(notdir $(f)));)
 	$(foreach f, $(MANPAGES_3_MD), ../utils/md2man.sh $(f) default.man $(MANPAGES_BUILDDIR)/$(basename $(notdir $(f)));)
 	$(foreach f, $(MANPAGES_1_MD), ../utils/md2man.sh $(f) default.man $(MANPAGES_BUILDDIR)/$(basename $(notdir $(f)));)
-
-
-#$(MANPAGES_BUILDDIR)%.1: $(MANPAGES_1_MD) default.man macros.man ../utils/md2man.sh FORCE
-#	../utils/md2man.sh ./$< default.main $@
-
-#$(MANPAGES_BUILDDIR)/%.3: $(MANPAGES_3_MD) default.man macros.man ../utils/md2man.sh FORCE
-#	../utils/md2man.sh ./$< default.man $@
-
-#$(MANPAGES_BUILDDIR)/%.5: $(MANPAGES_5_MD) default.man macros.man ../utils/md2man.sh FORCE
-#	../utils/md2man.sh ./$< default.man $@
-#$(MANPAGES_BUILDDIR)/%.7: $(MANPAGES_7_MD) default.man macros.man ../utils/md2man.sh FORCE
-#	../utils/md2man.sh  default.man $@
 
 compress: $(GZFILES_BUILD)
 
