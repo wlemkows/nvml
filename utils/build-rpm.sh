@@ -497,7 +497,7 @@ tar zcf $PACKAGE_TARBALL $PACKAGE_SOURCE
 # Create directory structure for rpmbuild
 mkdir -v BUILD SPECS
 
-rpmbuild --define "_topdir `pwd`"\
+QA_RPATH=0x0002 rpmbuild --define "_topdir `pwd`"\
          --define "_rpmdir ${OUT_DIR}"\
 	 --define "_srcrpmdir ${OUT_DIR}"\
          -ta $PACKAGE_TARBALL
