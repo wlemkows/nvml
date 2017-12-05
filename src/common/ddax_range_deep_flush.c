@@ -38,7 +38,13 @@
 
 #define _GNU_SOURCE
 
+
+#if !defined(NDCTL_DISABLE)
 #include <ndctl/libndctl.h>
+#else
+#include <errno.h>
+#endif
+
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -46,9 +52,10 @@
 #include "out.h"
 #include "ddax_range_deep_flush.h"
 
+#ifndef NDCTL_DISABLE
 /*
- * acquire_region_fd -- returns an fd referring to the region in which
- * the DAX device resides.
+ * acquire_region_fd -- (internal) returns an fd referring
+ * to the region in which the DAX device resides.
  * The caller is responsible for closing the fd.
  */
 static int
@@ -146,6 +153,7 @@ done:
 	errno = oerrno;
 	return retval;
 }
+#endif
 
 /*
  * ddax_range_deep_flush -- perform deep flush of given DAX device.
@@ -154,7 +162,12 @@ int
 ddax_range_deep_flush(dev_t dev_id)
 {
 	LOG(2, "ddax_range_deep_flush %lu", (unsigned long)dev_id);
-
+	int oerrno = errno;
+#ifdef NDCTL_DISABLE
+	oerrno = ENOTSUP;
+	errno = oerrno;
+	return -1;
+#else
 	int deep_flush_fd = acquire_deep_flush_fd(dev_id);
 	if (deep_flush_fd < 0)
 		return -1;
@@ -169,4 +182,5 @@ ddax_range_deep_flush(dev_t dev_id)
 	close(deep_flush_fd);
 
 	return 0;
+#endif
 }
