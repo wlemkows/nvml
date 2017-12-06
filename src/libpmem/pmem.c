@@ -175,6 +175,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits.h>
+#include <inttypes.h>
 
 #ifdef _WIN32
 #include <memoryapi.h>
@@ -187,6 +188,7 @@
 #include "util.h"
 #include "os.h"
 #include "mmap.h"
+#include "sys_util.h"
 #include "file.h"
 #include "valgrind_internal.h"
 
@@ -222,6 +224,39 @@
 #define MOVNT_THRESHOLD	256
 
 static size_t Movnt_threshold = MOVNT_THRESHOLD;
+
+enum map_tracker_flag {
+	MTF_DIRECT_MAPPED = 0x0001,
+
+	/* this should hold the value of all flags ORed for debug purpose */
+	MTF_MASK = MTF_DIRECT_MAPPED
+};
+
+/*
+ * this structure tracks the file mappings outstanding per file handle
+ */
+struct map_tracker {
+	SORTEDQ_ENTRY(map_tracker) entry;
+	uintptr_t base_addr;
+	uintptr_t end_addr;
+	enum map_tracker_flag flags;
+
+#ifdef _WIN32
+	/* Windows-specific data */
+	HANDLE FileHandle;
+	HANDLE FileMappingHandle;
+	DWORD Access;
+	os_off_t Offset;
+	size_t FileLen;
+#endif
+
+#ifdef NVML_COMMON_MMAP_DAX_DEEP_FLUSH
+	dev_t dev_id;
+#endif
+};
+
+static SORTEDQ_HEAD(map_list_head, map_tracker) Mmap_list =
+		SORTEDQ_HEAD_INITIALIZER(Mmap_list);
 
 /*
  * pmem_has_hw_drain -- return whether or not HW drain was found
@@ -530,6 +565,287 @@ pmem_is_pmem(const void *addr, size_t len)
 	return Func_is_pmem(addr, len);
 }
 
+
+/*
+ * map_range_comparer -- (internal) compares the two mapping trackers
+ */
+static intptr_t
+map_range_comparer(struct map_tracker *a, struct map_tracker *b)
+{
+	return ((intptr_t)a->base_addr - (intptr_t)b->base_addr);
+}
+
+/*
+ * map_range_find --(internal) find the map tracker for given address range
+ *
+ * Returns the first entry at least partially overlapping given range.
+ * It's up to the caller to check whether the entry exactly matches the range,
+ * or if the range spans multiple entries.
+ * The caller is also responsible for acquiring/releasing a lock on
+ * the map tracking list.
+ */
+static struct map_tracker *
+map_range_find(uintptr_t addr, size_t len)
+{
+	LOG(10, "addr 0x%016" PRIxPTR " len %zu", addr, len);
+
+	uintptr_t end = addr + len;
+
+	struct map_tracker *mt;
+	SORTEDQ_FOREACH(mt, &Mmap_list, entry) {
+		if (addr < mt->end_addr &&
+		    (addr >= mt->base_addr || end > mt->base_addr))
+			return mt;
+
+		/* break if there is no chance to find matching entry */
+		if (addr < mt->base_addr)
+			break;
+	}
+
+	return NULL;
+}
+
+/*
+ * map_range_register -- (internal) add a memory range into a map tracking list
+ */
+int
+map_range_register(const void *addr, size_t len, int fd)
+{
+	LOG(3, "addr %p len %zu fd %d", addr, len, fd);
+
+	int ret = 0;
+
+	ASSERT(fd >= 0);
+
+	if (os_rwlock_wrlock(&Mmap_list_lock)) {
+		errno = EBUSY;
+		ERR("!cannot lock map tracking list");
+		return -1;
+	}
+
+	/* check if not tracked already */
+	struct map_tracker *mt = map_range_find((uintptr_t)addr, len);
+	ASSERTeq(mt, NULL);
+
+	mt = Malloc(sizeof(struct map_tracker));
+	if (mt == NULL) {
+		ERR("!Malloc");
+		ret = -1;
+		goto err;
+	}
+
+
+	mt->base_addr = (uintptr_t)addr;
+	mt->end_addr = mt->base_addr + len;
+	mt->flags = MTF_DIRECT_MAPPED;
+
+#ifdef NVML_COMMON_MMAP_DAX_DEEP_FLUSH
+	os_stat_t fd_stat;
+	if (os_fstat(fd, &fd_stat) != 0) {
+		ERR("!os_fstat");
+		ret = -1;
+		goto err;
+	}
+	mt->dev_id = fd_stat.st_rdev;
+#endif
+
+	SORTEDQ_INSERT(&Mmap_list, mt, entry, struct map_tracker,
+			map_range_comparer);
+
+err:
+	if (ret != 0 && mt != NULL)
+		Free(mt);
+	util_rwlock_unlock(&Mmap_list_lock);
+	return ret;
+}
+
+/*
+ * map_range_split -- (internal) remove or split a map tracking entry
+ */
+static int
+map_range_split(struct map_tracker *mt, const void *addrp, const void *endp)
+{
+	LOG(3, "begin %p end %p", addrp, endp);
+
+	uintptr_t addr = (uintptr_t)addrp;
+	uintptr_t end = (uintptr_t)endp;
+	ASSERTne(mt, NULL);
+	ASSERTeq(addr % Mmap_align, 0);
+	ASSERTeq(end % Mmap_align, 0);
+
+	struct map_tracker *mtb = NULL;
+	struct map_tracker *mte = NULL;
+
+	/*
+	 * 1)    b    e           b     e
+	 *    xxxxxxxxxxxxx => xxx.......xxxx  -  mtb+mte
+	 * 2)       b     e           b     e
+	 *    xxxxxxxxxxxxx => xxxxxxx.......  -  mtb
+	 * 3) b     e          b      e
+	 *    xxxxxxxxxxxxx => ........xxxxxx  -  mte
+	 * 4) b           e    b            e
+	 *    xxxxxxxxxxxxx => ..............  -  <none>
+	 */
+
+	if (addr > mt->base_addr) {
+		/* case #1/2 */
+		/* new mapping at the beginning */
+		mtb = Malloc(sizeof(struct map_tracker));
+		if (mtb == NULL) {
+			ERR("!Malloc");
+			goto err;
+		}
+
+		mtb->flags = mt->flags;
+		mtb->base_addr = mt->base_addr;
+		mtb->end_addr = (uintptr_t)addr;
+	}
+
+	if (end < mt->end_addr) {
+		/* case #1/3 */
+		/* new mapping at the end */
+		mte = Malloc(sizeof(struct map_tracker));
+		if (mte == NULL) {
+			ERR("!Malloc");
+			goto err;
+		}
+
+		mte->flags = mt->flags;
+		mte->base_addr = end;
+		mte->end_addr = mt->end_addr;
+	}
+
+	SORTEDQ_REMOVE(&Mmap_list, mt, entry);
+
+	if (mtb) {
+		SORTEDQ_INSERT(&Mmap_list, mtb, entry,
+				struct map_tracker, map_range_comparer);
+	}
+
+	if (mte) {
+		SORTEDQ_INSERT(&Mmap_list, mte, entry,
+				struct map_tracker, map_range_comparer);
+	}
+
+	/* free entry for the original mapping */
+	Free(mt);
+	return 0;
+
+err:
+	Free(mtb);
+	Free(mte);
+	return -1;
+}
+
+/*
+ * map_range_unregister -- (internal) remove a memory range
+ * from map tracking list
+ *
+ * Remove the region between [begin,end].  If it's in a middle of the existing
+ * mapping, it results in two new map trackers.
+ */
+int
+map_range_unregister(const void *addr, size_t len)
+{
+	LOG(3, "addr %p len %zu", addr, len);
+
+	int ret = 0;
+
+	if (os_rwlock_wrlock(&Mmap_list_lock)) {
+		errno = EBUSY;
+		ERR("!cannot lock map tracking list");
+		return -1;
+	}
+
+	void *end = (char *)addr + len;
+
+	/* XXX optimize the loop */
+	struct map_tracker *mt;
+	while ((mt = map_range_find((uintptr_t)addr, len)) != NULL) {
+		if (map_range_split(mt, addr, end) != 0) {
+			ret = -1;
+			break;
+		}
+	}
+
+	util_rwlock_unlock(&Mmap_list_lock);
+	return ret;
+}
+
+/*
+ * map_range_is_pmem -- (internal) return true if entire range
+ * is persistent memory
+ *
+ * XXX Once the Linux and Windows implementation is unified, this function
+ * would just become a new is_pmem_detect().
+ */
+int
+map_range_is_pmem(const void *addrp, size_t len)
+{
+	LOG(10, "addr %p len %zu", addrp, len);
+
+	uintptr_t addr = (uintptr_t)addrp;
+	int retval = 1;
+
+	if (os_rwlock_rdlock(&Mmap_list_lock)) {
+		errno = EBUSY;
+		ERR("!cannot lock map tracking list");
+		return 0;
+	}
+
+	do {
+		struct map_tracker *mt = map_range_find(addr, len);
+		if (mt == NULL) {
+			LOG(4, "address not found 0x%016" PRIxPTR, addr);
+			retval = 0;
+			break;
+		}
+
+		LOG(10, "range found - begin 0x%016" PRIxPTR
+				" end 0x%016" PRIxPTR
+				" flags %x",
+				mt->base_addr, mt->end_addr, mt->flags);
+
+		if (mt->base_addr > addr) {
+			LOG(10, "base address doesn't match: "
+				"0x%" PRIxPTR " > 0x%" PRIxPTR,
+					mt->base_addr, addr);
+			retval = 0;
+			break;
+		}
+
+		retval &= ((mt->flags & MTF_DIRECT_MAPPED) != 0);
+
+		uintptr_t map_len = mt->end_addr - addr;
+		if (map_len > len)
+			map_len = len;
+		len -= map_len;
+		addr += map_len;
+	} while (len > 0);
+
+	util_rwlock_unlock(&Mmap_list_lock);
+
+	return retval;
+}
+
+#ifdef NVML_COMMON_MMAP_DAX_DEEP_FLUSH
+/*
+ * msync_range -- (internal) perform msync on a range - used for deep flushing
+ */
+static int
+msync_range(uintptr_t addr, size_t len)
+{
+	/* increase len by the amount we gain when we round addr down */
+	len += addr & (Pagesize - 1);
+
+	/* round addr down to page boundary */
+	addr &= ~((uintptr_t)Pagesize - 1);
+
+	return msync((void *) addr, len, MS_SYNC);
+}
+#endif
+
+
 #define PMEM_FILE_ALL_FLAGS\
 	(PMEM_FILE_CREATE|PMEM_FILE_EXCL|PMEM_FILE_SPARSE|PMEM_FILE_TMPFILE)
 
@@ -662,7 +978,7 @@ pmem_map_fileU(const char *path, size_t len, int flags,
 
 #ifndef _WIN32
 	/* XXX only Device DAX regions (PMEM) are tracked so far */
-	if (is_dev_dax && util_range_register(addr, len, fd) != 0) {
+	if (is_dev_dax && map_range_register(addr, len, fd) != 0) {
 		LOG(2, "can't track mapped region");
 	}
 #endif
@@ -729,7 +1045,7 @@ pmem_unmap(void *addr, size_t len)
 	LOG(3, "addr %p len %zu", addr, len);
 
 #ifndef _WIN32
-	util_range_unregister(addr, len);
+	map_range_unregister(addr, len);
 #endif
 	VALGRIND_REMOVE_PMEM_MAPPING(addr, len);
 	return util_unmap(addr, len);
@@ -1277,6 +1593,70 @@ pmem_init(void)
 			GetModuleHandle(TEXT("KernelBase.dll")),
 			"QueryVirtualMemoryInformation");
 #endif
+}
+
+
+
+/*
+ * range_deep_flush -- (internal) perform deep flush of given address range
+ */
+static int
+range_deep_flush(uintptr_t addr, size_t len)
+{
+#ifdef NVML_COMMON_MMAP_DAX_DEEP_FLUSH
+	while (len != 0) {
+		const struct map_tracker *mt = map_range_find(addr, len);
+
+		if (mt == NULL) /* no more overlapping track regions */
+			return msync_range(addr, len);
+
+		if (mt->base_addr > addr) {
+			size_t curr_len = mt->base_addr - addr;
+			if (curr_len > len)
+				curr_len = len;
+			if (msync_range(addr, curr_len) != 0)
+				return -1;
+			if ((len -= curr_len) == 0)
+				return 0;
+			addr = mt->base_addr;
+		}
+
+		ddax_range_deep_flush(mt->dev_id);
+
+		if (mt->end_addr >= addr + len)
+			return 0;
+
+		len -= mt->end_addr - addr;
+		addr = mt->end_addr;
+	}
+#else
+	return msync((void *) addr, len, MS_SYNC);
+#endif
+}
+
+
+/*
+ * util_range_deep_flush --(internal) perform deep flush of given address range
+ */
+int
+util_range_deep_flush(const void *addr, size_t len)
+{
+	LOG(3, "addr %p len %zu", addr, len);
+
+	if (len == 0)
+		return 0;
+
+	if (os_rwlock_rdlock(&Mmap_list_lock)) {
+		errno = EBUSY;
+		ERR("!cannot lock map tracking list");
+		return -1;
+	}
+
+	int retval = range_deep_flush((uintptr_t)addr, len);
+
+	util_rwlock_unlock(&Mmap_list_lock);
+
+	return retval;
 }
 
 /*
