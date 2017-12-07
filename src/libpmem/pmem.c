@@ -187,6 +187,7 @@
 #include "out.h"
 #include "util.h"
 #include "os.h"
+#include "os_dimm.h"
 #include "mmap.h"
 #include "sys_util.h"
 #include "file.h"
