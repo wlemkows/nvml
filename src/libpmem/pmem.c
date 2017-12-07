@@ -186,6 +186,7 @@
 #include "out.h"
 #include "util.h"
 #include "os.h"
+#include "os_dimm.h"
 #include "mmap.h"
 #include "file.h"
 #include "valgrind_internal.h"
