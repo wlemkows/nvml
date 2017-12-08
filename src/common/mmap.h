@@ -119,8 +119,6 @@ util_map_hint_align(size_t len, size_t req_align)
 	return align;
 }
 
-int util_range_deep_flush(const void *addr, size_t len);
-
 #ifdef __cplusplus
 }
 #endif

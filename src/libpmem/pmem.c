@@ -1609,13 +1609,13 @@ range_deep_flush(uintptr_t addr, size_t len)
 		const struct map_tracker *mt = map_range_find(addr, len);
 
 		if (mt == NULL) /* no more overlapping track regions */
-			return msync_range(addr, len);
+			return pmem_msync(addr, len);
 
 		if (mt->base_addr > addr) {
 			size_t curr_len = mt->base_addr - addr;
 			if (curr_len > len)
 				curr_len = len;
-			if (msync_range(addr, curr_len) != 0)
+			if (pmem_msync(addr, curr_len) != 0)
 				return -1;
 			if ((len -= curr_len) == 0)
 				return 0;
@@ -1637,10 +1637,13 @@ range_deep_flush(uintptr_t addr, size_t len)
 
 
 /*
- * util_range_deep_flush --(internal) perform deep flush of given address range
+ * pmem_deep_flush -- perform deep flush on a memory range
+ *
+ * It merely acts as wrapper around an msync call in most cases, the only
+ * exception is the case of an mmap'ed DAX device on Linux.
  */
 int
-util_range_deep_flush(const void *addr, size_t len)
+pmem_deep_flush(const void *addr, size_t len)
 {
 	LOG(3, "addr %p len %zu", addr, len);
 
@@ -1658,17 +1661,4 @@ util_range_deep_flush(const void *addr, size_t len)
 	util_rwlock_unlock(&Mmap_list_lock);
 
 	return retval;
-}
-
-/*
- * pmem_deep_flush -- perform deep flush on a memory range
- *
- * It merely acts as wrapper around an msync call in most cases, the only
- * exception is the case of an mmap'ed DAX device on Linux.
- */
-int
-pmem_deep_flush(const void *addr, size_t len)
-{
-	LOG(3, "addr %p len %zu", addr, len);
-	return util_range_deep_flush(addr, len);
 }
