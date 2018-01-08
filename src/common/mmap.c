@@ -100,14 +100,15 @@ util_range_comparer(struct map_tracker *a, struct map_tracker *b)
 }
 
 /*
- * util_range_find --(internal) find the map tracker for given address range
+ * util_range_find_unlocked -- (internal) find the map tracker
+ * for given address range
  *
  * Returns the first entry at least partially overlapping given range.
  * It's up to the caller to check whether the entry exactly matches the range,
  * or if the range spans multiple entries.
  */
-struct map_tracker *
-util_range_find(uintptr_t addr, size_t len)
+static struct map_tracker *
+util_range_find_unlocked(uintptr_t addr, size_t len)
 {
 	LOG(10, "addr 0x%016" PRIxPTR " len %zu", addr, len);
 
@@ -115,22 +116,37 @@ util_range_find(uintptr_t addr, size_t len)
 
 	struct map_tracker *mt;
 
-	if ((errno = os_rwlock_rdlock(&Mmap_list_lock)) != 0) {
-		ERR("!cannot lock map tracking list");
-		return NULL;
-	}
 	SORTEDQ_FOREACH(mt, &Mmap_list, entry) {
 		if (addr < mt->end_addr &&
-		    (addr >= mt->base_addr || end > mt->base_addr)) {
-			goto end;
-		}
+		    (addr >= mt->base_addr || end > mt->base_addr))
+			goto out;
 
 		/* break if there is no chance to find matching entry */
 		if (addr < mt->base_addr)
 			break;
 	}
+	mt = NULL;
 
-end:
+out:
+	return mt;
+}
+
+/*
+ * util_range_find --(internal) find the map tracker for given address range
+ * the same as util_range_find_unlocked but locked
+ */
+struct map_tracker *
+util_range_find(uintptr_t addr, size_t len)
+{
+	LOG(10, "addr 0x%016" PRIxPTR " len %zu", addr, len);
+
+	if ((errno = os_rwlock_rdlock(&Mmap_list_lock)) != 0) {
+		ERR("!cannot lock map tracking list");
+		return NULL;
+	}
+
+	struct map_tracker *mt = util_range_find_unlocked(addr, len);
+
 	util_rwlock_unlock(&Mmap_list_lock);
 	return mt;
 }
@@ -143,8 +159,6 @@ util_range_register(const void *addr, size_t len, const char *path)
 {
 	LOG(3, "addr %p len %zu path %s", addr, len, path);
 
-	int ret = 0;
-
 	/* check if not tracked already */
 	ASSERTeq(util_range_find((uintptr_t)addr, len), NULL);
 
@@ -152,8 +166,7 @@ util_range_register(const void *addr, size_t len, const char *path)
 	mt  = Malloc(sizeof(struct map_tracker));
 	if (mt == NULL) {
 		ERR("!Malloc");
-		ret = -1;
-		goto err;
+		goto err_mt_alloc;
 	}
 
 	mt->base_addr = (uintptr_t)addr;
@@ -163,17 +176,20 @@ util_range_register(const void *addr, size_t len, const char *path)
 
 	if ((errno = os_rwlock_wrlock(&Mmap_list_lock)) != 0) {
 		ERR("cannot lock map tracking list");
-		return -1;
+		goto err_lock;
 	}
 
 	SORTEDQ_INSERT(&Mmap_list, mt, entry, struct map_tracker,
 			util_range_comparer);
 
-err:
-	if (ret != 0 && mt != NULL)
-		Free(mt);
 	util_rwlock_unlock(&Mmap_list_lock);
-	return ret;
+
+	return 0;
+
+err_lock:
+	Free(mt);
+err_mt_alloc:
+	return -1;
 }
 
 /*
@@ -279,7 +295,7 @@ util_range_unregister(const void *addr, size_t len)
 
 	/* XXX optimize the loop */
 	struct map_tracker *mt;
-	while ((mt = util_range_find((uintptr_t)addr, len)) != NULL) {
+	while ((mt = util_range_find_unlocked((uintptr_t)addr, len)) != NULL) {
 		if (util_range_split(mt, addr, end) != 0) {
 			ret = -1;
 			break;

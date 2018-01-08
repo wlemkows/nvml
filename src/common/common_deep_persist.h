@@ -31,18 +31,18 @@
  */
 
 /*
- * ddax_deep_persist.h -- Internal utility functions for flushing
- * a memory range residing on a DAX device.
+ * common_deep_persist.h -- Internal utility functions for deep persist
+ * flushing a memory range
  */
 
-#ifndef PMDK_DDAX_DEEP_PERSIST_H
-#define PMDK_DDAX_DEEP_PERSIST_H 1
+#ifndef PMDK_COMMON_DEEP_PERSIST_H
+#define PMDK_COMMON_DEEP_PERSIST_H 1
 #endif
 
 #include <sys/types.h>
 #include "os.h"
 #include "set.h"
 
-int ddax_deep_persist(const void *addr, size_t len,
+int common_deep_persist(const void *addr, size_t len,
 		struct pool_set *set, unsigned region_id);
 int ddax_deep_flush_write(int region_id);

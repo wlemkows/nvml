@@ -218,7 +218,7 @@ util_file_device_dax_alignment(const char *path)
 int
 util_region_find(const char *path)
 {
-	LOG(3, "util_region_find \"%s\"", path);
+	LOG(3, "path \"%s\"", path);
 
 	return -1;
 }
