@@ -31,7 +31,7 @@
  */
 
 /*
- * ddax_deep_persist.c -- internal utility functions for flushing
+ * common_deep_persist.c -- internal utility functions for flushing
  * a memory range.
  * Currently only used on Linux.
  */
@@ -46,7 +46,7 @@
 #include "os.h"
 #include "file.h"
 #include "out.h"
-#include "ddax_deep_persist.h"
+#include "common_deep_persist.h"
 #include "os_deep_persist.h"
 #include "libpmem.h"
 
@@ -56,7 +56,7 @@
 int
 ddax_deep_flush_write(int region_id)
 {
-	LOG(2, "ddax_deep_flush_write %d", region_id);
+	LOG(3, "region_id %d", region_id);
 
 	char deep_flush_path[PATH_MAX];
 	int deep_flush_fd;
@@ -82,14 +82,14 @@ ddax_deep_flush_write(int region_id)
 }
 
 /*
- * ddax_replica_deep_persist -- perform deep persist on replica's parts from range
- * for dev dax write to deep_flush, otherwise run msync
+ * common_replica_deep_persist -- perform deep persist on replica's parts
+ * from range for dev dax write to deep_flush, otherwise run msync
  */
 static int
-ddax_replica_deep_persist(const void *addr, size_t len,
+common_replica_deep_persist(const void *addr, size_t len,
 			struct pool_set *set, unsigned replica_id)
 {
-	LOG(2, "ddax_replica_deep_persist addr %p len %zu set %p replica_id %u",
+	LOG(3, "addr %p len %zu set %p replica_id %u",
 		addr, len, set, replica_id);
 
 	struct pool_replica *rep = set->replica[replica_id];
@@ -106,41 +106,47 @@ ddax_replica_deep_persist(const void *addr, size_t len,
 		struct pool_set_part *part = &rep->part[p];
 		uintptr_t padd = (uintptr_t)part->addr;
 		uintptr_t pend = padd + part->size;
+		uintptr_t isa = (uintptr_t)addr;
+		uintptr_t ise = end;
 		if (padd <= end && pend >= (uintptr_t)addr) {
+			if (padd > (uintptr_t)addr)
+				isa = padd;
+			if (pend < end)
+				ise = pend;
+			size_t islen = ise - isa;
 			if (part->is_dev_dax) {
 				region_id = util_region_find(part->path);
 				ASSERTne(region_id, -1);
 				if (old_id == region_id)
 					continue;
 				old_id = region_id;
-				pmem_persist(part->addr, part->size);
+				pmem_persist((void *)isa, islen);
 				if (ddax_deep_flush_write(region_id)) {
 					ERR("ddax_deep_flush_write(%d)",
 						region_id);
 					return -1;
 				}
-			} else {
-				pmem_msync(part->addr, part->size);
-			}
+			} else
+				pmem_msync((void *)isa, islen);
 		}
 	}
 	return 0;
 }
 
 /*
- * ddax_deep_persist - check if deep persist request is for pmem or other
+ * common_deep_persist - check if deep persist request is for pmem or other
  * and then perform proper deep_persist
  */
 int
-ddax_deep_persist(const void *addr, size_t len, struct pool_set *set,
+common_deep_persist(const void *addr, size_t len, struct pool_set *set,
 		unsigned replica_id)
 {
-	LOG(2, "ddax_deep_persist addr %p len %zu set %p replica_id %u",
+	LOG(3, "%p len %zu set %p replica_id %u",
 		addr, len, set, replica_id);
 
 /*
  * for internal deep_persist usage functions pass
- * pool_set to ddax_deep_persist that allow match
+ * pool_set to common_deep_persist that allow match
  * pool_set parts to DAX region_id, external pmem API
  * uses map_tracker to track DAX mappings and does
  * not use pool_sets, so it that case set should be NULL
@@ -151,8 +157,8 @@ ddax_deep_persist(const void *addr, size_t len, struct pool_set *set,
 			return -1;
 		}
 	} else {
-		if (ddax_replica_deep_persist(addr, len, set, replica_id)) {
-			ERR("!ddax_replica_deep_persist(%p, %lu, %p, %u)",
+		if (common_replica_deep_persist(addr, len, set, replica_id)) {
+			ERR("!common_replica_deep_persist(%p, %lu, %p, %u)",
 				addr, len, set, replica_id);
 			return -1;
 		}

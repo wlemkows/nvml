@@ -299,7 +299,7 @@ util_file_device_dax_alignment(const char *path)
 int
 util_region_find(const char *path)
 {
-	LOG(3, "util_region_find path \"%s\"", path);
+	LOG(3, "path \"%s\"", path);
 
 	int dax_reg_id_fd;
 	char dax_region_path[PATH_MAX];

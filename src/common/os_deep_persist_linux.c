@@ -44,10 +44,11 @@
 #include "mmap.h"
 #include "libpmem.h"
 #include "os_deep_persist.h"
-#include "ddax_deep_persist.h"
+#include "common_deep_persist.h"
 
 /*
- * os_range_deep_persist -- (internal) perform deep persist of given address range
+ * os_range_deep_persist -- (internal) perform deep persist of
+ * given address range
  */
 int
 os_range_deep_persist(uintptr_t addr, size_t len)

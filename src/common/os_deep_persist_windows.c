@@ -40,8 +40,8 @@
 #include "libpmem.h"
 
 /*
- * os_range_deep_persist -- (internal) perform deep persist of given address range
- * in case of systems without DAX device support it is msync
+ * os_range_deep_persist -- (internal) perform deep persist of
+ * given address range in case of systems without DAX device support it is msync
  */
 int
 os_range_deep_persist(uintptr_t addr, size_t len)
