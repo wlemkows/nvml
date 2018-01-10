@@ -3741,6 +3741,8 @@ util_replica_fdclose(struct pool_replica *rep)
  * util_replica_deep_persist -- perform deep persist on replica's parts
  * for a given range. For dev dax write to deep_flush file from sysfs.
  * Otherwise call msync.
+ * for a given range. For dev dax write to deep_flush file from sysfs,
+ * otherwise call msync
  */
 int
 util_replica_deep_persist(const void *addr, size_t len,
