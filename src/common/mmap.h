@@ -54,7 +54,6 @@ extern int Mmap_no_random;
 extern void *Mmap_hint;
 extern char *Mmap_mapfile;
 
-
 void *util_map(int fd, size_t len, int flags, int rdonly, size_t req_align);
 int util_unmap(void *addr, size_t len);
 

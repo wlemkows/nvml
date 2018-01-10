@@ -53,7 +53,7 @@
     <ClCompile Include="os_thread_windows.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="os_deep_flush_windows.c">
+    <ClCompile Include="os_deep_persist_windows.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,7 +100,7 @@
     <ClInclude Include="fs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="os_deep_flush.h">
+    <ClInclude Include="os_deep_persist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

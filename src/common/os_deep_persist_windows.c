@@ -31,18 +31,23 @@
  */
 
 /*
- * ddax_deep_flush.h -- Internal utility functions for flushing
- * a memory range residing on a DAX device.
+ * os_deep_persist_windows.c -- Windows abstraction layer for deep_persist usage
  */
 
-#ifndef PMDK_FILE_H
-#define PMDK_FILE_H 1
-#endif
-
-#include <sys/types.h>
+#include <windows.h>
+#include "out.h"
 #include "os.h"
-#include "set.h"
+#include "libpmem.h"
 
-int ddax_deep_flush(const void *addr, size_t len,
-		struct pool_set *set, unsigned region_id);
-int ddax_deep_flush_write(int region_id);
+/*
+ * os_range_deep_persist -- (internal) perform deep persist of given address range
+ * in case of systems without DAX device support it is msync
+ */
+int
+os_range_deep_persist(uintptr_t addr, size_t len)
+{
+
+	LOG(3, "os_range_deep_persist addr %p len %lu", addr, len);
+
+	return pmem_msync((void *)addr, len);
+}

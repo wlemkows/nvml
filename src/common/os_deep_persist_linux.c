@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
  */
 
 /*
- * os_deep_flush_linux.c -- Linux abstraction layer
+ * os_deep_persist_linux.c -- Linux abstraction layer
  */
 
 #define _GNU_SOURCE
@@ -41,16 +41,16 @@
 #include <sys/stat.h>
 #include "out.h"
 #include "os.h"
-#include "os_deep_flush.h"
 #include "mmap.h"
 #include "libpmem.h"
-#include "ddax_deep_flush.h"
+#include "os_deep_persist.h"
+#include "ddax_deep_persist.h"
 
 /*
- * os_range_deep_flush -- (internal) perform deep flush of given address range
+ * os_range_deep_persist -- (internal) perform deep persist of given address range
  */
 int
-os_range_deep_flush(uintptr_t addr, size_t len)
+os_range_deep_persist(uintptr_t addr, size_t len)
 {
 	LOG(3, "addr 0x%016" PRIxPTR " len %zu", addr, len);
 
@@ -83,7 +83,7 @@ os_range_deep_flush(uintptr_t addr, size_t len)
 
 		size_t diff = mt->end_addr - addr;
 		len -= diff;
-		addr = mt->end_addr + 1;
+		addr = mt->end_addr;
 	}
 	return 0;
 }

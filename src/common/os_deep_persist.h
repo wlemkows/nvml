@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,23 +31,14 @@
  */
 
 /*
- * os_deep_flush_windows.c -- Windows abstraction layer for deep_flush usage
+ * os_deep_persist.h -- os deep_persist abstaction layer
  */
 
-#include <windows.h>
-#include "out.h"
-#include "os.h"
-#include "libpmem.h"
+#ifndef PMDK_OS_DEEP_PERSIST_H
+#define PMDK_OS_DEEP_PERSIST_H 1
+#endif
 
-/*
- * os_range_deep_flush -- (internal) perform deep flush of given address range
- * in case of systems without DAX device support it is msync
- */
-int
-os_range_deep_flush(uintptr_t addr, size_t len)
-{
+#include <sys/stat.h>
+#include <stdio.h>
 
-	LOG(3, "os_range_deep_flush addr %p len %lu", addr, len);
-
-	return pmem_msync((void *)addr, len);
-}
+int os_range_deep_persist(uintptr_t addr, size_t len);

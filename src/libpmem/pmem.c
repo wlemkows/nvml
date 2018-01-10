@@ -191,7 +191,7 @@
 #include "sys_util.h"
 #include "file.h"
 #include "valgrind_internal.h"
-#include "os_deep_flush.h"
+#include "os_deep_persist.h"
 
 #ifndef _MSC_VER
 /*
@@ -1287,20 +1287,20 @@ pmem_init(void)
 }
 
 /*
- * pmem_deep_flush -- perform deep flush on a memory range
+ * pmem_deep_persist -- perform deep persist on a memory range
  *
  * It merely acts as wrapper around an msync call in most cases, the only
  * exception is the case of an mmap'ed DAX device on Linux.
  */
 int
-pmem_deep_flush(const void *addr, size_t len)
+pmem_deep_persist(const void *addr, size_t len)
 {
 	LOG(3, "addr %p len %zu", addr, len);
 
 	if (len == 0)
 		return 0;
 
-	int retval = os_range_deep_flush((uintptr_t)addr, len);
+	int retval = os_range_deep_persist((uintptr_t)addr, len);
 
 	return retval;
 }

@@ -31,14 +31,18 @@
  */
 
 /*
- * os_deep_flush.h -- os deep_flush abstaction layer
+ * ddax_deep_persist.h -- Internal utility functions for flushing
+ * a memory range residing on a DAX device.
  */
 
-#ifndef PMDK_OS_DEEP_FLUSH_H
-#define PMDK_OS_DEEP_FLUSH_H 1
+#ifndef PMDK_DDAX_DEEP_PERSIST_H
+#define PMDK_DDAX_DEEP_PERSIST_H 1
 #endif
 
-#include <sys/stat.h>
-#include <stdio.h>
+#include <sys/types.h>
+#include "os.h"
+#include "set.h"
 
-int os_range_deep_flush(uintptr_t addr, size_t len);
+int ddax_deep_persist(const void *addr, size_t len,
+		struct pool_set *set, unsigned region_id);
+int ddax_deep_flush_write(int region_id);
