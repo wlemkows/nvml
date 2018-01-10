@@ -65,8 +65,7 @@ util_mmap_init(void)
 {
 	LOG(3, NULL);
 
-	if ((errno = os_rwlock_init(&Mmap_list_lock)))
-		FATAL("!os_rwlock_init");
+	util_rwlock_init(&Mmap_list_lock);
 
 	/*
 	 * For testing, allow overriding the default mmap() hint address.
@@ -140,10 +139,7 @@ util_range_find(uintptr_t addr, size_t len)
 {
 	LOG(10, "addr 0x%016" PRIxPTR " len %zu", addr, len);
 
-	if ((errno = os_rwlock_rdlock(&Mmap_list_lock)) != 0) {
-		ERR("!cannot lock map tracking list");
-		return NULL;
-	}
+	util_rwlock_rdlock(&Mmap_list_lock);
 
 	struct map_tracker *mt = util_range_find_unlocked(addr, len);
 
@@ -174,10 +170,7 @@ util_range_register(const void *addr, size_t len, const char *path)
 	mt->flags = MTF_DIRECT_MAPPED;
 	mt->region_id = util_region_find(path);
 
-	if ((errno = os_rwlock_wrlock(&Mmap_list_lock)) != 0) {
-		ERR("cannot lock map tracking list");
-		goto err_lock;
-	}
+	util_rwlock_wrlock(&Mmap_list_lock);
 
 	SORTEDQ_INSERT(&Mmap_list, mt, entry, struct map_tracker,
 			util_range_comparer);
@@ -286,10 +279,7 @@ util_range_unregister(const void *addr, size_t len)
 
 	int ret = 0;
 
-	if ((errno = os_rwlock_wrlock(&Mmap_list_lock)) != 0) {
-		ERR("cannot lock map tracking list");
-		return -1;
-	}
+	util_rwlock_wrlock(&Mmap_list_lock);
 
 	void *end = (char *)addr + len;
 
@@ -309,9 +299,6 @@ util_range_unregister(const void *addr, size_t len)
 /*
  * util_range_is_pmem -- (internal) return true if entire range
  * is persistent memory
- *
- * XXX Once the Linux and Windows implementation is unified, this function
- * would just become a new is_pmem_detect().
  */
 int
 util_range_is_pmem(const void *addrp, size_t len)
@@ -321,10 +308,7 @@ util_range_is_pmem(const void *addrp, size_t len)
 	uintptr_t addr = (uintptr_t)addrp;
 	int retval = 1;
 
-	if ((errno = os_rwlock_rdlock(&Mmap_list_lock)) != 0) {
-		ERR("cannot lock map tracking list");
-		return 0;
-	}
+	util_rwlock_rdlock(&Mmap_list_lock);
 
 	do {
 		struct map_tracker *mt = util_range_find(addr, len);
