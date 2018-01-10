@@ -70,7 +70,7 @@ int util_file_dir_close(struct dir_handle *a);
 int util_file_dir_remove(const char *path);
 int util_file_is_device_dax(const char *path);
 int util_fd_is_device_dax(int fd);
-int util_region_find(const char *path);
+int util_ddax_region_find(const char *path);
 ssize_t util_file_get_size(const char *path);
 size_t util_file_device_dax_alignment(const char *path);
 void *util_file_map_whole(const char *path);

@@ -51,7 +51,8 @@
 #include "libpmem.h"
 
 /*
- * ddax_deep_flush_write -- perform final write to deep_flush on given region_id
+ * ddax_deep_flush_write -- perform final write to deep_flush file
+ * on given region_id
  */
 int
 ddax_deep_flush_write(int region_id)
@@ -83,7 +84,8 @@ ddax_deep_flush_write(int region_id)
 
 /*
  * common_replica_deep_persist -- perform deep persist on replica's parts
- * from range for dev dax write to deep_flush, otherwise run msync
+ * for a given range. For dev dax write to deep_flush file from sysfs,
+ * otherwise call msync
  */
 static int
 common_replica_deep_persist(const void *addr, size_t len,
@@ -106,28 +108,35 @@ common_replica_deep_persist(const void *addr, size_t len,
 		struct pool_set_part *part = &rep->part[p];
 		uintptr_t padd = (uintptr_t)part->addr;
 		uintptr_t pend = padd + part->size;
+		/* init intersection start and end addersses */
 		uintptr_t isa = (uintptr_t)addr;
 		uintptr_t ise = end;
 		if (padd <= end && pend >= (uintptr_t)addr) {
+		/* recalculate intersection addersses */
 			if (padd > (uintptr_t)addr)
 				isa = padd;
 			if (pend < end)
 				ise = pend;
 			size_t islen = ise - isa;
 			if (part->is_dev_dax) {
-				region_id = util_region_find(part->path);
+				region_id = util_ddax_region_find(part->path);
 				ASSERTne(region_id, -1);
 				if (old_id == region_id)
 					continue;
 				old_id = region_id;
 				pmem_persist((void *)isa, islen);
 				if (ddax_deep_flush_write(region_id)) {
-					ERR("ddax_deep_flush_write(%d)",
+					LOG(1, "ddax_deep_flush_write(%d)",
 						region_id);
 					return -1;
 				}
-			} else
-				pmem_msync((void *)isa, islen);
+			} else {
+				if (pmem_msync((void *)isa, islen)) {
+					LOG(1, "pmem_msync(%p, %lu)",
+						(void *)isa, islen);
+					return -1;
+				}
+			}
 		}
 	}
 	return 0;
@@ -144,21 +153,21 @@ common_deep_persist(const void *addr, size_t len, struct pool_set *set,
 	LOG(3, "%p len %zu set %p replica_id %u",
 		addr, len, set, replica_id);
 
-/*
- * for internal deep_persist usage functions pass
- * pool_set to common_deep_persist that allow match
- * pool_set parts to DAX region_id, external pmem API
- * uses map_tracker to track DAX mappings and does
- * not use pool_sets, so it that case set should be NULL
- */
+	/*
+	 * for internal deep_persist usage functions pass
+	 * pool_set to common_deep_persist that allow match
+	 * pool_set parts to DAX region_id, external pmem API
+	 * uses map_tracker to track DAX mappings and does
+	 * not use pool_sets, so it that case set should be NULL
+	 */
 	if (set == NULL) {
 		if (pmem_deep_persist(addr, len)) {
-			ERR("!pmem_deep_persist(%p, %lu)", addr, len);
+			LOG(1, "!pmem_deep_persist(%p, %lu)", addr, len);
 			return -1;
 		}
 	} else {
 		if (common_replica_deep_persist(addr, len, set, replica_id)) {
-			ERR("!common_replica_deep_persist(%p, %lu, %p, %u)",
+			LOG(1, "!common_replica_deep_persist(%p, %lu, %p, %u)",
 				addr, len, set, replica_id);
 			return -1;
 		}

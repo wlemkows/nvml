@@ -294,10 +294,10 @@ util_file_device_dax_alignment(const char *path)
 }
 
 /*
- * util_region_find -- returns DEV dax region id that contains file
+ * util_ddax_region_find -- returns DEV dax region id that contains file
  */
 int
-util_region_find(const char *path)
+util_ddax_region_find(const char *path)
 {
 	LOG(3, "path \"%s\"", path);
 

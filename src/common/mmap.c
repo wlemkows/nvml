@@ -168,7 +168,7 @@ util_range_register(const void *addr, size_t len, const char *path)
 	mt->base_addr = (uintptr_t)addr;
 	mt->end_addr = mt->base_addr + len;
 	mt->flags = MTF_DIRECT_MAPPED;
-	mt->region_id = util_region_find(path);
+	mt->region_id = util_ddax_region_find(path);
 
 	util_rwlock_wrlock(&Mmap_list_lock);
 

@@ -85,6 +85,10 @@ void *util_map_tmpfile(const char *dir, size_t size, size_t req_align);
 #define RANGE_RW(addr, len, is_dev_dax) RANGE(addr, len, is_dev_dax, rw)
 #define RANGE_NONE(addr, len, is_dev_dax) RANGE(addr, len, is_dev_dax, none)
 
+/*
+ * those map_tracker structures are used for mmap.c from mmap.c
+ * and os_deep_persist_linux.c
+ */
 enum map_tracker_flag {
 	MTF_DIRECT_MAPPED = 0x0001,
 

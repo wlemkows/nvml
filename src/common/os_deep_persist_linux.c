@@ -60,7 +60,11 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 
 		if (mt == NULL) /* no more overlapping track regions */
 			return pmem_msync((void *)addr, len);
-
+/*
+ * for input deep_persist range that cover found mapping
+ * it call write to deep_flush file, for addresses away
+ * from tracker range it calls msync
+ */
 		if (mt->base_addr > addr) {
 			size_t curr_len = mt->base_addr - addr;
 			if (curr_len > len)
