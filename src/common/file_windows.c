@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,12 +213,12 @@ util_file_device_dax_alignment(const char *path)
 }
 
 /*
- * util_get_dev_id -- returns dev_id from file stat
+ * util_region_find -- returns DEV dax region id that contains file
  */
-os_dev_t
-util_get_dev_id(const char *path)
+int
+util_region_find(const char *path)
 {
-	LOG(3, "path \"%s\"", path);
+	LOG(3, "util_region_find \"%s\"", path);
 
 	return -1;
 }

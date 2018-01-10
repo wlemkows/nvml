@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,14 +35,14 @@
  * a memory range residing on a DAX device.
  */
 
+#ifndef PMDK_FILE_H
+#define PMDK_FILE_H 1
+#endif
 
 #include <sys/types.h>
 #include "os.h"
 #include "set.h"
 
-int ddax_region_find(os_dev_t dev_id);
 int ddax_deep_flush(const void *addr, size_t len,
-struct pool_set *set, unsigned region_id);
-int ddax_replica_deep_flush(const void *addr, size_t len,
-struct pool_set *set, unsigned region_id);
+		struct pool_set *set, unsigned region_id);
 int ddax_deep_flush_write(int region_id);
