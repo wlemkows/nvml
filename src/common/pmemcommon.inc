@@ -41,7 +41,6 @@ SOURCE =\
 	$(COMMON)/mmap_linux.c\
 	$(COMMON)/os_linux.c\
 	$(COMMON)/os_thread_linux.c\
-	$(COMMON)/common_deep_persist.c\
 	$(COMMON)/os_deep_persist_linux.c\
 	$(COMMON)/out.c\
 	$(COMMON)/pool_hdr.c\

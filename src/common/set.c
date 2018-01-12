@@ -68,6 +68,7 @@
 #include "sys_util.h"
 #include "util_pmem.h"
 #include "fs.h"
+#include "os_deep_persist.h"
 
 #define LIBRARY_REMOTE "librpmem.so.1"
 #define SIZE_AUTODETECT_STR "AUTO"
@@ -3740,4 +3741,49 @@ util_replica_fdclose(struct pool_replica *rep)
 		struct pool_set_part *part = &rep->part[p];
 		util_part_fdclose(part);
 	}
+}
+
+/*
+ * util_replica_deep_persist -- perform deep persist on replica's parts
+ * for a given range. For dev dax write to deep_flush file from sysfs,
+ * otherwise call msync
+ */
+int
+util_replica_deep_persist(const void *addr, size_t len,
+			struct pool_set *set, unsigned replica_id)
+{
+	LOG(3, "addr %p len %zu set %p replica_id %u",
+		addr, len, set, replica_id);
+
+	struct pool_replica *rep = set->replica[replica_id];
+	uintptr_t rep_addr = (uintptr_t)rep->part[0].addr;
+	uintptr_t rep_end = rep_addr + rep->repsize;
+	uintptr_t end = (uintptr_t)addr + len;
+
+	ASSERT((uintptr_t)addr >= rep_addr);
+	ASSERT(end <= rep_end);
+
+	for (unsigned p = 0; p < rep->nparts; p++) {
+		struct pool_set_part *part = &rep->part[p];
+		uintptr_t padd = (uintptr_t)part->addr;
+		uintptr_t pend = padd + part->size;
+		/* init intersection start and end addresses */
+		uintptr_t isa = (uintptr_t)addr;
+		uintptr_t ise = end;
+		if (padd <= end && pend >= (uintptr_t)addr) {
+		/* recalculate intersection addresses */
+			if (padd > (uintptr_t)addr)
+				isa = padd;
+			if (pend < end)
+				ise = pend;
+			size_t islen = ise - isa;
+
+			if (os_part_deep_persist(part, (void *)isa, islen)) {
+				LOG(1, "os_part_deep_persist(%p, %p, %lu)",
+					part, addr, len);
+				return -1;
+			}
+		}
+	}
+	return 0;
 }

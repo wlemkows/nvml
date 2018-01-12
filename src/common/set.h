@@ -230,7 +230,8 @@ int util_is_poolset_file(const char *path);
 int util_poolset_foreach_part(const char *path,
 	int (*cb)(struct part_file *pf, void *arg), void *arg);
 size_t util_poolset_size(const char *path);
-
+int util_replica_deep_persist(const void *addr, size_t len,
+	struct pool_set *set, unsigned replica_id);
 int util_pool_create(struct pool_set **setp, const char *path, size_t poolsize,
 	size_t minsize, size_t minpartsize, const char *sig, uint32_t major,
 	uint32_t compat, uint32_t incompat, uint32_t ro_compat,

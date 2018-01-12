@@ -51,3 +51,15 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 
 	return pmem_msync((void *)addr, len);
 }
+
+
+/*
+ * os_part_deep_persist -- (internal) call msync for non DEV dax
+ */
+int
+os_part_deep_persist(struct pool_set_part *part, void *addr, size_t len)
+{
+	LOG(3, "part %p addr %p len %lu", part, addr, len);
+
+	return pmem_msync(addr, len);
+}
