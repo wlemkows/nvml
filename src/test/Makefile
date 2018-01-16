@@ -223,6 +223,7 @@ PMEM_TESTS = \
 	pmem_is_pmem\
 	pmem_is_pmem_linux\
 	pmem_map_file\
+	pmem_deep_persist\
 	pmem_memcpy\
 	pmem_memmove\
 	pmem_memset\
