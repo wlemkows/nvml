@@ -325,14 +325,14 @@ util_ddax_region_find(const char *path)
 
 	ssize_t len = read(dax_reg_id_fd, reg_id, DAX_REGION_ID_LEN);
 
-	if (len < 2 || reg_id[len] != '\0') {
+	if (len < 2 || reg_id[len - 1] != '\n') {
 		ERR("!read(%d, %p, %d)", dax_reg_id_fd, reg_id,
 			DAX_REGION_ID_LEN);
 		goto err;
 	}
 
 	int reg_num = (int)strtol(reg_id, &end_addr, 10);
-	if (*end_addr != 0) {
+	if (*end_addr != '\n') {
 		ERR("!strtol(%s, %s, 10)", reg_id, end_addr);
 		goto err;
 	}
