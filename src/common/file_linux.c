@@ -325,7 +325,7 @@ util_ddax_region_find(const char *path)
 
 	ssize_t len = read(dax_reg_id_fd, reg_id, DAX_REGION_ID_LEN);
 
-	if (len <= 1) {
+	if (len < 2 || reg_id[len] != '\0') {
 		ERR("!read(%d, %p, %d)", dax_reg_id_fd, reg_id,
 			DAX_REGION_ID_LEN);
 		goto err;
