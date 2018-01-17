@@ -3745,8 +3745,8 @@ util_replica_fdclose(struct pool_replica *rep)
 
 /*
  * util_replica_deep_persist -- perform deep persist on replica's parts
- * for a given range. For dev dax write to deep_flush file from sysfs,
- * otherwise call msync periodically
+ * for a given range. For dev dax write to deep_flush file from sysfs.
+ * Otherwise call msync.
  */
 int
 util_replica_deep_persist(const void *addr, size_t len,
@@ -3770,7 +3770,7 @@ util_replica_deep_persist(const void *addr, size_t len,
 		/* init intersection start and end addresses */
 		uintptr_t isa = (uintptr_t)addr;
 		uintptr_t ise = end;
-		if (padd <= end && pend >= (uintptr_t)addr) {
+		if (padd < end && pend > (uintptr_t)addr) {
 		/* recalculate intersection addresses */
 			if (padd > (uintptr_t)addr)
 				isa = padd;
@@ -3778,9 +3778,12 @@ util_replica_deep_persist(const void *addr, size_t len,
 				ise = pend;
 			size_t islen = ise - isa;
 
+			LOG(15, "perform deep_persist for replica %u "
+				"part %p, addr %p, len %lu",
+				replica_id, part, (void *)isa, islen);
 			if (os_part_deep_persist(part, (void *)isa, islen)) {
 				LOG(1, "os_part_deep_persist(%p, %p, %lu)",
-					part, addr, len);
+					part, (void *)isa, islen);
 				return -1;
 			}
 		}

@@ -47,7 +47,7 @@
 #include "os_deep_persist.h"
 
 /*
- * os_deep_flush_write -- perform final write to deep_flush file
+ * os_deep_flush_write -- (internal) perform write to deep_flush file
  * on given region_id
  */
 static int
@@ -61,7 +61,7 @@ os_deep_flush_write(int region_id)
 	snprintf(deep_flush_path, PATH_MAX,
 		"/sys/bus/nd/devices/region%d/deep_flush", region_id);
 
-	if ((deep_flush_fd = os_open(deep_flush_path, O_RDWR)) < 0) {
+	if ((deep_flush_fd = os_open(deep_flush_path, O_WRONLY)) < 0) {
 		ERR("!os_open(\"%s\", O_RDWR)", deep_flush_path);
 		return -1;
 	}
@@ -79,8 +79,7 @@ os_deep_flush_write(int region_id)
 }
 
 /*
- * os_range_deep_persist -- (internal) perform deep persist of
- * given address range
+ * os_range_deep_persist -- perform deep persist of given address range
  */
 int
 os_range_deep_persist(uintptr_t addr, size_t len)
@@ -90,8 +89,12 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 	while (len != 0) {
 		const struct map_tracker *mt = util_range_find(addr, len);
 
-		if (mt == NULL) /* no more overlapping track regions */
+		/* no more overlapping track regions */
+		if (mt == NULL) {
+			LOG(15, "pmem_msync addr %p, len %lu",
+				(void *)addr, len);
 			return pmem_msync((void *)addr, len);
+		}
 		/*
 		 * for input deep_persist range that cover found mapping
 		 * it call write to deep_flush file, for addresses away
@@ -107,10 +110,17 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 				return 0;
 			addr = mt->base_addr;
 		}
-		size_t mt_len = mt->end_addr - mt->base_addr;
-		pmem_persist((void *)mt->base_addr, mt_len);
+		size_t mt_in_len = mt->end_addr - addr;
+		size_t persist_len = len;
+		if (mt_in_len <= len)
+			persist_len = mt_in_len;
+		/* XXX: to be replaced with pmem_deep_flush() */
+		LOG(15, "pmem_persist addr %p, len %lu",
+			(void *)addr, persist_len);
+		pmem_persist((void *)addr, persist_len);
+
 		if (os_deep_flush_write(mt->region_id) < 0) {
-			ERR("cannot write to deep_flush in region %d",
+			LOG(2, "cannot write to deep_flush in region %d",
 				mt->region_id);
 			return -1;
 		}
@@ -118,15 +128,14 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 		if (mt->end_addr >= addr + len)
 			return 0;
 
-		size_t diff = mt->end_addr - addr;
-		len -= diff;
+		len -= mt_in_len;
 		addr = mt->end_addr;
 	}
 	return 0;
 }
 
 /*
- * os_part_deep_persist -- (internal) search DEV dax region id for part file
+ * os_part_deep_persist -- search DEV dax region id for part file
  * on device dax and perform write to deep_flush file
  * or call msync for non DEV dax
  */
@@ -138,6 +147,8 @@ os_part_deep_persist(struct pool_set_part *part, void *addr, size_t len)
 	if (part->is_dev_dax) {
 		int region_id = util_ddax_region_find(part->path);
 		ASSERTne(region_id, -1);
+		/* XXX: to be replaced with pmem_deep_flush() */
+		LOG(15, "pmem_persist addr %p, len %lu", addr, len);
 		pmem_persist(addr, len);
 		if (os_deep_flush_write(region_id)) {
 			LOG(1, "ddax_deep_flush_write(%d)",

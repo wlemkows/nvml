@@ -294,7 +294,7 @@ util_file_device_dax_alignment(const char *path)
 }
 
 /*
- * util_ddax_region_find -- returns DEV dax region id that contains file
+ * util_ddax_region_find -- returns Device DAX region id
  */
 int
 util_ddax_region_find(const char *path)
@@ -304,6 +304,7 @@ util_ddax_region_find(const char *path)
 	int dax_reg_id_fd;
 	char dax_region_path[PATH_MAX];
 	char reg_id[DAX_REGION_ID_LEN];
+	char *end_addr;
 	os_stat_t st;
 
 	if (os_stat(path, &st) < 0) {
@@ -318,7 +319,7 @@ util_ddax_region_find(const char *path)
 		major(dev_id), minor(dev_id));
 
 	if ((dax_reg_id_fd = os_open(dax_region_path, O_RDONLY)) < 0) {
-		ERR("!open(\"%s\", O_RDONLY", dax_region_path);
+		ERR("!open(\"%s\", O_RDONLY)", dax_region_path);
 		return -1;
 	}
 
@@ -330,8 +331,14 @@ util_ddax_region_find(const char *path)
 		goto err;
 	}
 
+	int reg_num = (int)strtol(reg_id, &end_addr, 10);
+	if (*end_addr != 0) {
+		ERR("!strtol(%s, %s, 10)", reg_id, end_addr);
+		goto err;
+	}
+
 	os_close(dax_reg_id_fd);
-	return atoi(reg_id);
+	return reg_num;
 
 err:
 	os_close(dax_reg_id_fd);
