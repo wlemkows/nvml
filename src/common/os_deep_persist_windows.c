@@ -39,14 +39,16 @@
 #include "os.h"
 #include "libpmem.h"
 
+void (*Func_deep)(const void *, size_t);
+
 /*
- * os_range_deep_persist -- (internal) perform deep persist of
+ * os_range_deep_action -- (internal) perform deep persist of
  * given address range in case of systems without DAX device support it is msync
  */
 int
-os_range_deep_persist(uintptr_t addr, size_t len)
+os_range_deep_action(uintptr_t addr, size_t len)
 {
-	LOG(3, "os_range_deep_persist addr %p len %lu", addr, len);
+	LOG(3, "os_range_deep_action addr %p len %lu", addr, len);
 
 	return pmem_msync((void *)addr, len);
 }
