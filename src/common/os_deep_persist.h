@@ -41,7 +41,8 @@
 #include <stddef.h>
 #include "set.h"
 
-int os_range_deep_persist(uintptr_t addr, size_t len);
+extern void (*Func_deep)(const void *, size_t);
+int os_range_deep_action(uintptr_t addr, size_t len);
 int os_part_deep_persist(struct pool_set_part *part, void *addr, size_t len);
 
 #endif

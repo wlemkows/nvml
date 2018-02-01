@@ -46,6 +46,8 @@
 #include "libpmem.h"
 #include "os_deep_persist.h"
 
+void (*Func_deep)(const void *, size_t);
+
 /*
  * os_deep_flush_write -- (internal) perform write to deep_flush file
  * on given region_id
@@ -79,10 +81,10 @@ os_deep_flush_write(int region_id)
 }
 
 /*
- * os_range_deep_persist -- perform deep persist of given address range
+ * os_range_deep_action -- perform deep action of given address range
  */
 int
-os_range_deep_persist(uintptr_t addr, size_t len)
+os_range_deep_action(uintptr_t addr, size_t len)
 {
 	LOG(3, "addr 0x%016" PRIxPTR " len %zu", addr, len);
 
@@ -114,10 +116,10 @@ os_range_deep_persist(uintptr_t addr, size_t len)
 		size_t mt_in_len = mt->end_addr - addr;
 		size_t persist_len = MIN(len, mt_in_len);
 
-		/* XXX: to be replaced with pmem_deep_flush() */
-		LOG(15, "pmem_persist addr %p, len %lu",
+		LOG(15, "Func_deep addr %p, len %lu",
 			(void *)addr, persist_len);
-		pmem_persist((void *)addr, persist_len);
+		Func_deep((void *)addr, persist_len);
+		pmem_drain();
 
 		if (os_deep_flush_write(mt->region_id) < 0) {
 			LOG(2, "cannot write to deep_flush in region %d",
