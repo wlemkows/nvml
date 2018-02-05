@@ -31,7 +31,7 @@
  */
 
 /*
- * os_deep_persist_linux.c -- Linux abstraction layer
+ * os_deep_common_linux.c -- Linux abstraction layer
  */
 
 #define _GNU_SOURCE
@@ -44,7 +44,7 @@
 #include "mmap.h"
 #include "file.h"
 #include "libpmem.h"
-#include "os_deep_persist.h"
+#include "os_deep_common.h"
 
 void (*Func_deep)(const void *, size_t);
 

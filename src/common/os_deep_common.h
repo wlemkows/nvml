@@ -31,7 +31,7 @@
  */
 
 /*
- * os_deep_persist.h -- os deep_persist abstaction layer
+ * os_deep_common.h -- abstaction layer for common usage of deep_* functions
  */
 
 #ifndef PMDK_OS_DEEP_PERSIST_H

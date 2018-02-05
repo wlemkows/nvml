@@ -68,7 +68,7 @@
 #include "sys_util.h"
 #include "util_pmem.h"
 #include "fs.h"
-#include "os_deep_persist.h"
+#include "os_deep_common.h"
 
 #define LIBRARY_REMOTE "librpmem.so.1"
 #define SIZE_AUTODETECT_STR "AUTO"
