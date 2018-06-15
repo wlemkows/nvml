@@ -314,7 +314,7 @@ util_range_find_unlocked(uintptr_t addr, size_t len)
 	struct map_tracker *mt;
 
 	SORTEDQ_FOREACH(mt, &Mmap_list, entry) {
-		if (addr < mt->end_addr &&
+		if (addr <= mt->end_addr &&
 		    (addr >= mt->base_addr || end > mt->base_addr))
 			goto out;
 
