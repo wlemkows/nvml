@@ -117,11 +117,13 @@ see **pmem_flush**(3).
 
 **pmemobj_xpersist**() is a version of **pmemobj_persist**() function with
 additional *flags* argument.
-It supports only the **PMEM_F_RELAXED** flag (see **pmem_memcpy**(3)).
+It supports only the **PMEMOBJ_F_RELAXED** flag.
+This flag indicates that memory transfer operation does
+not require 8-byte atomicity guarantees.
 
 **pmemobj_xflush**() is a version of **pmemobj_flush**() function with
 additional *flags* argument.
-It supports only the **PMEM_F_RELAXED** flag (see **pmem_memcpy**(3)).
+It supports only the **PMEMOBJ_F_RELAXED** flag (see **pmem_memcpy**(3)).
 
 The **pmemobj_memmove**(), **pmemobj_memcpy**() and **pmemobj_memset**() functions
 provide the same memory copying as their namesakes **memmove**(3), **memcpy**(3),

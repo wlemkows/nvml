@@ -47,7 +47,7 @@
 
 #include <string.h>
 
-#include "libpmem.h"
+#include "obj.h"
 #include "heap.h"
 #include "memblock.h"
 #include "out.h"
@@ -204,7 +204,7 @@ memblock_header_legacy_write(const struct memory_block *m,
 	VALGRIND_ADD_TO_TX(hdrp, sizeof(*hdrp));
 	pmemops_memcpy(&m->heap->p_ops, hdrp, &hdr,
 		sizeof(hdr), /* legacy header is 64 bytes in size */
-		PMEM_F_MEM_WC | PMEM_F_MEM_NODRAIN | PMEM_F_RELAXED);
+		PMEMOBJ_F_MEM_WC | PMEMOBJ_F_MEM_NODRAIN | PMEMOBJ_F_RELAXED);
 	VALGRIND_REMOVE_FROM_TX(hdrp, sizeof(*hdrp));
 
 	/* unused fields of the legacy headers are used as a red zone */
@@ -219,6 +219,7 @@ static void
 memblock_header_compact_write(const struct memory_block *m,
 	size_t size, uint64_t extra, uint16_t flags)
 {
+
 	COMPILE_ERROR_ON(ALLOC_HDR_COMPACT_SIZE > CACHELINE_SIZE);
 
 	struct {
@@ -244,8 +245,8 @@ memblock_header_compact_write(const struct memory_block *m,
 
 	VALGRIND_ADD_TO_TX(hdrp, hdr_size);
 
-	pmemops_memcpy(&m->heap->p_ops, hdrp, &padded,
-		hdr_size, PMEM_F_MEM_WC | PMEM_F_MEM_NODRAIN | PMEM_F_RELAXED);
+	pmemops_memcpy(&m->heap->p_ops, hdrp, &padded, hdr_size,
+		PMEMOBJ_F_MEM_WC | PMEMOBJ_F_MEM_NODRAIN | PMEMOBJ_F_RELAXED);
 	VALGRIND_DO_MAKE_MEM_UNDEFINED((char *)hdrp + ALLOC_HDR_COMPACT_SIZE,
 		hdr_size - ALLOC_HDR_COMPACT_SIZE);
 
