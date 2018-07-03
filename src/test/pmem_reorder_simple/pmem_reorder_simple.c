@@ -61,6 +61,8 @@ struct three_field {
 static void
 write_consistent(struct three_field *structp)
 {
+	/* reorder engine type has to back to default */
+	VALGRIND_DEFAULT_REORDER;
 	structp->first_field = 1;
 	structp->second_field = 1;
 	structp->third_field = 1;
@@ -75,6 +77,8 @@ write_consistent(struct three_field *structp)
 static void
 write_inconsistent(struct three_field *structp)
 {
+	/* reorder engine type has to back to default */
+	VALGRIND_DEFAULT_REORDER;
 	structp->first_field = 1;
 	structp->second_field = 1;
 	structp->third_field = 1;
@@ -120,6 +124,9 @@ main(int argc, char *argv[])
 		memset(structp, 0, sizeof(*structp));
 
 	VALGRIND_LOG_STORES;
+	/* change only for VALGRIND_DEFAULT_REORDER test */
+	VALGRIND_PARTIAL_REORDER;
+
 	switch (opt) {
 		case 'g':
 			write_consistent(structp);
