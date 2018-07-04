@@ -1,5 +1,5 @@
-# Copyright (c) 2018 by the Sphinx team
 # Copyright 2018, Intel Corporation
+# Copyright (c) 2018, by the Sphinx team
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions

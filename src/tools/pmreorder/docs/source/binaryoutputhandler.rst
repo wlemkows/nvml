@@ -5,3 +5,4 @@ binaryoutputhandler module
     :special-members: __init__
     :members:
     :show-inheritance:
+
