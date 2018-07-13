@@ -125,7 +125,7 @@ main(int argc, char *argv[])
 
 	VALGRIND_LOG_STORES;
 	/* change only for VALGRIND_DEFAULT_REORDER test */
-	VALGRIND_PARTIAL_REORDER;
+	/* VALGRIND_PARTIAL_REORDER; */
 
 	switch (opt) {
 		case 'g':
