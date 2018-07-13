@@ -62,7 +62,7 @@ static void
 write_consistent(struct three_field *structp)
 {
 	/* reorder engine type has to back to default */
-	VALGRIND_DEFAULT_REORDER;
+	/* VALGRIND_DEFAULT_REORDER; */
 	structp->first_field = 1;
 	structp->second_field = 1;
 	structp->third_field = 1;
@@ -78,7 +78,7 @@ static void
 write_inconsistent(struct three_field *structp)
 {
 	/* reorder engine type has to back to default */
-	VALGRIND_DEFAULT_REORDER;
+	/* VALGRIND_DEFAULT_REORDER; */
 	structp->first_field = 1;
 	structp->second_field = 1;
 	structp->third_field = 1;
