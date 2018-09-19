@@ -56,7 +56,6 @@
 #include "sync.h"
 #include "tx.h"
 #include "sys_util.h"
-
 /*
  * The variable from which the config is directly loaded. The string
  * cannot contain any comments or extraneous white characters.
@@ -2141,7 +2140,7 @@ constructor_alloc(void *ctx, void *ptr, size_t usable_size, void *arg)
 	ASSERTne(arg, NULL);
 
 	struct constr_args *carg = arg;
-
+	VALGRIND_EMIT_LOG("CONSTRUCTOR_ALLOC");
 	if (carg->zero_init)
 		pmemops_memset(p_ops, ptr, 0, usable_size, 0);
 
