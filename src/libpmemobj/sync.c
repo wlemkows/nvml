@@ -547,17 +547,21 @@ int
 pmemobj_cond_broadcast(PMEMobjpool *pop, PMEMcond *condp)
 {
 	LOG(3, "pop %p cond %p", pop, condp);
+	FUNC_EMIT_LOG(__func__, BEGIN);
 
 	ASSERTeq(pop, pmemobj_pool_by_ptr(condp));
 
 	PMEMcond_internal *condip = (PMEMcond_internal *)condp;
 	os_cond_t *cond = get_cond(pop, condip);
 	if (cond == NULL)
+		FUNC_EMIT_LOG(__func__, END);
 		return EINVAL;
 
 	ASSERTeq((uintptr_t)cond % util_alignof(os_cond_t), 0);
 
-	return os_cond_broadcast(cond);
+	int ret = os_cond_broadcast(cond);
+	FUNC_EMIT_LOG(__func__, END);
+	return ret;
 }
 
 /*

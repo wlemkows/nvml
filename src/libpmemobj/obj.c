@@ -1952,6 +1952,7 @@ void
 pmemobj_close(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
+	FUNC_EMIT_LOG(__func__, BEGIN);
 
 	_pobj_cache_invalidate++;
 
@@ -1986,6 +1987,7 @@ pmemobj_close(PMEMobjpool *pop)
 #endif /* _WIN32 */
 
 	obj_pool_cleanup(pop);
+	FUNC_EMIT_LOG(__func__, END);
 }
 
 /*
@@ -2042,7 +2044,10 @@ pmemobj_checkU(const char *path, const char *layout)
 int
 pmemobj_check(const char *path, const char *layout)
 {
-	return pmemobj_checkU(path, layout);
+	FUNC_EMIT_LOG(__func__, BEGIN);
+	int ret = pmemobj_checkU(path, layout);
+	FUNC_EMIT_LOG(__func__, END);
+	return ret;
 }
 #else
 /*
@@ -2208,8 +2213,11 @@ pmemobj_alloc(PMEMobjpool *pop, PMEMoid *oidp, size_t size,
 		return -1;
 	}
 
-	return obj_alloc_construct(pop, oidp, size, type_num,
+	FUNC_EMIT_LOG(__func__, BEGIN);
+	int ret = obj_alloc_construct(pop, oidp, size, type_num,
 			0, constructor, arg);
+	FUNC_EMIT_LOG(__func__, END);
+	return ret;
 }
 
 /*
@@ -2577,12 +2585,15 @@ pmemobj_alloc_usable_size(PMEMoid oid)
 	if (oid.off == 0)
 		return 0;
 
+	FUNC_EMIT_LOG(__func__, BEGIN);
 	PMEMobjpool *pop = pmemobj_pool_by_oid(oid);
 
 	ASSERTne(pop, NULL);
 	ASSERT(OBJ_OID_IS_VALID(pop, oid));
 
-	return (palloc_usable_size(&pop->heap, oid.off));
+	size_t ret = palloc_usable_size(&pop->heap, oid.off);
+	FUNC_EMIT_LOG(__func__, END);
+	return ret;
 }
 
 /*
@@ -2993,7 +3004,9 @@ pmemobj_publish(PMEMobjpool *pop, struct pobj_action *actv, size_t actvcnt)
 void
 pmemobj_cancel(PMEMobjpool *pop, struct pobj_action *actv, size_t actvcnt)
 {
+	FUNC_EMIT_LOG(__func__, BEGIN);
 	palloc_cancel(&pop->heap, actv, actvcnt);
+	FUNC_EMIT_LOG(__func__, END);
 }
 
 /*

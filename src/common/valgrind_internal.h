@@ -73,6 +73,22 @@ extern unsigned _On_valgrind;
 #include "valgrind/drd.h"
 #endif
 
+#define BEGIN ".BEGIN"
+#define END ".END"
+#define EMIT_LOG_LEN 100
+
+#define FUNC_EMIT_LOG(name, suffix) \
+		char emit_log_func[EMIT_LOG_LEN] = {0}; \
+		char emit_log_lib[EMIT_LOG_LEN] = {0}; \
+		int ret = snprintf(emit_log_func, EMIT_LOG_LEN, \
+			"%s%s", name, suffix); \
+		if (ret < 0 || ret >= EMIT_LOG_LEN) \
+			ERR("!snprintf"); \
+		strcat(emit_log_lib, PMEMOBJ_LOG_PREFIX); \
+		strcat(emit_log_lib, suffix); \
+		VALGRIND_EMIT_LOG(emit_log_lib); \
+		VALGRIND_EMIT_LOG(emit_log_func);
+
 #if VG_HELGRIND_ENABLED || VG_DRD_ENABLED
 
 #define VALGRIND_ANNOTATE_HAPPENS_BEFORE(obj) do {\
