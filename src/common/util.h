@@ -56,6 +56,7 @@ extern "C" {
 
 extern unsigned long long Pagesize;
 extern unsigned long long Mmap_align;
+extern int Pmreorder_emit;
 
 #define CACHELINE_SIZE 64U
 

@@ -51,6 +51,9 @@ unsigned long long Pagesize;
 /* allocation/mmap granularity */
 unsigned long long Mmap_align;
 
+/* true if pmreorder instrumentization has to be enabled */
+int Pmreorder_emit;
+
 /*
  * our versions of malloc & friends start off pointing to the libc versions
  */
@@ -334,6 +337,10 @@ util_init(void)
 
 #if ANY_VG_TOOL_ENABLED
 	_On_valgrind = RUNNING_ON_VALGRIND;
+
+	char *pmreorder_env = getenv("PMREORDER_EMIT_LOG");
+	if (pmreorder_env)
+		Pmreorder_emit = atoi(pmreorder_env);
 #endif
 }
 

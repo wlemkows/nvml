@@ -265,9 +265,11 @@ extern void util_emit_log(const char *lib, const char *func, int order);
  * to pmemcheck store log file.
  */
 #define PMEMOBJ_API_START()\
-	util_emit_log("libpmemobj", __func__, 0);
+	if (Pmreorder_emit)\
+		util_emit_log("libpmemobj", __func__, 0);
 #define PMEMOBJ_API_END()\
-	util_emit_log("libpmemobj", __func__, 1);
+	if (Pmreorder_emit)\
+		util_emit_log("libpmemobj", __func__, 1);
 
 #else
 
