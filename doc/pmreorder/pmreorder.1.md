@@ -52,8 +52,8 @@ date: pmreorder version 1.5
 
 **pmreorder** - performs a persistent consistency check
 		 using a store reordering mechanism
-
-
+---
+----------
 # SYNOPSIS #
 
 ```
@@ -66,7 +66,7 @@ $ python pmreorder <options>
 The pmreorder tool is a collection of python scripts designed
 to parse and replay operations logged by pmemcheck -
 a persistent memory checking tool.
-
+--
 Pmreorder performs the store reordering between persistent
 memory barriers - a sequence of flush-fence operations.
 It uses a consistency checking routine provided in the
@@ -75,7 +75,7 @@ consistent state.
 
 Considering that logging, replaying and reordering of operations
 are very time consuming, it is recommended to use as few stores as
-possible in test workloads.
+-----------possible in test workloads.
 
 
 # OPTIONS #

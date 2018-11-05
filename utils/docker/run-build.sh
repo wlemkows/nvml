@@ -40,6 +40,12 @@ set -e
 # Prepare build environment
 ./prepare-for-build.sh
 
+# Create PR on gh-pages
+if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
+	echo "Running auto doc update"
+	./run-doc-update.sh
+fi
+
 # Build all and run tests
 cd $WORKDIR
 make check-license
