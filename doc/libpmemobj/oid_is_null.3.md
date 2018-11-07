@@ -51,7 +51,7 @@ _WINUX(,[NOTES](#notes)<br />)
 **pmemobj_type_num**(), **pmemobj_pool_by_oid**(),
 **pmemobj_pool_by_ptr**() - functions that allow mapping
 operations between object addresses, object handles, oids or type numbers
-
+some test text
 
 # SYNOPSIS #
 
