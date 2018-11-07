@@ -4,7 +4,7 @@ Content-Style: 'text/css'
 title: LIBRPMEM
 collection: librpmem
 header: PMDK
-date: rpmem API version 1.1
+date: rpmem API version 1.2
 ...
 
 [comment]: <> (Copyright 2016-2017, Intel Corporation)
@@ -55,7 +55,7 @@ date: rpmem API version 1.1
 
 # NAME #
 
-**librpmem** -- remote persistent memory support library (EXPERIMENTAL)
+**librpmem** - remote persistent memory support library (EXPERIMENTAL)
 
 
 # SYNOPSIS #
@@ -395,7 +395,7 @@ main(int argc, char *argv[])
 	memset(pool, 0, POOL_SIZE);
 
 	/* make local data persistent on remote node */
-	ret = rpmem_persist(rpp, 0, POOL_SIZE, 0);
+	ret = rpmem_persist(rpp, 0, POOL_SIZE, 0, 0);
 	if (ret) {
 		fprintf(stderr, "rpmem_persist: %s\n", rpmem_errormsg());
 		return 1;
@@ -431,5 +431,5 @@ recommended by the SNIA NVM Programming Technical Work Group:
 **ibv_fork_init**(3), **rpmem_create**(3), **rpmem_open**(3),
 **rpmem_persist**(3), **strerror**(3), **limits.conf**(5), **fabric**(7),
 **fi_sockets**(7), **fi_verbs**(7), **libpmem**(7), **libpmemblk**(7),
-**libpmemcto**(7), **libpmemlog**(7), **libpmemobj**(7)
+**libpmemlog**(7), **libpmemobj**(7)
 and **<http://pmem.io>**

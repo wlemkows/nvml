@@ -4,7 +4,7 @@ Content-Style: 'text/css'
 title: RPMEM_PERSIST
 collection: librpmem
 header: PMDK
-date: rpmem API version 1.1
+date: rpmem API version 1.2
 ...
 
 [comment]: <> (Copyright 2017, Intel Corporation)
@@ -46,7 +46,7 @@ date: rpmem API version 1.1
 # NAME #
 
 **rpmem_persist**(), **rpmem_read**(),
--- functions to copy and read remote pools
+- functions to copy and read remote pools
 
 
 # SYNOPSIS #
@@ -55,6 +55,8 @@ date: rpmem API version 1.1
 #include <librpmem.h>
 
 int rpmem_persist(RPMEMpool *rpp, size_t offset,
+	size_t length, unsigned lane, unsigned flags);
+int rpmem_deep_persist(RPMEMpool *rpp, size_t offset,
 	size_t length, unsigned lane);
 int rpmem_read(RPMEMpool *rpp, void *buff, size_t offset,
 	size_t length, unsigned lane);
@@ -69,12 +71,25 @@ persistent on the remote node before the function returns. The remote node
 is identified by the *rpp* handle which must be returned from either
 **rpmem_open**(3) or **rpmem_create**(3). The *offset* is relative
 to the *pool_addr* specified in the **rpmem_open**(3) or **rpmem_create**(3)
-call. The *offset* and *length* combined must not exceed the
+call. If the remote pool was created using **rpmem_create**() with non-NULL
+*create_attr* argument, *offset* has to be greater or equal to 4096.
+In that case the first 4096 bytes of the pool is used for storing the pool
+matadata and cannot be overwritten.
+If the pool was created with NULL *create_attr* argument, the pool metadata
+is not stored with the pool and *offset* can be any nonnegative number.
+The *offset* and *length* combined must not exceed the
 *pool_size* passed to **rpmem_open**(3) or **rpmem_create**(3).
 The **rpmem_persist**() operation is performed using the given *lane* number.
 The lane must be less than the value returned by **rpmem_open**(3) or
 **rpmem_create**(3) through the *nlanes* argument (so it can take a value
-from 0 to *nlanes* - 1).
+from 0 to *nlanes* - 1). The *flags* argument can be 0 or RPMEM_PERSIST_RELAXED
+which means the persist operation will be done without any guarantees regarding
+atomicity of memory transfer.
+
+The **rpmem_deep_persist**() function works in the same way as
+**rpmem_persist**(3) function, but additionally it flushes the data to the
+lowest possible persistency domain available from software.
+Please see **pmem_deep_persist**(3) for details.
 
 The **rpmem_read**() function reads *length* bytes of data from a remote pool
 at *offset* and copies it to the buffer *buff*. The operation is performed on

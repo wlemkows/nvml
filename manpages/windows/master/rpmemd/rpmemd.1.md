@@ -4,7 +4,7 @@ Content-Style: 'text/css'
 title: RPMEMD
 collection: rpmemd
 header: PMDK
-date: rpmemd version 1.3
+date: rpmemd version 1.4
 ...
 
 [comment]: <> (Copyright 2016-2017, Intel Corporation)
@@ -49,7 +49,7 @@ date: rpmemd version 1.3
 
 # NAME #
 
-**rpmemd** -- librpmem target node process (EXPERIMENTAL)
+**rpmemd** - librpmem target node process (EXPERIMENTAL)
 
 
 # SYNOPSIS #

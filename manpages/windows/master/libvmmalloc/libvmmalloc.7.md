@@ -4,7 +4,7 @@ Content-Style: 'text/css'
 title: LIBVMMALLOC
 collection: libvmmalloc
 header: PMDK
-date: vmmalloc API version 1.0
+date: vmmalloc API version 1.1
 ...
 
 [comment]: <> (Copyright 2016-2017, Intel Corporation)
@@ -50,13 +50,13 @@ date: vmmalloc API version 1.0
 
 # NAME #
 
-**libvmmalloc** -- general purpose volatile memory allocation library
+**libvmmalloc** - general purpose volatile memory allocation library
 
 
 # SYNOPSIS #
 
 ```
-$ LD_PRELOAD=libvmmalloc.so command [ args... ]
+$ LD_PRELOAD=libvmmalloc.so.1 command [ args... ]
 ```
 
 or
