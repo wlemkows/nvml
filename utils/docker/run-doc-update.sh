@@ -32,8 +32,10 @@
 
 set -e
 
-ORIGIN="https://${GITHUB_TOKEN}@github.com/WeronikaLewandowska/pmdk"
-UPSTREAM="https://github.com/wlemkows/pmdk"
+BOT_NAME="WeronikaLewandowska"
+REPO_NAME="wlemkows"
+ORIGIN="https://${GITHUB_TOKEN}@github.com/${BOT_NAME}/pmdk"
+UPSTREAM="https://github.com/${REPO_NAME}/pmdk"
 # master or stable-* branch
 TARGET_BRANCH=${TRAVIS_BRANCH}
 declare -A TARGET_BRANCHES=(["master"]="master" ["stable-1.2"]="v1.2" ["stable-1.3"]="v1.3" ["stable-1.4"]="v1.4" ["stable-1.5"]="v1.5")
@@ -43,7 +45,7 @@ git clone ${ORIGIN}
 cd pmdk
 git remote add upstream ${UPSTREAM}
 
-git config --local user.name "WeronikaLewandowska"
+git config --local user.name ${BOT_NAME}
 git config --local user.email "taj5wero@gmail.com"
 
 git checkout ${TARGET_BRANHC}
@@ -59,7 +61,7 @@ git push -f ${ORIGIN} ${TARGET_BRANCH}
 
 # Makes pull request.
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.
-hub pull-request -f -b wlemkows:${TARGET_BRANCH} -h WeronikaLewandowska:${TARGET_BRANCH} -m "doc: automatic $TARGET_BRANCH docs update" && true
+hub pull-request -f -b ${REPO_NAME}:${TARGET_BRANCH} -h ${BOT_NAME}:${TARGET_BRANCH} -m "doc: automatic $TARGET_BRANCH docs update" && true
 
 git clean -dfx
 
@@ -87,6 +89,6 @@ git add -A
 git commit -m "doc: automatic gh-pages docs update" && true
 git push -f ${ORIGIN} gh-pages
 
-hub pull-request -f -b wlemkows:gh-pages -h WeronikaLewandowska:gh-pages -m "doc: automatic gh-pages docs update" && true
+hub pull-request -f -b ${REPO_NAME}:gh-pages -h ${BOT_NAME}:gh-pages -m "doc: automatic gh-pages docs update" && true
 
 exit 0
