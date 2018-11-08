@@ -56,7 +56,7 @@ git remote add upstream ${UPSTREAM}
 git config --local user.name ${BOT_NAME}
 git config --local user.email "taj5wero@gmail.com"
 
-git checkout ${TARGET_BRANHC}
+git checkout -B ${TARGET_BRANCH}
 git remote update
 git rebase upstream/${TARGET_BRANCH}
 
