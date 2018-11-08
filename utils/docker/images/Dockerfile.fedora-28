@@ -30,47 +30,61 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment for building the PMDK project.
 #
 
 # Pull base image
-FROM ubuntu:16.04
+FROM fedora:28
 MAINTAINER marcin.slusarz@intel.com
 
-# Update the Apt cache and install basic tools
-RUN apt-get update \
- && apt-get install -y software-properties-common \
+# Install basic tools
+RUN dnf update -y \
+ && dnf install -y \
 	asciidoc \
 	autoconf \
+	automake \
+	bash-completion \
 	bc \
 	clang \
-	clang-format-3.8 \
 	cmake \
-	debhelper \
-	devscripts \
-	flake8 \
+	file \
+	findutils \
+	fuse \
+	fuse-devel \
 	gcc \
 	gdb \
 	git \
-	libc6-dbg \
-	libfuse-dev \
-	libglib2.0-dev \
-	libjson-c-dev \
-	libkmod-dev \
-	libncurses5-dev \
+	glib2-devel \
+	hub \
+	json-c-devel \
+	kmod-devel \
+	lbzip2 \
 	libtool \
-	libudev-dev \
-	libunwind8-dev \
-	libuv1-dev \
+	libudev-devel \
+	libunwind-devel \
+	libuuid-devel \
+	libuv-devel \
+	make \
+	man \
+	ncurses-devel \
+	openssh-server \
 	pandoc \
-	pkg-config \
-	ruby \
-	ssh \
+	passwd \
+	pkgconfig \
+	rpm-build \
+	rpm-build-libs \
+	rpmdevtools \
 	sudo \
-	uuid-dev \
-	whois \
- && rm -rf /var/lib/apt/lists/*
+	tar \
+	wget \
+	which \
+	xmlto \
+ && dnf clean all
+
+# Install libndctl
+COPY install-libndctl.sh install-libndctl.sh
+RUN ./install-libndctl.sh fedora
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -78,21 +92,20 @@ RUN ./install-valgrind.sh
 
 # Install libfabric
 COPY install-libfabric.sh install-libfabric.sh
-RUN ./install-libfabric.sh
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
+RUN ./install-libfabric.sh fedora
 
 # Add user
 ENV USER pmdkuser
 ENV USERPASS pmdkpass
-RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
+RUN useradd -m $USER
+RUN echo $USERPASS | passwd $USER --stdin
+RUN gpasswd wheel -a $USER
 USER $USER
 
 # Set required environment variables
-ENV OS ubuntu
-ENV OS_VER 16.04
-ENV START_SSH_COMMAND service ssh start
-ENV PACKAGE_MANAGER dpkg
+ENV OS fedora
+ENV OS_VER 28
+ENV START_SSH_COMMAND /usr/sbin/sshd
+ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
+
