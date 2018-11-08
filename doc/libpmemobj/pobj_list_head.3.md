@@ -132,7 +132,7 @@ POBJ_LIST_MOVE_ELEMENT_BEFORE(PMEMobjpool *pop, POBJ_LIST_HEAD *head,
 
 
 # DESCRIPTION #
-
+some test
 The following macros define and operate on a type-safe persistent
 atomic circular doubly linked list data structure that consist of
 a set of persistent objects of a well-known type. Unlike the functions
