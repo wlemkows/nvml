@@ -70,7 +70,7 @@ int pmem_has_hw_drain(void);
 
 
 # DESCRIPTION #
-
+fdfd
 The functions in this section provide access to the stages of flushing
 to persistence, for the less common cases where an application needs more
 control of the flushing operations than the **pmem_persist**() function.
