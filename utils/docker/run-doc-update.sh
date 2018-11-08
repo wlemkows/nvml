@@ -61,7 +61,10 @@ git remote update
 git rebase upstream/${TARGET_BRANCH}
 
 make doc
-
+echo "----------------"
+python --version
+python3 --version
+git branch
 # Build & PR groff
 git add -A
 git commit -m "doc: automatic $TARGET_BRANCH docs update" && true
