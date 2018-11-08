@@ -61,10 +61,7 @@ git remote update
 git rebase upstream/${TARGET_BRANCH}
 
 make doc
-echo "----------------"
-python --version
-python3 --version
-git branch
+
 # Build & PR groff
 git add -A
 git commit -m "doc: automatic $TARGET_BRANCH docs update" && true
@@ -85,8 +82,9 @@ cd ..
 mv ./doc/web_linux ../
 mv ./doc/web_windows ../
 
+GH_PAGES_NAME="gh-pages-for-$TARGET_BRANCH"
 # Checkout gh-pages and copy docs
-git checkout -fb gh-pages upstream/gh-pages
+git checkout -fb $GH_PAGES_NAME upstream/gh-pages
 git clean -dfx
 
 cp -r  ../web_linux/* ./manpages/linux/${VERSION}/
@@ -98,8 +96,8 @@ cp -r  ../web_windows/* ./manpages/windows/${VERSION}/
 # changes which were reverted).
 git add -A
 git commit -m "doc: automatic gh-pages docs update" && true
-git push -f ${ORIGIN} gh-pages
+git push -f ${ORIGIN} ${GH_PAGES_NAME}
 
-hub pull-request -f -b ${USER_NAME}:gh-pages -h ${BOT_NAME}:gh-pages -m "doc: automatic gh-pages docs update" && true
+hub pull-request -f -b ${USER_NAME}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} -m "doc: automatic gh-pages docs update" && true
 
 exit 0
