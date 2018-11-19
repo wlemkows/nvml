@@ -92,8 +92,10 @@ GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
 git checkout -fb $GH_PAGES_NAME upstream/gh-pages
 git clean -dfx
 
-cp -r  ../web_linux/* ./manpages/linux/${VERSION}/
-cp -r  ../web_windows/* ./manpages/windows/${VERSION}/
+rsync -a  ../web_linux/ ./manpages/linux/${VERSION}/
+rsync -a  ../web_windows/ ./manpages/windows/${VERSION}/\
+	--exclude='libvmmalloc' --exclude='librpmem' 	\
+       	--exclude='rpmemd' --exclude='pmreorder'
 
 rm -r ../web_linux
 rm -r ../web_windows
