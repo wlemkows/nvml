@@ -32,8 +32,8 @@
 
 set -e
 
-BOT_NAME="pmdk-bot"
-USER_NAME="pmem"
+BOT_NAME="WeronikaLewandowska"
+USER_NAME="wlemkows"
 REPO_NAME="pmdk"
 
 ORIGIN="https://${GITHUB_TOKEN}@github.com/${BOT_NAME}/${REPO_NAME}"

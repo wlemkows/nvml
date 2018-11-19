@@ -40,6 +40,12 @@ set -e
 # Prepare build environment
 ./prepare-for-build.sh
 
+# Create PR with generated docs
+if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
+	echo "Running auto doc update"
+	./run-doc-update.sh
+fi
+
 # Build all and run tests
 cd $WORKDIR
 make check-license
@@ -49,8 +55,3 @@ make -j2 test USE_LIBUNWIND=1
 make -j2 pcheck TEST_BUILD=$TEST_BUILD
 make DESTDIR=/tmp source
 
-# Create PR with generated docs
-if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
-	echo "Running auto doc update"
-	./run-doc-update.sh
-fi

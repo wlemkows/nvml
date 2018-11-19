@@ -87,7 +87,7 @@ if [ -z "$NDCTL_ENABLE" ]; then ndctl_enable=; else ndctl_enable="--env NDCTL_EN
 
 # Only run doc update on pmem/pmdk master or stable branch
 VALID_BRANCHES=("master" "stable-1.2" "stable-1.3" "stable-1.4" "stable-1.5")
-if [[ ! "${VALID_BRANCHES[@]}" =~ "${TRAVIS_BRANCH}" || "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_REPO_SLUG" != "${GITHUB_REPO}" ]]; then
+if [[ ! "${VALID_BRANCHES[@]}" =~ "${TRAVIS_BRANCH}" ]]; then
 	AUTO_DOC_UPDATE=0
 fi
 
