@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2017, Intel Corporation
+# Copyright 2016-2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,8 +46,7 @@ if [[ -z "$TRAVIS" ]]; then
 	exit 1
 fi
 
-if [[ $TRAVIS_REPO_SLUG != "pmem/pmdk" \
-	|| $TRAVIS_EVENT_TYPE != "pull_request" ]];
+if [[ $TRAVIS_REPO_SLUG != "wlemkows/pmdk" ]];
 then
 	echo "SKIP: $0 can only be executed for pull requests to pmem/pmdk"
 	exit 0

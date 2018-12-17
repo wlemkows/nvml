@@ -32,8 +32,8 @@
 
 set -e
 
-BOT_NAME="pmdk-bot"
-USER_NAME="pmem"
+BOT_NAME="WeronikaLewandowska"
+USER_NAME="wlemkows"
 REPO_NAME="pmdk"
 
 ORIGIN="https://${GITHUB_TOKEN}@github.com/${BOT_NAME}/${REPO_NAME}"
@@ -56,7 +56,7 @@ cd ${REPO_NAME}
 git remote add upstream ${UPSTREAM}
 
 git config --local user.name ${BOT_NAME}
-git config --local user.email "pmem-bot@intel.com"
+git config --local user.email "weronika.lewandowska@intel.com"
 
 git checkout -B ${TARGET_BRANCH}
 git remote update
