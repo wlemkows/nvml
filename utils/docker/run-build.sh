@@ -52,6 +52,6 @@ pwd
 # Create PR with generated docs
 if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
 	echo "Running auto doc update"
-	./run-doc-update.sh
+	./utils/docker/run-doc-update.sh
 fi
 make DESTDIR=/tmp source
