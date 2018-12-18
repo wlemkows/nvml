@@ -53,7 +53,7 @@ date: pmreorder version 1.5
 **pmreorder** - performs a persistent consistency check
 		 using a store reordering mechanism
 
-some test changes wlemkows 123
+some test changes wlemkows 12 3 4
 
 
 # SYNOPSIS #
