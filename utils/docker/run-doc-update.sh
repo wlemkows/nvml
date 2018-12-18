@@ -71,7 +71,9 @@ git push -f ${ORIGIN} ${TARGET_BRANCH}
 
 # Makes pull request.
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.
+echo "hub ----------- pull req 1"
 hub pull-request -f -b ${USER_NAME}:${TARGET_BRANCH} -h ${BOT_NAME}:${TARGET_BRANCH} -m "doc: automatic $TARGET_BRANCH docs update" && true
+echo "hub ----------- pull req 1"
 
 git clean -dfx
 
