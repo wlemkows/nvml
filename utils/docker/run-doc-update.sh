@@ -95,13 +95,13 @@ GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
 git checkout -B $GH_PAGES_NAME upstream/gh-pages
 git clean -dfx
 
-rsync -a ../web_linux/ ./manpages/linux/${VERSION}/
-rsync -a ../web_windows/ ./manpages/windows/${VERSION}/ \
-	--exclude='libvmmalloc' --exclude='librpmem'	\
-	--exclude='rpmemd' --exclude='pmreorder'
+cp -r ../web_linux/* ./manpages/linux/${VERSION}/
+#rsync -a ../web_windows/ ./manpages/windows/${VERSION}/ \
+#	--exclude='libvmmalloc' --exclude='librpmem'	\
+#	--exclude='rpmemd' --exclude='pmreorder'
 
 rm -r ../web_linux
-rm -r ../web_windows
+#rm -r ../web_windows
 
 # Add and push changes.
 # git commit command may fail if there is nothing to commit.
