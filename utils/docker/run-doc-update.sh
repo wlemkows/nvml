@@ -86,7 +86,7 @@ cd  ./doc
 make web
 cd ..
 
-#mkdir ../web_manpages
+# mkdir ../web_manpages
 mv ./doc/web_linux ../
 #mv ./doc/web_windows ../
 
