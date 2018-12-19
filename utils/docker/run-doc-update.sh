@@ -88,7 +88,7 @@ cd ..
 
 #mkdir ../web_manpages
 mv ./doc/web_linux ../
-mv ./doc/web_windows ../
+#mv ./doc/web_windows ../
 
 # Checkout gh-pages and copy docs
 GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
