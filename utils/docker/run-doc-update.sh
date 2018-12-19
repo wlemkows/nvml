@@ -62,6 +62,9 @@ git checkout -B ${TARGET_BRANCH}
 git remote update
 git rebase upstream/${TARGET_BRANCH}
 
+echo "pandoc version is ---->>>>"
+pandoc --version
+
 make doc
 echo "git status ->"
 git status
