@@ -63,7 +63,8 @@ git remote update
 git rebase upstream/${TARGET_BRANCH}
 
 make doc
-
+echo "git status ->"
+git status
 # Build & PR groff
 git add -A
 git commit -m "doc: automatic $TARGET_BRANCH docs update" && true
