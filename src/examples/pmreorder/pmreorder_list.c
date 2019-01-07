@@ -56,6 +56,7 @@ struct list_node {
 
 struct list_root {
 	node_id head;
+	node_id size;
 	struct list_node nodes[MAX_NODES];
 };
 
@@ -68,29 +69,17 @@ struct list_root {
 static int
 check_consistency(struct list_root *root)
 {
-	struct list_node *node1 = NODE_PTR(root, root->head);
-	struct list_node *node2 = NODE_PTR(root, node1->next);
-	struct list_node *node3 = NODE_PTR(root, node2->next);
+	struct list_node *node = NODE_PTR(root, root->head);
 
 	/*
 	 * If node is linked to the list then its
-	 * value should be set preperly
+	 * value should not be empty
 	 */
-
-	/* one element on the list */
-	if (root->head == 5 && node1->value != 55)
-		return 1;
-
-	/* two elements on the list */
-	if ((root->head == 3 && node1->value != 33) || \
-		(node1->next == 5 && node2->value != 55))
-		return 1;
-
-	/* three elements on the list */
-	if ((root->head == 6 && node1->value != 66) || \
-		(node1->next == 3 && node2->value != 33) || \
-		(node2->next == 5 && node3->value != 55))
-		return 1;
+	while (node->next != 0) {
+		if (!NODE_PTR(root, node->next)->value)
+			return 1;
+		node = NODE_PTR(root, node->next);
+	}
 
 	return 0;
 }
@@ -106,7 +95,7 @@ list_print(struct list_root *list)
 	fprintf(fp, "List:\n");
 
 	node_id n = list->head;
-	while (NODE_PTR(list, n)->value != 0) {
+	for (int i = 0; i < list->size; i++) {
 		fprintf(fp, "Value: %d\n", NODE_PTR(list, n)->value);
 		n = NODE_PTR(list, n)->next;
 	}
@@ -117,16 +106,28 @@ list_print(struct list_root *list)
  * list_insert_consistency -- add new element to the list in a consistent way
  */
 static void
-list_insert_consistent(struct list_root *root, node_id node, int value)
+list_insert_consistent(struct list_root *root, int value)
 {
-	struct list_node *new = NODE_PTR(root, node);
+
+	struct list_node *head = NODE_PTR(root, root->head);
+	node_id new_id = root->size + root->head;
+	struct list_node *new = NODE_PTR(root, new_id);
+	struct list_node *last = head;
 
 	new->value = value;
-	new->next = root->head;
+	new->next = 0;
 	pmem_persist(new, sizeof(new));
 
-	root->head = node;
-	pmem_persist(&root->head, sizeof(root->head));
+	if (root->size == 0) {
+		head = new;
+	} else {
+		while (last->next != 0)
+			last = NODE_PTR(root, last->next);
+		last->next = new_id;
+		pmem_persist(&last->next, sizeof(last->next));
+	}
+	root->size++;
+	pmem_persist(&root->size, sizeof(root->size));
 }
 
 /*
@@ -134,18 +135,29 @@ list_insert_consistent(struct list_root *root, node_id node, int value)
  * in an inconsistent way
  */
 static void
-list_insert_inconsistent(struct list_root *root, node_id node, int value)
+list_insert_inconsistent(struct list_root *root, int value)
 {
-	struct list_node *new = NODE_PTR(root, node);
+	struct list_node *head = NODE_PTR(root, root->head);
+	node_id new_id = root->size + root->head;
+	struct list_node *new = NODE_PTR(root, new_id);
+	struct list_node *last = head;
 
-	new->next = root->head;
-	pmem_persist(&new->next, sizeof(node));
+	new->next = 0;
+	pmem_persist(&new->next, sizeof(new->next));
 
-	root->head = node;
-	pmem_persist(&root->head, sizeof(root->head));
+	if (root->size == 0) {
+		head = new;
+	} else {
+		while (last->next != 0)
+			last = NODE_PTR(root, last->next);
+		last->next = new_id;
+		pmem_persist(&last->next, sizeof(last->next));
+	}
+	root->size++;
+	pmem_persist(&root->size, sizeof(root->size));
 
 	new->value = value;
-	pmem_persist(&new->value, sizeof(value));
+	pmem_persist(&new->value, sizeof(new->value));
 }
 
 int
@@ -175,16 +187,19 @@ main(int argc, char *argv[])
 		pmem_memset_persist(r, 0, sizeof(struct list_root) +
 				sizeof(struct list_node) * MAX_NODES);
 
+	r->head = 0;
 	switch (opt) {
 		case 'g':
-			list_insert_consistent(r, 5, 55);
-			list_insert_consistent(r, 3, 33);
-			list_insert_consistent(r, 6, 66);
+			r->size = 0;
+			list_insert_consistent(r, 66);
+			list_insert_consistent(r, 55);
+			list_insert_consistent(r, 33);
 			break;
 		case 'b':
-			list_insert_inconsistent(r, 5, 55);
-			list_insert_inconsistent(r, 3, 33);
-			list_insert_inconsistent(r, 6, 66);
+			r->size = 0;
+			list_insert_inconsistent(r, 66);
+			list_insert_inconsistent(r, 55);
+			list_insert_inconsistent(r, 33);
 			break;
 		case 'c':
 			check = check_consistency(r);
