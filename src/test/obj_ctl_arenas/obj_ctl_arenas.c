@@ -93,10 +93,9 @@ worker_arenas_size(void *arg)
 	/* we need to test 2 arenas so 2 threads are needed here */
 	os_mutex_lock(&lock);
 	nth++;
-	if (nth != NTHREAD)
+	while (nth < NTHREAD)
 		os_cond_wait(&cond, &lock);
-	else
-		os_cond_broadcast(&cond);
+	os_cond_broadcast(&cond);
 	os_mutex_unlock(&lock);
 
 
