@@ -146,13 +146,18 @@ tx.post_commit.stop | r- | - | void * | - | - | -
 
 This entry point is deprecated.
 
-heap.narenas | r- | - | unsigned | - | - | -
+heap.narenas.automatic | r- | - | unsigned | - | - | -
 
 Reads the number of arenas used in automatic scheduling of memory operations
 for threads. By default, this value is equal to the number of available processors.
 An arena is a memory management structure which enables concurrency by taking
 exclusive ownership of parts of the heap and allowing associated threads to allocate
 without contention.
+
+heap.narenas.total | r- | - | unsigned | - | - | -
+
+Reads the number of all created arenas. It includes automatic arenas
+created by default and arenas created using heap.arena.create CTL.
 
 heap.arena.[arena_id].size | r- | - | uint64_t | - | - | -
 
