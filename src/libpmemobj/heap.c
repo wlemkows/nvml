@@ -186,7 +186,7 @@ heap_thread_arena_destructor(void *arg)
  * destructor of a thread, which also touches that variable.
  */
 static struct arena *
-heap_thread_arena_assign(struct heap_rt *heap)
+heap_thread_arena_assign(struct heap_rt *heap, struct arena *arena)
 {
 	util_mutex_lock(&heap->arenas_lock);
 
@@ -200,6 +200,11 @@ heap_thread_arena_assign(struct heap_rt *heap)
 			a->nthreads < least_used->nthreads)&&
 			a->automatic == 1)
 			least_used = a;
+		if (arena != NULL &&
+			a == arena &&
+			a->nthreads < 1 &&
+			a->automatic == 0)
+			least_used = arena;
 	}
 
 	LOG(4, "assigning %p arena to current thread", least_used);
@@ -222,7 +227,7 @@ heap_thread_arena(struct heap_rt *heap)
 {
 	struct arena *a;
 	if ((a = os_tls_get(heap->thread_arena)) == NULL)
-		a = heap_thread_arena_assign(heap);
+		a = heap_thread_arena_assign(heap, NULL);
 
 	return a;
 }
@@ -1049,6 +1054,18 @@ heap_set_arena_auto(struct palloc_heap *heap, unsigned arena_id,
 	util_mutex_lock(&h->arenas_lock);
 	a->automatic = automatic;
 	util_mutex_unlock(&h->arenas_lock);
+}
+
+/*
+ * heap_set_arena_thread -- assign arena to the current thread
+ */
+void
+heap_set_arena_thread(struct palloc_heap *heap, unsigned arena_id)
+{
+	struct heap_rt *h = heap->rt;
+	struct arena *a = VEC_ARR(&heap->rt->arenas)[arena_id];
+
+	heap_thread_arena_assign(h, a);
 }
 
 /*
