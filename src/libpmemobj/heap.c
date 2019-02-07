@@ -272,13 +272,44 @@ heap_bucket_acquire_by_id(struct palloc_heap *heap, uint8_t class_id)
 }
 
 /*
- * heap_bucket_acquire_by_id -- fetches by class a bucket exclusive for the
+ * heap_bucket_acquire_with_arena -- fetches by arena a bucket exclusive
+ * for the thread until heap_bucket_release is called
+ */
+struct bucket *
+heap_bucket_acquire_with_arena(struct palloc_heap *heap, uint8_t class_id,
+		uint16_t arena_id)
+{
+	struct heap_rt *rt = heap->rt;
+	struct bucket *b;
+
+#ifdef DEBUG
+	util_mutex_lock(&rt->arenas_lock);
+	ASSERT(arena_id < VEC_SIZE(&rt->arenas));
+	util_mutex_unlock(&rt->arenas_lock);
+#endif
+
+	b = (class_id == DEFAULT_ALLOC_CLASS_ID) ? rt->default_bucket :
+		(VEC_ARR(&heap->rt->arenas)[arena_id])->buckets[class_id];
+
+	util_mutex_lock(&b->lock);
+
+	return b;
+}
+
+/*
+ * heap_bucket_acquire -- fetches by class a bucket exclusive for the
  *	thread until heap_bucket_release is called
  */
 struct bucket *
-heap_bucket_acquire(struct palloc_heap *heap, struct alloc_class *c)
+heap_bucket_acquire(struct palloc_heap *heap, struct alloc_class *c,
+		uint16_t arena_flag)
 {
-	return heap_bucket_acquire_by_id(heap, c->id);
+	struct bucket *b;
+	b = arena_flag ? heap_bucket_acquire_with_arena(heap, c->id,
+				ARENA_ID_FROM_FLAG(arena_flag)) :
+		heap_bucket_acquire_by_id(heap, c->id);
+
+	return b;
 }
 
 /*
