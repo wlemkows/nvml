@@ -38,6 +38,7 @@
 
 require_test_type short
 require_fs_type any
+require_build_type debug
 
 setup
 
