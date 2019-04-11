@@ -71,10 +71,9 @@ create_holey_file 2048M $DIR\testfile2.4224
 # with Windows
 #
 
-Start-Sleep -s 240
 # MINIMUM POOL SIZE = 16MB + 64KB
 $MIN_POOL_SIZE = ((16*1024*1024 + 64*1024).ToString() + "b")
-create_holey_file $MIN_POOL_SIZE $DIR\testfile7.512
+create_holey_filee $MIN_POOL_SIZE $DIR\testfile7.512
 create_holey_file $MIN_POOL_SIZE $DIR\testfile7.520
 create_holey_file $MIN_POOL_SIZE $DIR\testfile7.528
 create_holey_file $MIN_POOL_SIZE $DIR\testfile7.4096
