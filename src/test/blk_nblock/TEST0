@@ -96,6 +96,8 @@ truncate -s $MIN_POOL_SIZE $DIR/testfile7.4096
 truncate -s $MIN_POOL_SIZE $DIR/testfile7.4160
 truncate -s $MIN_POOL_SIZE $DIR/testfile7.4224
 
+Start-Sleep -s 240
+
 # should fail:
 #	512:$DIR/testfile1 (file is too small)
 #	4096:$DIR/testfile2.512 (bsize doesn't match pool)
