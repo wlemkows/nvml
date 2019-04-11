@@ -109,6 +109,7 @@ ulog_entry_size(const struct ulog_entry_base *entry)
 		case ULOG_OPERATION_AND:
 		case ULOG_OPERATION_OR:
 		case ULOG_OPERATION_SET:
+		case ULOG_OPERATION_ADD:
 			return sizeof(struct ulog_entry_val);
 		case ULOG_OPERATION_BUF_SET:
 		case ULOG_OPERATION_BUF_CPY:
@@ -533,6 +534,14 @@ ulog_entry_apply(const struct ulog_entry_base *e, int persist,
 
 			VALGRIND_ADD_TO_TX(dst, dst_size);
 			*dst = ev->value;
+			f(p_ops->base, dst, sizeof(uint64_t),
+				PMEMOBJ_F_RELAXED);
+		break;
+		case ULOG_OPERATION_ADD:
+			ev = (struct ulog_entry_val *)e;
+
+			VALGRIND_ADD_TO_TX(dst, dst_size);
+			*dst += ev->value;
 			f(p_ops->base, dst, sizeof(uint64_t),
 				PMEMOBJ_F_RELAXED);
 		break;

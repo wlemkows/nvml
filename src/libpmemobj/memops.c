@@ -253,6 +253,9 @@ operation_merge(struct ulog_entry_base *entry, uint64_t value,
 		case ULOG_OPERATION_SET:
 			e->value = value;
 			break;
+		case ULOG_OPERATION_ADD:
+			e->value += value;
+			break;
 		default:
 			ASSERT(0); /* unreachable */
 	}
@@ -554,7 +557,7 @@ operation_process(struct operation_context *ctx)
 			ctx->pshadow_ops.ulog->data;
 		ulog_operation_type t = ulog_entry_type(e);
 		if (t == ULOG_OPERATION_SET || t == ULOG_OPERATION_AND ||
-		    t == ULOG_OPERATION_OR) {
+		    t == ULOG_OPERATION_OR || t == ULOG_OPERATION_ADD) {
 			ulog_entry_apply(e, 1, ctx->p_ops);
 			redo_process = 0;
 		}

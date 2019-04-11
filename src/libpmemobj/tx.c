@@ -375,6 +375,7 @@ tx_undo_entry_apply(struct ulog_entry_base *e, void *arg,
 		case ULOG_OPERATION_AND:
 		case ULOG_OPERATION_OR:
 		case ULOG_OPERATION_SET:
+		case ULOG_OPERATION_ADD:
 		case ULOG_OPERATION_BUF_SET:
 		default:
 			ASSERT(0);
@@ -393,7 +394,9 @@ tx_abort_set(PMEMobjpool *pop, struct lane *lane)
 
 	ulog_foreach_entry((struct ulog *)&lane->layout->undo,
 		tx_undo_entry_apply, NULL, &pop->p_ops);
+
 	operation_finish(lane->undo, ULOG_INC_GEN_NUM);
+	operation_cancel(lane->external);
 }
 
 /*
@@ -692,6 +695,7 @@ pmemobj_tx_begin(PMEMobjpool *pop, jmp_buf env, ...)
 
 		lane_hold(pop, &tx->lane);
 		operation_start(tx->lane->undo);
+		operation_start(tx->lane->external);
 
 		VEC_INIT(&tx->actions);
 		PMDK_SLIST_INIT(&tx->tx_entries);
@@ -914,7 +918,6 @@ pmemobj_tx_commit(void)
 
 		pmemops_drain(&pop->p_ops);
 
-		operation_start(tx->lane->external);
 		palloc_publish(&pop->heap, VEC_ARR(&tx->actions),
 			VEC_SIZE(&tx->actions), tx->lane->external);
 
@@ -1068,14 +1071,9 @@ pmemobj_tx_add_snapshot(struct tx *tx, struct tx_range_def *snapshot)
 	 * invalid once the redo log is processed.
 	 */
 	if (tx->first_snapshot) {
-		struct pobj_action *action = tx_action_add(tx);
-		if (action == NULL)
-			return -1;
-
 		uint64_t *n = &tx->lane->layout->undo.gen_num;
-		palloc_set_value(&tx->pop->heap, action,
-			n, *n + 1);
-
+		operation_add_entry(tx->lane->external, n, 1,
+				ULOG_OPERATION_ADD);
 		tx->first_snapshot = 0;
 	}
 
