@@ -35,83 +35,121 @@
  */
 
 #include "unittest.h"
+#include <fcntl.h>
+#include <assert.h>
 
-POBJ_LAYOUT_BEGIN(recreate);
-POBJ_LAYOUT_ROOT(recreate, struct root);
-POBJ_LAYOUT_TOID(recreate, struct foo);
-POBJ_LAYOUT_END(recreate);
+//POBJ_LAYOUT_BEGIN(recreate);
+//POBJ_LAYOUT_ROOT(recreate, struct root);
+//POBJ_LAYOUT_TOID(recreate, struct foo);
+//POBJ_LAYOUT_END(recreate);
 
-struct foo {
-	int bar;
-};
+//struct foo {
+//	int bar;
+//};
 
-struct root {
-	TOID(struct foo) foo;
-};
+//struct root {
+//	TOID(struct foo) foo;
+//};
 
-#define LAYOUT_NAME "obj_recreate"
+//#define LAYOUT_NAME "obj_recreate"
+
+
+//#define N PMEMOBJ_MIN_POOL
+
+#define N (1024 * 1024 * 8)
 #define ZEROLEN 4096
-#define N PMEMOBJ_MIN_POOL
-
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_recreate");
+//	START(argc, argv, "obj_recreate");
 
 	/* root doesn't count */
-	UT_COMPILE_ERROR_ON(POBJ_LAYOUT_TYPES_NUM(recreate) != 1);
+//	UT_COMPILE_ERROR_ON(POBJ_LAYOUT_TYPES_NUM(recreate) != 1);
+//----------------------------------------------------------------------------------------
 
-	if (argc < 2)
-		UT_FATAL("usage: %s file-name [trunc]", argv[0]);
+	char *file = "/mnt/pmem/here_wlemkows";
+	int fd0 = open(file, O_RDWR | O_CREAT, 0666);
+	int ret = posix_fallocate(fd0, 0, 2 * N);
+	assert(ret == 0);
 
-	const char *path = argv[1];
+	close(fd0);
 
-	PMEMobjpool *pop = NULL;
+	fd0 = open(file, O_RDWR);
+	ret = ftruncate(fd0, N);
+	assert(ret == 0);
+
+	void *map = mmap(NULL, ZEROLEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd0, 0);
+	UT_ASSERT(map);
+	memset(map, 0, ZEROLEN);
+	ret = munmap(map, ZEROLEN);
+	assert(ret == 0);
+	close(fd0);
+
+	fd0 = open(file, O_RDWR);
+	map = mmap(NULL, N, PROT_READ|PROT_WRITE, MAP_SHARED, fd0, 0);
+	char data[8] = {1, 1, 1, 1, 1, 1, 1, 1};
+	memcpy(map, data, 8);
+	ret = munmap(map, N);
+	assert(ret == 0);
+	close(fd0);
+
+	unlink(file);
+//----------------------------------------------------------------------------------------	
+	
+//	if (argc < 2)
+//		UT_FATAL("usage: %s file-name [trunc]", argv[0]);
+
+//	const char *path = argv[1];
+
+//	PMEMobjpool *pop = NULL;
 
 	/* create pool 2*N */
-	pop = pmemobj_create(path, LAYOUT_NAME, 2 * N, S_IWUSR | S_IRUSR);
-	if (pop == NULL)
-		UT_FATAL("!pmemobj_create: %s", path);
+//	pop = pmemobj_create(path, LAYOUT_NAME, 2 * N, S_IWUSR | S_IRUSR);
+//	if (pop == NULL)
+//		UT_FATAL("!pmemobj_create: %s", path);
 
 	/* allocate 1.5*N */
-	TOID(struct root) root = (TOID(struct root))pmemobj_root(pop,
-		(size_t)(1.5 * N));
+//	TOID(struct root) root = (TOID(struct root))pmemobj_root(pop,
+//		(size_t)(1.5 * N));
 
 	/* use root object for something */
-	POBJ_NEW(pop, &D_RW(root)->foo, struct foo, NULL, NULL);
+//	POBJ_NEW(pop, &D_RW(root)->foo, struct foo, NULL, NULL);
 
-	pmemobj_close(pop);
+//	pmemobj_close(pop);
 
-	int fd = OPEN(path, O_RDWR);
+//	int fd = OPEN(path, O_RDWR);
 
-	if (argc >= 3 && strcmp(argv[2], "trunc") == 0) {
-		UT_OUT("truncating");
+//	if (argc >= 3 && strcmp(argv[2], "trunc") == 0) {
+//		UT_OUT("truncating");
 		/* shrink file to N */
-		FTRUNCATE(fd, N);
-	}
+//		FTRUNCATE(fd, N);
+		
+//	}
 
 	/* zero first 4kB */
-	void *p = MMAP(NULL, ZEROLEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-	memset(p, 0, ZEROLEN);
-	MUNMAP(p, ZEROLEN);
-	CLOSE(fd);
+//	void *p = MMAP(NULL, ZEROLEN, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+//	printf("mmap---------->%p\n", p);
+//	memset(p, 0, ZEROLEN);
+//	int x = MUNMAP(p, ZEROLEN);
+//	printf("munmap--------->%d\n", x);
+//	CLOSE(fd);
 
 	/* create pool on existing file */
-	pop = pmemobj_create(path, LAYOUT_NAME, 0, S_IWUSR | S_IRUSR);
-	if (pop == NULL)
-		UT_FATAL("!pmemobj_create: %s", path);
+//	pop = pmemobj_create(path, LAYOUT_NAME, 0, S_IWUSR | S_IRUSR);
+//	if (pop == NULL)
+//		UT_FATAL("!pmemobj_create: %s", path);
 
 	/* try to allocate 0.7*N */
-	root = (TOID(struct root))pmemobj_root(pop, (size_t)(0.5 * N));
+//	root = (TOID(struct root))pmemobj_root(pop, (size_t)(0.5 * N));
 
-	if (TOID_IS_NULL(root))
-		UT_FATAL("couldn't allocate root object");
+//	if (TOID_IS_NULL(root))
+//		UT_FATAL("couldn't allocate root object");
 
 	/* validate root object is empty */
-	if (!TOID_IS_NULL(D_RW(root)->foo))
-		UT_FATAL("root object is already filled after pmemobj_create!");
+//	if (!TOID_IS_NULL(D_RW(root)->foo))
+//		UT_FATAL("root object is already filled after pmemobj_create!");
 
-	pmemobj_close(pop);
+//	pmemobj_close(pop);
 
-	DONE(NULL);
+//	DONE(NULL);
 }

@@ -36,7 +36,7 @@
 TARGET = obj_recreate
 OBJS = obj_recreate.o
 
-LIBPMEM=y
-LIBPMEMOBJ=y
+#LIBPMEM=y
+#LIBPMEMOBJ=y
 
 include ../Makefile.inc
