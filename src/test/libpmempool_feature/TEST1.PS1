@@ -38,6 +38,8 @@
 
 require_test_type medium
 
+require_build_type debug
+
 require_fs_type any
 
 setup
