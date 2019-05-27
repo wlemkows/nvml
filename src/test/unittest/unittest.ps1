@@ -617,6 +617,11 @@ function match {
 # easily bail when a cmd fails
 #
 function check {
+
+    if ($error.Count) {
+        throw "RUNTESTS: stopping: $testName/$runscript FAILED TEST=$testtype FS=$fs BUILD=$build"
+    }
+
     #	..\match $(find . -regex "[^0-9]*${UNITTEST_NUM}\.log\.match" | xargs)
     $perl = Get-Command -Name perl -ErrorAction SilentlyContinue
     If ($perl -eq $null) {
@@ -1048,7 +1053,7 @@ function setup {
         Remove-Item $f
     }
 
-    rm -Force check_pool_${Env:BUILD}_${Env:UNITTEST_NUM}.log -ErrorAction SilentlyContinue
+    rm -Force check_pool_${Env:BUILD}_${Env:UNITTEST_NUM}.log -ErrorAction Ignore
 
     if ($Env:FS -ne "none") {
 
@@ -1272,10 +1277,10 @@ $Env:CHECK_POOL_LOG_FILE = "check_pool_${Env:BUILD}_${Env:UNITTEST_NUM}.log"
 # It also removes all log files created by tests: out*.log, err*.log and trace*.log
 #
 function enable_log_append() {
-    rm -Force -ErrorAction SilentlyContinue $Env:OUT_LOG_FILE
-    rm -Force -ErrorAction SilentlyContinue $Env:ERR_LOG_FILE
-    rm -Force -ErrorAction SilentlyContinue $Env:TRACE_LOG_FILE
-    rm -Force -ErrorAction SilentlyContinue $Env:PREP_LOG_FILE
+    rm -Force -ErrorAction Ignore $Env:OUT_LOG_FILE
+    rm -Force -ErrorAction Ignore $Env:ERR_LOG_FILE
+    rm -Force -ErrorAction Ignore $Env:TRACE_LOG_FILE
+    rm -Force -ErrorAction Ignore $Env:PREP_LOG_FILE
     $Env:UNITTEST_LOG_APPEND=1
 }
 
