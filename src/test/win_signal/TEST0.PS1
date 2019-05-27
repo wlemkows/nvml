@@ -42,6 +42,8 @@ require_fs_type none
 
 setup
 
+cat dummy_file_test.txt
+
 expect_normal_exit $Env:EXE_DIR\win_signal$Env:EXESUFFIX
 
 check
