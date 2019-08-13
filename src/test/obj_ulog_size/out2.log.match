@@ -1,4 +1,4 @@
-obj_ulog_size$(nW)TEST0: START: obj_ulog_size
+obj_ulog_size$(nW)TEST2: START: obj_ulog_size
  $(nW)obj_ulog_size$(nW) $(nW)testfile $(nW)testfile1
 do_tx_max_alloc_no_user_alloc_snap
 Cannot extend undo log - the pool is full: ${Cannot allocate memory|Not enough space}
@@ -7,6 +7,7 @@ Can use the user appended undo log buffer
 do_tx_max_alloc_user_alloc_nested
 Can use the undo log appended by the user in a nested transaction
 do_tx_max_alloc_user_alloc_snap_multi
+Can use multiple user appended undo log buffers
 All user appended undo log buffers are used: ${Cannot allocate memory|Not enough space}
 do_tx_auto_alloc_disabled
 Cannot add to undo log the range bigger than the undo log default size - the auto alloc is disabled: ${Cannot allocate memory|Not enough space}
@@ -19,4 +20,4 @@ User can append the same undo log buffer twice
 User cannot append the same undo log buffer twice: Invalid argument
 do_tx_max_alloc_tx_publish
 Can extend redo log with appended buffer
-obj_ulog_size$(nW)TEST0: DONE
+obj_ulog_size$(nW)TEST2: DONE
