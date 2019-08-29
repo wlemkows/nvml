@@ -39,6 +39,7 @@
 
 #include "unittest.h"
 #include "util.h"
+#include "lane.h"
 
 #define TX_SNAPSHOT_ALIGNMENT CACHELINE_SIZE
 #define TX_SNAPSHOT_LOG_BUFFER_OVERHEAD 64ULL
@@ -57,10 +58,17 @@ struct object {
 
 TOID_DECLARE(struct object, 0);
 
-#define MAX_OBJECTS 1024
+#define MAX_OBJECTS (16 * MB / MIN_ALLOC)
 #define MIN_ALLOC 64
 #define MB (1024 * 1024)
 #define DIVIDER 2
+
+/*
+ * REDO_OVERFLOW -- Size for trigger out of memory
+ *     during redo log extension
+ */
+#define REDO_OVERFLOW ((LANE_REDO_EXTERNAL_SIZE\
+					/ TX_INTENT_LOG_ENTRY_OVERHEAD) + 1)
 
 static int nobj = 0;
 
@@ -301,6 +309,71 @@ do_tx_max_alloc_wrong_pop_addr(PMEMobjpool *pop, PMEMobjpool *pop2)
 	pmemobj_free(&oid2);
 }
 
+static void
+do_tx_max_alloc_no_prealloc_snap_tx_publish(PMEMobjpool *pop)
+{
+	UT_OUT("no_prealloc_snap_tx_publish");
+	PMEMoid oid[MAX_OBJECTS];
+	PMEMoid oid2[REDO_OVERFLOW];
+	struct pobj_action act[REDO_OVERFLOW];
+
+	for (int i = 0; i < REDO_OVERFLOW; i++) {
+		oid2[i] = pmemobj_reserve(pop, &act[i], 64, 0);
+		UT_ASSERT(!OID_IS_NULL(oid2[i]));
+	}
+
+	fill_pool(pop, oid);
+
+	/* it should abort - cannot extend redo log */
+	TX_BEGIN(pop) {
+		pmemobj_tx_publish(act, (size_t)REDO_OVERFLOW);
+	} TX_ONABORT {
+		UT_OUT("!Cannot add snapshot");
+	} TX_ONCOMMIT {
+		UT_OUT("Can add snapshot");
+	} TX_END
+
+	free_pool(oid);
+	for (int i = 0; i < REDO_OVERFLOW; ++i) {
+		pmemobj_defer_free(pop, oid2[i], &act[i]);
+	}
+}
+
+static void
+do_tx_max_alloc_prealloc_snap_tx_publish(PMEMobjpool *pop)
+{
+	UT_OUT("prealloc_snap_tx_publish");
+	PMEMoid oid[MAX_OBJECTS];
+	PMEMoid oid2[REDO_OVERFLOW];
+	struct pobj_action act[REDO_OVERFLOW];
+
+	for (int i = 0; i < REDO_OVERFLOW; i++) {
+		oid2[i] = pmemobj_reserve(pop, &act[i], 64, 0);
+		UT_ASSERT(!OID_IS_NULL(oid2[i]));
+	}
+
+	fill_pool(pop, oid);
+
+	/* pool is full now, so let's try to snapshot first object */
+	size_t snap_size = pmemobj_alloc_usable_size(oid[0]);
+	void *addr = pmemobj_direct(oid[0]);
+
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_INTENT, addr, snap_size);
+		pmemobj_tx_publish(act, (size_t)REDO_OVERFLOW);
+	} TX_ONABORT {
+		UT_OUT("!Cannot add snapshot");
+	} TX_ONCOMMIT {
+		UT_OUT("Can add snapshot");
+	} TX_END
+
+	free_pool(oid);
+	for (int i = 0; i < REDO_OVERFLOW; ++i) {
+		pmemobj_defer_free(pop, oid2[i], &act[i]);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -326,6 +399,8 @@ main(int argc, char *argv[])
 	do_tx_max_alloc_prealloc_snap_multi(pop);
 	do_tx_do_not_auto_reserve_snapshot(pop);
 	do_tx_max_alloc_wrong_pop_addr(pop, pop2);
+	do_tx_max_alloc_no_prealloc_snap_tx_publish(pop);
+	do_tx_max_alloc_prealloc_snap_tx_publish(pop);
 
 	pmemobj_close(pop);
 	pmemobj_close(pop2);

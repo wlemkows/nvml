@@ -12,4 +12,8 @@ do_not_auto_reserve
 Cannot reserve more: ${Cannot allocate memory|Not enough space}
 wrong_pop_addr
 Allocation from different pool: Invalid argument
+no_prealloc_snap_tx_publish
+Cannot add snapshot: ${Cannot allocate memory|Not enough space}
+prealloc_snap_tx_publish
+Can add snapshot
 obj_ulog_prealloc$(nW)TEST0: DONE
