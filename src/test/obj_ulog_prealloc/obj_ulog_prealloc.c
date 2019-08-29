@@ -273,6 +273,39 @@ do_tx_max_alloc_wrong_pop_addr(PMEMobjpool *pop, PMEMobjpool *pop2)
 	pmemobj_free(&oid2);
 }
 
+static void
+do_tx_max_alloc_no_prealloc_snap_tx_publish(PMEMobjpool *pop)
+{
+	const int MY_VALUE = 41;
+	
+	UT_OUT("no_prealloc_snap_tx_publish");
+	PMEMoid oid[MAX_OBJECTS];
+	PMEMoid oid2[MY_VALUE];
+	struct pobj_action act[MY_VALUE];
+	//fill_pool(pop, oid);
+
+	for (int i = 0; i < MY_VALUE; i++) {
+		oid2[i] = pmemobj_reserve(pop, &act[i], 64, 0);
+		UT_ASSERT(!OID_IS_NULL(oid2[i]));
+	}
+
+	fill_pool(pop, oid);
+
+	/* it should abort - cannot allocate memory */
+	TX_BEGIN(pop) {
+		pmemobj_tx_publish(act, (size_t)MY_VALUE);
+	} TX_ONABORT {
+		UT_OUT("!Cannot add snapshot");
+	} TX_ONCOMMIT {
+		UT_OUT("Can add snapshot");
+	} TX_END
+
+	free_pool(oid);
+	for (int i = 0; i < MY_VALUE; ++i) {
+		pmemobj_defer_free(pop, oid2[i], &act[i]);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -296,8 +329,9 @@ main(int argc, char *argv[])
 	do_tx_max_alloc_prealloc_snap(pop);
 	do_tx_max_alloc_prealloc_nested(pop);
 	do_tx_max_alloc_prealloc_snap_multi(pop);
-	do_tx_do_not_auto_reserve(pop);
+	do_tx_do_not_auto_reserve(pop); //cos psuje, nastepna funkcja po niej zawsze ma nobj == 243
 	do_tx_max_alloc_wrong_pop_addr(pop, pop2);
+	do_tx_max_alloc_no_prealloc_snap_tx_publish(pop); //zle napisana petla for?
 
 	pmemobj_close(pop);
 	pmemobj_close(pop2);
