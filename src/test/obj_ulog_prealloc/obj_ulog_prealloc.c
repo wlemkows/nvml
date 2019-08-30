@@ -329,7 +329,7 @@ main(int argc, char *argv[])
 	do_tx_max_alloc_prealloc_snap(pop);
 	do_tx_max_alloc_prealloc_nested(pop);
 	do_tx_max_alloc_prealloc_snap_multi(pop);
-	do_tx_do_not_auto_reserve(pop); //cos psuje, nastepna funkcja po niej zawsze ma nobj == 243
+	do_tx_do_not_auto_reserve(pop); //cos psuje, nastepna funkcja po niej zawsze ma nobj = 243
 	do_tx_max_alloc_wrong_pop_addr(pop, pop2);
 	do_tx_max_alloc_no_prealloc_snap_tx_publish(pop); //zle napisana petla for?
 
