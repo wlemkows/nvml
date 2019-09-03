@@ -137,7 +137,7 @@ do_tx_max_alloc_no_prealloc_snap(PMEMobjpool *pop)
 	} TX_ONABORT {
 		UT_OUT("!Cannot add snapshot");
 	} TX_ONCOMMIT {
-		UT_OUT("Can add snapshot");
+		UT_FATAL("Can add snapshot");
 	} TX_END
 
 	free_pool(oid);
@@ -155,11 +155,12 @@ do_tx_max_alloc_prealloc_snap(PMEMobjpool *pop)
 	size_t snap_size = pmemobj_alloc_usable_size(oid[0]);
 	void *addr = pmemobj_direct(oid[0]);
 
-	TX_BEGIN_PARAM(pop, TX_PARAM_SNAPSHOT_BUFFER, addr,
-			snap_size,  TX_PARAM_NONE) {
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, addr, snap_size);
 		pmemobj_tx_add_range(oid[0], 0, snap_size);
 	} TX_ONABORT {
-		UT_OUT("!Cannot add snapshot");
+		UT_FATAL("!Cannot add snapshot");
 	} TX_ONCOMMIT {
 		UT_OUT("Can add snapshot");
 	} TX_END
@@ -186,12 +187,13 @@ do_tx_max_alloc_prealloc_nested(PMEMobjpool *pop)
 	TX_BEGIN(pop) {
 		/* do antything */
 		D_RW(obj0)->value = TEST_VALUE_1;
-		TX_BEGIN_PARAM(pop, TX_PARAM_SNAPSHOT_BUFFER, addr,
-				snap_size, TX_PARAM_NONE) {
+		TX_BEGIN(pop) {
+			pmemobj_tx_log_append_buffer(
+				TX_LOG_TYPE_SNAPSHOT, addr, snap_size);
 			pmemobj_tx_add_range(oid[1], 0, snap_size);
 			D_RW(obj1)->value = TEST_VALUE_2;
 		} TX_ONABORT {
-			UT_OUT("!Cannot add snapshot");
+			UT_FATAL("!Cannot add snapshot");
 		} TX_ONCOMMIT {
 			UT_OUT("Can add snapshot");
 		} TX_END
@@ -218,20 +220,20 @@ do_tx_max_alloc_prealloc_snap_multi(PMEMobjpool *pop)
 	void *addr2 = pmemobj_direct(oid[2]);
 
 	errno = 0;
-	TX_BEGIN_PARAM(pop,
-			TX_PARAM_SNAPSHOT_BUFFER,
-			addr0, snap_size0,
-			TX_PARAM_SNAPSHOT_BUFFER,
-			addr1, snap_size1,
-			TX_PARAM_SNAPSHOT_BUFFER,
-			addr2, snap_size2,
-			TX_PARAM_NONE) {
-			/* abort expected - cannot allocate memory */
-			pmemobj_tx_add_range(oid[0], 0, snap_size0);
-			pmemobj_tx_add_range(oid[1], 0, snap_size1);
-			pmemobj_tx_add_range(oid[2], 0, snap_size2);
+	TX_BEGIN(pop) {
+		/* abort expected - cannot allocate memory */
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, addr0, snap_size0);
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, addr1, snap_size1);
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, addr2, snap_size2);
+
+		pmemobj_tx_add_range(oid[0], 0, snap_size0);
+		pmemobj_tx_add_range(oid[1], 0, snap_size1);
+		pmemobj_tx_add_range(oid[2], 0, snap_size2);
 	} TX_ONABORT {
-		UT_OUT("!Cannot add snapshot");
+		UT_FATAL("!Cannot add snapshot");
 	} TX_ONCOMMIT {
 		UT_OUT("Can add snapshot");
 	} TX_END
@@ -240,24 +242,25 @@ do_tx_max_alloc_prealloc_snap_multi(PMEMobjpool *pop)
 }
 
 static void
-do_tx_do_not_auto_reserve(PMEMobjpool *pop)
+do_tx_do_not_auto_reserve_snapshot(PMEMobjpool *pop)
 {
 	UT_OUT("do_not_auto_reserve");
 	PMEMoid oid0, oid1;
 
-	int err = pmemobj_zalloc(pop, &oid0, 1024, 0);
+	int err = pmemobj_alloc(pop, &oid0, 1024, 0, NULL, NULL);
 	UT_ASSERTeq(err, 0);
-	err = pmemobj_zalloc(pop, &oid1, 1024, 0);
+	err = pmemobj_alloc(pop, &oid1, 1024, 0, NULL, NULL);
 	UT_ASSERTeq(err, 0);
 
-	TX_BEGIN_PARAM(pop, TX_PARAM_NO_BUFFER_AUTO_EXTEND, TX_PARAM_NONE) {
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_auto_alloc(TX_LOG_TYPE_SNAPSHOT, 0);
 		pmemobj_tx_add_range(oid0, 0, 1024);
 		/* it should abort - cannot extend ulog (first entry is full) */
 		pmemobj_tx_add_range(oid1, 0, 1024);
 	} TX_ONABORT {
 		UT_OUT("!Cannot reserve more");
 	} TX_ONCOMMIT {
-		UT_OUT("Can add snapshot");
+		UT_FATAL("Can add snapshot");
 	} TX_END
 
 	pmemobj_free(&oid0);
@@ -277,20 +280,21 @@ do_tx_max_alloc_wrong_pop_addr(PMEMobjpool *pop, PMEMobjpool *pop2)
 	PMEMoid oid2;
 
 	fill_pool(pop, oid);
-	pmemobj_zalloc(pop2, &oid2, MB, 0);
+	pmemobj_alloc(pop2, &oid2, MB, 0, NULL, NULL);
 
 	/* pools are allocated now, let's try to get address from wrong pool */
 	size_t snap_size = pmemobj_alloc_usable_size(oid2);
 	void *addr2 = pmemobj_direct(oid2);
 
 	/* abort expected - cannot allocate from different pool */
-	TX_BEGIN_PARAM(pop, TX_PARAM_SNAPSHOT_BUFFER, addr2,
-			snap_size,  TX_PARAM_NONE) {
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, addr2, snap_size);
 		pmemobj_tx_add_range(oid[0], 0, snap_size);
 	} TX_ONABORT {
 		UT_OUT("!Allocation from different pool");
 	} TX_ONCOMMIT {
-		UT_OUT("Can add snapshot");
+		UT_FATAL("Can add snapshot");
 	} TX_END
 
 	free_pool(oid);
@@ -320,7 +324,7 @@ main(int argc, char *argv[])
 	do_tx_max_alloc_prealloc_snap(pop);
 	do_tx_max_alloc_prealloc_nested(pop);
 	do_tx_max_alloc_prealloc_snap_multi(pop);
-	do_tx_do_not_auto_reserve(pop);
+	do_tx_do_not_auto_reserve_snapshot(pop);
 	do_tx_max_alloc_wrong_pop_addr(pop, pop2);
 
 	pmemobj_close(pop);
