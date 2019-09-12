@@ -1,16 +1,16 @@
 obj_ulog_size$(nW)TEST0: START: obj_ulog_size
  $(nW)obj_ulog_size$(nW) $(nW)testfile $(nW)testfile1
-no_prealloc_snap
+do_tx_max_alloc_no_user_alloc_snap
 Cannot add snapshot: ${Cannot allocate memory|Not enough space}
-prealloc_snap
+do_tx_max_alloc_user_alloc_snap
 Can add snapshot
-prealloc_nested
+do_tx_max_alloc_user_alloc_nested
 Can add snapshot
-prealloc_snap_multi
+do_tx_max_alloc_user_alloc_snap_multi
 Can add snapshot
-do_not_auto_reserve
+do_tx_do_not_auto_reserve_snapshot
 Cannot reserve more: ${Cannot allocate memory|Not enough space}
-wrong_pop_addr
+do_tx_max_alloc_wrong_pop_addr
 Allocation from different pool: Invalid argument
 do_tx_max_alloc_tx_publish_abort
 Cannot publish: ${Cannot allocate memory|Not enough space}
