@@ -122,6 +122,12 @@ tx.debug.skip_expensive_checks | rw | - | int | int | - | boolean
 Turns off some expensive checks performed by the transaction module in "debug"
 builds. Ignored in "release" builds.
 
+tx.debug.verify_user_buffers | rw | - | int | int | - | boolean
+
+Enables verification of user buffers provided by pmemobj_tx_log_append_buffer
+API. For now the only verified aspect is whether the same buffer is used
+simultaneously in 2 or more transactions.
+
 tx.cache.size | rw | - | long long | long long | - | integer
 
 Size in bytes of the transaction snapshot cache. In a larger cache the
