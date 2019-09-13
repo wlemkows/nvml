@@ -55,7 +55,9 @@ date: pmemobj API version 2.3
 
 **TX_BEGIN_PARAM**(), **TX_BEGIN_CB**(),
 **TX_BEGIN**(), **TX_ONABORT**,
-**TX_ONCOMMIT**, **TX_FINALLY**, **TX_END**
+**TX_ONCOMMIT**, **TX_FINALLY**, **TX_END**,
+
+**pmemobj_tx_log_append_buffer**(), **pmemobj_tx_log_auto_alloc**()
 - transactional object manipulation
 
 
@@ -81,6 +83,9 @@ TX_ONABORT
 TX_ONCOMMIT
 TX_FINALLY
 TX_END
+
+int pmemobj_tx_log_append_buffer(enum pobj_log_type type, void *addr, size_t size);
+int pmemobj_tx_log_auto_alloc(enum pobj_log_type type, size_t on_off);
 ```
 
 
@@ -315,6 +320,68 @@ The **TX_END** macro cleans up and closes the transaction started by the
 It is mandatory to terminate each transaction with this macro. If the transaction
 was aborted, *errno* is set appropriately.
 
+## TUNING ##
+
+From pmemobj implementation perspective there are two types of operations
+in a transaction:
+
++ **snapshots**, where action must be performed and persisted immediately
++ **intents**, where the persist part of the action can be postponed until
+  transaction commit
+
+**pmemobj_tx_add_range**() and all its variants belong to the **snapshots**
+group.
+
+**pmemobj_tx_alloc**() (with its variants), **pmemobj_tx_free**(),
+**pmemobj_tx_realloc**() (with its variants) and **pmemobj_tx_publish**()
+belong to the **intents** group. Even though **pmemobj_tx_alloc**() allocates
+memory immediately, it modifies only the runtime state and postpones persistent
+memory modifications to the commit phase. **pmemobj_tx_free**() cannot free
+the object immediately, because of possible transaction rollback, so it
+postpones both the action and persistent memory modifications to the commit
+phase. **pmemobj_tx_realloc**() is just a combination of those two and
+**pmemobj_tx_publish**() postpones reservations and deferred frees to
+the commit phase.
+
+Those two types of operations require that pmemobj builds a persistent log
+of operations. Intent log is applied on commit (sometimes it's called
+a redo log) and snapshot log is applied on abort (again, sometimes it's
+called an undo log).
+
+When pmemobj transactions starts it's not possible to predict how much
+persistent memory space will be needed for those logs. This means that pmemobj
+must internally allocate this space whenever it's needed. This has 2 down sides:
+
++ when transaction makes a lot of snapshots or does a lot of allocations,
+  pmemobj may need to do many internal allocations, which must be freed when
+  transaction ends, adding a lot of overhead when such big transactions are
+  frequent
++ when pool is almost full freeing in a transaction may actually fail because of
+  not enough space for the log
+
+To solve both of these problems pmemobj exposes these functions:
+
++ **pmemobj_tx_log_append_buffer**()
++ **pmemobj_tx_log_auto_alloc**()
+
+**pmemobj_tx_log_append_buffer**() appends a given range of memory
+[*addr*, *addr* + *size*) to the log *type* of the current transaction.
+*type* can be one of the two values (with meanings described above):
+
++ **TX_LOG_TYPE_SNAPSHOT**
++ **TX_LOG_TYPE_INTENT**
+
+The range of memory **must** belong to the same pool the transaction is on
+and **must** be zeroed the first time it is used.
+The last requirement means that for example if caller allocated big object
+and divided it between threads, it **must** zero it each time the division
+changes.
+
+**pmemobj_tx_log_auto_alloc**() disables (*on_off* set to 0) or enables
+(*on_off* set to 1) automatic allocation of logs of given *type*.
+It can be used to verify that the buffer set with
+**pmemobj_tx_log_append_buffer**() is big enough to hold the log, without
+reaching out-of-space scenario.
 
 # RETURN VALUE #
 
@@ -338,6 +405,11 @@ The **pmemobj_tx_errno**() function returns the error code of the last transacti
 
 The **pmemobj_tx_process**() function returns no value.
 
+On success, **pmemobj_tx_log_append_buffer**() returns 0. Otherwise,
+the transaction is aborted and an error number is returned.
+
+On success, **pmemobj_tx_log_auto_alloc**() returns 0. Otherwise,
+the transaction is aborted and an error number is returned.
 
 # CAVEATS #
 
