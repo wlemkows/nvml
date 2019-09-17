@@ -40,9 +40,7 @@
 
 #include "unittest.h"
 
-/*
- * tx.h -- needed for defines
- */
+/* needed for defines */
 #include "tx.h"
 
 /*
@@ -61,7 +59,7 @@ struct object {
 TOID_DECLARE(struct object, 0);
 #define MIN_ALLOC 64
 #define MAX_ALLOC (1024 * 1024)
-#define HALF_OF_DEFAULT_UNDO_SIZE LANE_UNDO_SIZE / 2 /* 1024 bytes */
+#define HALF_OF_DEFAULT_UNDO_SIZE (LANE_UNDO_SIZE / 2) /* 1024 bytes */
 #define LOG_BUFFER 0
 #define LOG_BUFFER_NUM 6
 #define RANGE (LOG_BUFFER + LOG_BUFFER_NUM)
@@ -77,7 +75,7 @@ TOID_DECLARE(struct object, 0);
 
 /*
  * free_pool -- frees the pool from all allocated objects
- * and allocated memory
+ * and releases oids dynamic array
  */
 static void
 free_pool(PMEMoid *oids, size_t noids)
@@ -131,19 +129,19 @@ static void
 do_tx_max_alloc_tx_publish_abort(PMEMobjpool *pop)
 {
 	UT_OUT("do_tx_max_alloc_tx_publish_abort");
-	PMEMoid *oids = NULL;
-	PMEMoid oids2[REDO_OVERFLOW];
-	size_t noids = 0;
+	PMEMoid *allocated = NULL;
+	PMEMoid reservations[REDO_OVERFLOW];
+	size_t nallocated = 0;
 	struct pobj_action act[REDO_OVERFLOW];
 
 	for (int i = 0; i < REDO_OVERFLOW; i++) {
 		/* size is 64 - it can be any size */
-		oids2[i] = pmemobj_reserve(pop, &act[i], 64, 0);
-		UT_ASSERT(!OID_IS_NULL(oids2[i]));
+		reservations[i] = pmemobj_reserve(pop, &act[i], 64, 0);
+		UT_ASSERT(!OID_IS_NULL(reservations[i]));
 	}
 
-	oids = fill_pool(pop, &noids);
-	UT_ASSERT(noids >= MIN_NOIDS);
+	allocated = fill_pool(pop, &nallocated);
+	UT_ASSERT(nallocated >= MIN_NOIDS);
 
 	/* it should abort - cannot extend redo log */
 	TX_BEGIN(pop) {
@@ -154,7 +152,7 @@ do_tx_max_alloc_tx_publish_abort(PMEMobjpool *pop)
 		UT_FATAL("Can publish");
 	} TX_END
 
-	free_pool(oids, noids);
+	free_pool(allocated, nallocated);
 	pmemobj_cancel(pop, act, REDO_OVERFLOW);
 }
 
@@ -212,14 +210,11 @@ do_tx_max_alloc_no_user_alloc_snap(PMEMobjpool *pop)
 	PMEMoid *oids = fill_pool(pop, &noids);
 	UT_ASSERT(noids >= MIN_NOIDS);
 
-/*
- * querying snapshot size
- * oids[0] object is taken intentionally - size of the pool is 16 MB,
- * allocation starts with objects with size of 1 MB, that's mean that
- * oids[0] is bigger than default undo log, which size is 2 KB
- */
+	/* querying snapshot size */
 	size_t snap_size =
 		pmemobj_alloc_usable_size(oids[LOG_BUFFER]);
+	UT_ASSERT(snap_size > LANE_UNDO_SIZE);
+
 	TX_BEGIN(pop) {
 		/* it should abort - cannot allocate memory */
 		pmemobj_tx_add_range(oids[LOG_BUFFER], 0, snap_size);
@@ -249,7 +244,8 @@ do_tx_max_alloc_user_alloc_snap(PMEMobjpool *pop)
 		pmemobj_alloc_usable_size(oids[LOG_BUFFER]);
 	void *buff_addr = pmemobj_direct(oids[LOG_BUFFER]);
 	size_t snap_size =
-		pmemobj_alloc_usable_size(oids[LOG_BUFFER + 1]);
+		pmemobj_alloc_usable_size(oids[RANGE]);
+	UT_ASSERT(snap_size > LANE_UNDO_SIZE);
 
 	TX_BEGIN(pop) {
 		pmemobj_tx_log_append_buffer(
@@ -280,7 +276,7 @@ do_tx_max_alloc_user_alloc_nested(PMEMobjpool *pop)
 		pmemobj_alloc_usable_size(oids[LOG_BUFFER]);
 	void *buff_addr = pmemobj_direct(oids[LOG_BUFFER]);
 	size_t snap_size =
-		pmemobj_alloc_usable_size(oids[LOG_BUFFER + 1]);
+		pmemobj_alloc_usable_size(oids[RANGE]);
 
 	TOID(struct object) obj0;
 	TOID(struct object) obj1;
@@ -293,7 +289,7 @@ do_tx_max_alloc_user_alloc_nested(PMEMobjpool *pop)
 		TX_BEGIN(pop) {
 			pmemobj_tx_log_append_buffer(
 				TX_LOG_TYPE_SNAPSHOT, buff_addr, buff_size);
-			pmemobj_tx_add_range(oids[RANGE + 2],
+			pmemobj_tx_add_range(oids[RANGE],
 				0, snap_size);
 			D_RW(obj1)->value = TEST_VALUE_2;
 		} TX_ONABORT {
@@ -345,7 +341,7 @@ do_tx_max_alloc_user_alloc_snap_multi(PMEMobjpool *pop)
 		pmemobj_tx_log_append_buffer(
 			TX_LOG_TYPE_SNAPSHOT, buff_addr2, buff_size2);
 
-		pmemobj_tx_add_range(oids[RANGE], 0, snap_size0);
+		pmemobj_tx_add_range(oids[RANGE + 0], 0, snap_size0);
 		pmemobj_tx_add_range(oids[RANGE + 1], 0, snap_size1);
 		pmemobj_tx_add_range(oids[RANGE + 2], 0, snap_size2);
 	} TX_ONABORT {
@@ -368,12 +364,12 @@ do_tx_do_not_auto_reserve_snapshot(PMEMobjpool *pop)
 	UT_OUT("do_tx_do_not_auto_reserve_snapshot");
 	PMEMoid oid0, oid1;
 
-	int err = pmemobj_alloc(pop, &oid0, HALF_OF_DEFAULT_UNDO_SIZE,
+	int ret = pmemobj_alloc(pop, &oid0, HALF_OF_DEFAULT_UNDO_SIZE,
 		0, NULL, NULL);
-	UT_ASSERTeq(err, 0);
-	err = pmemobj_alloc(pop, &oid1, HALF_OF_DEFAULT_UNDO_SIZE,
+	UT_ASSERTeq(ret, 0);
+	ret = pmemobj_alloc(pop, &oid1, HALF_OF_DEFAULT_UNDO_SIZE,
 		0, NULL, NULL);
-	UT_ASSERTeq(err, 0);
+	UT_ASSERTeq(ret, 0);
 
 	TX_BEGIN(pop) {
 		pmemobj_tx_log_auto_alloc(TX_LOG_TYPE_SNAPSHOT, 0);
@@ -408,18 +404,17 @@ do_tx_max_alloc_wrong_pop_addr(PMEMobjpool *pop, PMEMobjpool *pop2)
 	UT_ASSERTeq(ret, 0);
 
 	/* pools are allocated now, let's try to get address from wrong pool */
-	size_t buff_size = pmemobj_alloc_usable_size(oid2);
-	void *buff_addr2 = pmemobj_direct(oid2);
+	size_t buff2_size = pmemobj_alloc_usable_size(oid2);
+	void *buff2_addr = pmemobj_direct(oid2);
 
 	/* abort expected - cannot allocate from different pool */
 	TX_BEGIN(pop) {
 		pmemobj_tx_log_append_buffer(
-			TX_LOG_TYPE_SNAPSHOT, buff_addr2, buff_size);
-		pmemobj_tx_add_range(oids[0], 0, buff_size);
+			TX_LOG_TYPE_SNAPSHOT, buff2_addr, buff2_size);
 	} TX_ONABORT {
 		UT_OUT("!Allocation from different pool");
 	} TX_ONCOMMIT {
-		UT_FATAL("Can add snapshot");
+		UT_FATAL("Can append log buffer from a different memory pool");
 	} TX_END
 
 	free_pool(oids, noids);
