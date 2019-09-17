@@ -376,17 +376,57 @@ The last requirement means that for example if caller allocated a big object
 and divided it between threads, it **must** zero it each time the division
 changes.
 
-To calculate the minimum size of a buffer which will be able to hold
-N snapshots, each of size S(i), it's necessary to use this formula:
+To calculate the **maximum** size of a buffer which will be able to hold
+N snapshots, each of size S(i), this code snippet can be used:
 
-SIZE = ctl(tx.snapshot.log.buffer_overhead) + sum_(i=1)^N roundup(S(i) + ctl(tx.snapshot.log.entry_overhead), ctl(tx.snapshot.log.entry_alignment))
+```c
+size_t bufsize(size_t *S, size_t N) {
+	size_t entry_overhead = ctl("tx.snapshot.log.entry_overhead");
+	size_t entry_alignment = ctl("tx.snapshot.log.entry_alignment");
+	size_t buffer_overhead = ctl("tx.snapshot.log.buffer_overhead");
 
-To calculate the minimum size of a buffer which will be able to hold
-N intents, it's necessary to use this formula:
+	size_t sz = buffer_overhead;
 
-SIZE = ctl(tx.intent.log.buffer_overhead) + roundup(N * ctl(tx.intent.log.entry_overhead), ctl(tx.intent.log.buffer_alignment))
+	for (size_t i = 0; i < N; ++i)
+		sz += roundup(S[i] + entry_overhead, entry_alignment);
 
-where ctl(x) means the value returned by **pmemobj_ctl_get**(3) for "x".
+	return sz;
+}
+```
+
+Actual used space can be smaller, e.g. because of:
+
++ statically allocated internal buffer,
++ overlapping snapshots
+
+To calculate the **maximum** size of a buffer which will be able to hold
+A allocations and F frees, this code snippet can be used:
+
+```c
+size_t bufsize(size_t A, size_t F) {
+	size_t entry_overhead = ctl("tx.intent.log.entry_overhead");
+	size_t buffer_alignment = ctl("tx.intent.log.buffer_alignment");
+	size_t buffer_overhead = ctl("tx.intent.log.buffer_overhead");
+
+	size_t sz = buffer_overhead +
+		roundup((A + F) * entry_overhead, buffer_alignment);
+
+	return sz;
+}
+```
+
+Actual used space can be smaller, e.g. because of:
+
++ statically allocated internal buffer,
++ merging of log entries, when changes are made to the same 8 byte memory location
+
+In the above snippets ctl(x) is a wrapper around **pmemobj_ctl_get**(3) and roundup is:
+
+```c
+size_t roundup(size_t x, size_t y) {
+	return (x + y - 1) / y;
+}
+```
 
 **pmemobj_tx_log_auto_alloc**() disables (*on_off* set to 0) or enables
 (*on_off* set to 1) automatic allocation of internal logs of given *type*.
