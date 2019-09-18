@@ -57,7 +57,8 @@ date: pmemobj API version 2.3
 **TX_BEGIN**(), **TX_ONABORT**,
 **TX_ONCOMMIT**, **TX_FINALLY**, **TX_END**,
 
-**pmemobj_tx_log_append_buffer**(), **pmemobj_tx_log_auto_alloc**()
+**pmemobj_tx_log_append_buffer**(), **pmemobj_tx_log_auto_alloc**(),
+**pmemobj_tx_log_snapshots_max_size**(), **pmemobj_tx_log_intents_max_size**()
 - transactional object manipulation
 
 
@@ -86,6 +87,8 @@ TX_END
 
 int pmemobj_tx_log_append_buffer(enum pobj_log_type type, void *addr, size_t size);
 int pmemobj_tx_log_auto_alloc(enum pobj_log_type type, int on_off);
+size_t pmemobj_tx_log_snapshots_max_size(size_t *sizes, size_t nsizes);
+size_t pmemobj_tx_log_intents_max_size(size_t nintents);
 ```
 
 
@@ -376,57 +379,18 @@ The last requirement means that for example if caller allocated a big object
 and divided it between threads, it **must** zero it each time the division
 changes.
 
-To calculate the **maximum** size of a buffer which will be able to hold
-N snapshots, each of size S(i), this code snippet can be used:
+**pmemobj_tx_log_snapshots_max_size** calculates the **maximum** size of
+a buffer which will be able to hold *nsizes* snapshots, each of size *sizes[i]*.
+Application should not expect this function to return the same value between
+restarts. In future versions of pmemobj this function can return smaller
+(because of better accuracy or space optimizations) or higher (because
+of higher alignment required for better performance) value.
 
-```c
-size_t bufsize(size_t *S, size_t N) {
-	size_t entry_overhead = ctl("tx.snapshot.log.entry_overhead");
-	size_t entry_alignment = ctl("tx.snapshot.log.entry_alignment");
-	size_t buffer_overhead = ctl("tx.snapshot.log.buffer_overhead");
-
-	size_t sz = buffer_overhead;
-
-	for (size_t i = 0; i < N; ++i)
-		sz += roundup(S[i] + entry_overhead, entry_alignment);
-
-	return sz;
-}
-```
-
-Actual used space can be smaller, e.g. because of:
-
-+ statically allocated internal buffer,
-+ overlapping snapshots
-
-To calculate the **maximum** size of a buffer which will be able to hold
-A allocations and F frees, this code snippet can be used:
-
-```c
-size_t bufsize(size_t A, size_t F) {
-	size_t entry_overhead = ctl("tx.intent.log.entry_overhead");
-	size_t buffer_alignment = ctl("tx.intent.log.buffer_alignment");
-	size_t buffer_overhead = ctl("tx.intent.log.buffer_overhead");
-
-	size_t sz = buffer_overhead +
-		roundup((A + F) * entry_overhead, buffer_alignment);
-
-	return sz;
-}
-```
-
-Actual used space can be smaller, e.g. because of:
-
-+ statically allocated internal buffer,
-+ merging of log entries, when changes are made to the same 8 byte memory location
-
-In the above snippets ctl(x) is a wrapper around **pmemobj_ctl_get**(3) and roundup is:
-
-```c
-size_t roundup(size_t x, size_t y) {
-	return (x + y - 1) / y;
-}
-```
+**pmemobj_tx_log_intents_max_size** calculates the **maximum** size of
+a buffer which will be able to hold *nintents* intents.
+Just like with **pmemobj_tx_log_snapshots_max_size**, application should not
+expect this function to return the same value between restarts, for the same
+reasons.
 
 **pmemobj_tx_log_auto_alloc**() disables (*on_off* set to 0) or enables
 (*on_off* set to 1) automatic allocation of internal logs of given *type*.

@@ -153,30 +153,6 @@ tx.post_commit.stop | r- | - | void * | - | - | -
 
 This entry point is deprecated.
 
-tx.snapshot.log.entry_overhead | r- | global | unsigned | - | - | integer
-
-Reads per snapshot space overhead (in bytes).
-
-tx.snapshot.log.buffer_overhead | r- | global | unsigned | - | - | integer
-
-Reads per snapshot buffer space overhead (in bytes).
-
-tx.snapshot.log.entry_alignment | r- | global | unsigned | - | - | integer
-
-Reads alignment of snapshots (in bytes).
-
-tx.intent.log.entry_overhead | r- | global | unsigned | - | - | integer
-
-Reads per intent space overhead (in bytes).
-
-tx.intent.log.buffer_overhead | r- | global | unsigned | - | - | integer
-
-Reads per intent buffer space overhead (in bytes).
-
-tx.intent.log.buffer_alignment | r- | global | unsigned | - | - | integer
-
-Reads alignment of intents (in bytes).
-
 heap.narenas.automatic | r- | - | unsigned | - | - | -
 
 Reads the number of arenas used in automatic scheduling of memory operations
