@@ -44,15 +44,7 @@
  * lane.h -- needed for LANE_REDO_EXTERNAL_SIZE
  */
 #include "lane.h"
-
-/* TX_INTENT_LOG_ENTRY_OVERHEAD -- sizeof(struct ulog_entry_val) */
-#define TX_INTENT_LOG_ENTRY_OVERHEAD (0b01ULL << 4) /* 16 bytes */
-#define TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT CACHELINE_SIZE
-#define TX_SNAPSHOT_LOG_BUFFER_OVERHEAD 64ULL
-/* TX_INTENT_LOG_ENTRY_OVERHEAD -- sizeof(struct ulog_entry_buf) */
-#define TX_SNAPSHOT_LOG_ENTRY_OVERHEAD (0b11ULL << 3) /* 24 */
-#define TX_INTENT_LOG_BUFFER_ALIGNMENT CACHELINE_SIZE
-#define TX_INTENT_LOG_BUFFER_OVERHEAD 64ULL
+#include "tx.h"
 
 #define LAYOUT_NAME "obj_ulog_size"
 #define TEST_VALUE_1 1
@@ -363,6 +355,47 @@ do_tx_max_alloc_wrong_pop_addr(PMEMobjpool *pop, PMEMobjpool *pop2)
 	pmemobj_free(&oid2);
 }
 
+/*
+ * do_tx_buffer_currently_used -- the same buffer cannot be used
+ * twice in the same time.
+ */
+static void
+do_tx_buffer_currently_used(PMEMobjpool *pop)
+{
+	UT_OUT("do_tx_buffer_currently_used");
+
+	PMEMoid oid_buff, oid_snap;
+
+	int err = pmemobj_alloc(pop, &oid_buff, 1024, 0, NULL, NULL);
+	UT_ASSERTeq(err, 0);
+
+	err = pmemobj_alloc(pop, &oid_snap, 1024, 0, NULL, NULL);
+	UT_ASSERTeq(err, 0);
+
+	/* this buffer we will try to use twice */
+	size_t buff_size = pmemobj_alloc_usable_size(oid_buff);
+	void *buff_addr = pmemobj_direct(oid_buff);
+
+	size_t range_size = pmemobj_alloc_usable_size(oid_snap);
+
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, buff_addr, buff_size);
+
+		pmemobj_tx_add_range(oid_snap, 0, range_size);
+
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, buff_addr, buff_size);
+	} TX_ONABORT {
+		UT_OUT("!Allocation currently used");
+	} TX_ONCOMMIT {
+		UT_OUT("Allocation is not currently used");
+	} TX_END
+
+	pmemobj_free(&oid_buff);
+	pmemobj_free(&oid_snap);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -391,6 +424,7 @@ main(int argc, char *argv[])
 	do_tx_do_not_auto_reserve_snapshot(pop);
 	do_tx_max_alloc_wrong_pop_addr(pop, pop2);
 	do_tx_max_alloc_tx_publish_abort(pop);
+	do_tx_buffer_currently_used(pop);
 
 	pmemobj_close(pop);
 	pmemobj_close(pop2);

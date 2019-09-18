@@ -38,6 +38,17 @@ import testframework as t
 class TEST0(t.BaseTest):
     test_type = t.Medium
     memcheck = t.DISABLE
+    build = [t.Debug]
+
+    def run(self, ctx):
+        filepath = ctx.create_holey_file(16 * t.MiB, 'testfile')
+        filepath1 = ctx.create_holey_file(16 * t.MiB, 'testfile1')
+        ctx.exec('obj_ulog_size', filepath, filepath1)
+
+class TEST1(t.BaseTest):
+    test_type = t.Medium
+    memcheck = t.DISABLE
+    build = [t.Release]
 
     def run(self, ctx):
         filepath = ctx.create_holey_file(16 * t.MiB, 'testfile')
