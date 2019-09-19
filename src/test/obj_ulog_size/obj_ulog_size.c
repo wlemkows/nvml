@@ -302,12 +302,12 @@ do_tx_max_alloc_user_alloc_snap_multi(PMEMobjpool *pop)
 	PMEMoid *allocated = fill_pool(pop, &nallocated);
 	UT_ASSERT(nallocated >= MIN_NOIDS);
 
-	const unsigned long snap_size = 3;
-	size_t buff_sizes[snap_size];
-	void *buff_addrs[snap_size];
-	size_t range_sizes[snap_size];
+	#define ARRAY_SIZE_COMMON 3
+	size_t buff_sizes[ARRAY_SIZE_COMMON];
+	void *buff_addrs[ARRAY_SIZE_COMMON];
+	size_t range_sizes[ARRAY_SIZE_COMMON];
 
-	for (unsigned long i = 0; i < snap_size; i++) {
+	for (unsigned long i = 0; i < ARRAY_SIZE_COMMON; i++) {
 		buff_sizes[i] =
 			pmemobj_alloc_usable_size(allocated[LOG_BUFFER + i]);
 		buff_addrs[i] = pmemobj_direct(allocated[LOG_BUFFER + i]);
@@ -322,7 +322,7 @@ do_tx_max_alloc_user_alloc_snap_multi(PMEMobjpool *pop)
 		pmemobj_tx_log_append_buffer(
 			TX_LOG_TYPE_SNAPSHOT, buff_addrs[1], buff_sizes[1]);
 		pmemobj_tx_log_append_buffer(
-			TX_LOG_TYPE_SNAPSHOT, buff_addrs[2], buff_sizes[2]);
+			TX_LOG_TYPE_SNAPSHOT, buff_addrs[2], buff_sizes[1]);
 
 		pmemobj_tx_add_range(allocated[RANGE + 0], 0, range_sizes[0]);
 		pmemobj_tx_add_range(allocated[RANGE + 1], 0, range_sizes[1]);
@@ -330,7 +330,29 @@ do_tx_max_alloc_user_alloc_snap_multi(PMEMobjpool *pop)
 	} TX_ONABORT {
 		UT_FATAL("!Cannot use multiple user appended undo log buffers");
 	} TX_ONCOMMIT {
-		UT_OUT("!Can use multiple user appended undo log buffers");
+		UT_OUT("Can use multiple user appended undo log buffers");
+	} TX_END
+
+	/* check if all user allocated buffers are used */
+	errno = 0;
+	TX_BEGIN(pop) {
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, buff_addrs[0], buff_sizes[0]);
+		pmemobj_tx_log_append_buffer(
+			TX_LOG_TYPE_SNAPSHOT, buff_addrs[1], buff_sizes[1]);
+		/*
+		 * do not append last buffer to make sure it is needed for this
+		 * transaction to succeed
+		 */
+
+		pmemobj_tx_add_range(allocated[RANGE + 0], 0, range_sizes[0]);
+		pmemobj_tx_add_range(allocated[RANGE + 1], 0, range_sizes[1]);
+		pmemobj_tx_add_range(allocated[RANGE + 2], 0, range_sizes[2]);
+	} TX_ONABORT {
+		UT_OUT("!All user appended undo log buffers are used");
+	} TX_ONCOMMIT {
+		UT_FATAL("Not all user appended undo log buffers are required - "
+			"too small ranges");
 	} TX_END
 
 	free_pool(allocated, nallocated);
