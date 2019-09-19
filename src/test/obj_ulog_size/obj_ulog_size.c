@@ -138,44 +138,6 @@ do_tx_max_alloc_tx_publish_abort(PMEMobjpool *pop)
 }
 
 static void
-do_ctl_overhead_test(PMEMobjpool *pop)
-{
-	int ret;
-	unsigned ro_value = 0;
-
-	ret = pmemobj_ctl_get(pop, "tx.snapshot.log.entry_alignment",
-			&ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT);
-
-	ro_value = 0;
-	ret = pmemobj_ctl_get(pop, "tx.intent.log.buffer_alignment", &ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_INTENT_LOG_BUFFER_ALIGNMENT);
-
-	ro_value = 0;
-	ret = pmemobj_ctl_get(pop, "tx.snapshot.log.entry_overhead", &ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_SNAPSHOT_LOG_ENTRY_OVERHEAD);
-
-	ro_value = 0;
-	ret = pmemobj_ctl_get(pop, "tx.intent.log.entry_overhead", &ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_INTENT_LOG_ENTRY_OVERHEAD);
-
-	ro_value = 0;
-	ret = pmemobj_ctl_get(pop, "tx.snapshot.log.buffer_overhead",
-			&ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_SNAPSHOT_LOG_BUFFER_OVERHEAD);
-
-	ro_value = 0;
-	ret = pmemobj_ctl_get(pop, "tx.intent.log.buffer_overhead", &ro_value);
-	UT_ASSERTeq(ret, 0);
-	UT_ASSERTeq(ro_value, TX_INTENT_LOG_BUFFER_OVERHEAD);
-}
-
-static void
 do_tx_max_alloc_no_prealloc_snap(PMEMobjpool *pop)
 {
 	UT_OUT("no_prealloc_snap");
@@ -416,7 +378,6 @@ main(int argc, char *argv[])
 	if (pop2 == NULL)
 		UT_FATAL("!pmemobj_create");
 
-	do_ctl_overhead_test(pop);
 	do_tx_max_alloc_no_prealloc_snap(pop);
 	do_tx_max_alloc_prealloc_snap(pop);
 	do_tx_max_alloc_prealloc_nested(pop);

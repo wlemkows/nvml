@@ -1954,96 +1954,6 @@ static const struct ctl_node CTL_NODE(debug)[] = {
 };
 
 /*
- * CTL_READ_HANDLER(entry_alignment, snapshot) -- returns the snapshot entry
- * alignement
- */
-static int
-CTL_READ_HANDLER(entry_alignment, snapshot)(void *ctx, enum ctl_query_source
-	source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *entry_alignment = arg;
-
-	*entry_alignment = TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT;
-
-	return 0;
-}
-
-/*
- * CTL_READ_HANDLER(buffer_alignment, intent) -- returns the intent
- * buffer alignement
- */
-static int
-CTL_READ_HANDLER(buffer_alignment, intent)(void *ctx, enum ctl_query_source
-	source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *buffer_alignment = arg;
-
-	*buffer_alignment = TX_INTENT_LOG_BUFFER_ALIGNMENT;
-
-	return 0;
-}
-
-/*
- * CTL_READ_HANDLER(entry_overhead, snapshot) -- returns the snapshot entry
- * overhead
- */
-static int
-CTL_READ_HANDLER(entry_overhead, snapshot)(void *ctx, enum ctl_query_source
-	source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *entry_overhead = arg;
-
-	*entry_overhead = TX_SNAPSHOT_LOG_ENTRY_OVERHEAD;
-
-	return 0;
-}
-
-/*
- * CTL_READ_HANDLER(buffer_overhead, snapshot) -- returns the snapshot
- * buffer overhead
- */
-static int
-CTL_READ_HANDLER(buffer_overhead, snapshot)(void *ctx,
-	enum ctl_query_source source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *buffer_overhead = arg;
-
-	*buffer_overhead = TX_SNAPSHOT_LOG_BUFFER_OVERHEAD;
-
-	return 0;
-}
-
-/*
- * CTL_READ_HANDLER(entry_overhead, intent) -- returns the redo log entry
- * overhead
- */
-static int
-CTL_READ_HANDLER(entry_overhead, intent)(void *ctx,
-	enum ctl_query_source source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *entry_overhead = arg;
-
-	*entry_overhead = TX_INTENT_LOG_ENTRY_OVERHEAD;
-
-	return 0;
-}
-
-/*
- * CTL_READ_HANDLER(buffer_overhead, intent) -- returns the redo log buffer
- * overhead
- */
-static int
-CTL_READ_HANDLER(buffer_overhead, intent)(void *ctx,
-	enum ctl_query_source source, void *arg, struct ctl_indexes *indexes)
-{
-	unsigned *buffer_overhead = arg;
-
-	*buffer_overhead = TX_INTENT_LOG_BUFFER_OVERHEAD;
-
-	return 0;
-}
-
-/*
  * CTL_READ_HANDLER(queue_depth) -- returns the depth of the post commit queue
  */
 static int
@@ -2093,40 +2003,10 @@ static const struct ctl_node CTL_NODE(post_commit)[] = {
 	CTL_NODE_END
 };
 
-static const struct ctl_node CTL_NODE(log, intent)[] = {
-	CTL_LEAF_RO(entry_overhead, intent),
-	CTL_LEAF_RO(buffer_overhead, intent),
-	CTL_LEAF_RO(buffer_alignment, intent),
-
-	CTL_NODE_END
-};
-
-static const struct ctl_node CTL_NODE(log, snapshot)[] = {
-	CTL_LEAF_RO(entry_overhead, snapshot),
-	CTL_LEAF_RO(buffer_overhead, snapshot),
-	CTL_LEAF_RO(entry_alignment, snapshot),
-
-	CTL_NODE_END
-};
-
-static const struct ctl_node CTL_NODE(snapshot)[] = {
-	CTL_CHILD(log, snapshot),
-
-	CTL_NODE_END
-};
-
-static const struct ctl_node CTL_NODE(intent)[] = {
-	CTL_CHILD(log, intent),
-
-	CTL_NODE_END
-};
-
 static const struct ctl_node CTL_NODE(tx)[] = {
 	CTL_CHILD(debug),
 	CTL_CHILD(cache),
 	CTL_CHILD(post_commit),
-	CTL_CHILD(snapshot),
-	CTL_CHILD(intent),
 
 	CTL_NODE_END
 };
