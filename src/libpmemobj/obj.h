@@ -204,6 +204,11 @@ struct pmemobjpool {
 	PMEMrwlock_internal *rwlock_head;
 	PMEMcond_internal *cond_head;
 
+	struct {
+		os_mutex_t lock;
+		struct ravl *map;
+	} ulog_user_buffers;
+
 	/* padding to align size of this structure to page boundary */
 	/* sizeof(unused2) == 8192 - offsetof(struct pmemobjpool, unused2) */
 	char unused2[992];

@@ -1260,6 +1260,10 @@ obj_runtime_init(PMEMobjpool *pop, int rdonly, int boot, unsigned nlanes)
 		goto err_ctl;
 	}
 
+	struct ravl *r = ravl_new_sized(tx_range_def_cmp,
+			sizeof(struct user_buffer_def));
+	UT_ASSERTne(r, NULL);
+
 	/*
 	 * If possible, turn off all permissions on the pool header page.
 	 *

@@ -90,7 +90,6 @@ struct ulog_entry_buf {
  * what user has allocated - user should free himself.
  */
 #define ULOG_USER_OWNED (1U << 0)
-#define ULOG_USED (1U << 1)
 
 /* use this for allocations of aligned ulog extensions */
 #define SIZEOF_ALIGNED_ULOG(base_capacity)\
@@ -135,11 +134,6 @@ void ulog_rebuild_next_vec(struct ulog *ulog, struct ulog_next *next,
 
 int ulog_foreach_entry(struct ulog *ulog,
 	ulog_entry_cb cb, void *arg, const struct pmem_ops *ops);
-
-void ulog_flags_foreach_clear(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags, uint64_t cond);
-void ulog_flags_set(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags);
 
 int ulog_reserve(struct ulog *ulog,
 	size_t ulog_base_nbytes, size_t gen_num,

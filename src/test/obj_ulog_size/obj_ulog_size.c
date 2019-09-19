@@ -326,36 +326,28 @@ do_tx_buffer_currently_used(PMEMobjpool *pop)
 {
 	UT_OUT("do_tx_buffer_currently_used");
 
-	PMEMoid oid_buff, oid_snap;
+	PMEMoid oid_buff;
 
-	int err = pmemobj_alloc(pop, &oid_buff, 1024, 0, NULL, NULL);
-	UT_ASSERTeq(err, 0);
-
-	err = pmemobj_alloc(pop, &oid_snap, 1024, 0, NULL, NULL);
+	int err = pmemobj_alloc(pop, &oid_buff, MB, 0, NULL, NULL);
 	UT_ASSERTeq(err, 0);
 
 	/* this buffer we will try to use twice */
 	size_t buff_size = pmemobj_alloc_usable_size(oid_buff);
 	void *buff_addr = pmemobj_direct(oid_buff);
 
-	size_t range_size = pmemobj_alloc_usable_size(oid_snap);
-
 	TX_BEGIN(pop) {
 		pmemobj_tx_log_append_buffer(
 			TX_LOG_TYPE_SNAPSHOT, buff_addr, buff_size);
 
-		pmemobj_tx_add_range(oid_snap, 0, range_size);
-
 		pmemobj_tx_log_append_buffer(
 			TX_LOG_TYPE_SNAPSHOT, buff_addr, buff_size);
 	} TX_ONABORT {
-		UT_OUT("!Allocation currently used");
+		UT_OUT("!User cannot append the same undo log buffer twice");
 	} TX_ONCOMMIT {
-		UT_OUT("Allocation is not currently used");
+		UT_FATAL("!User can append the same undo log buffer twice");
 	} TX_END
 
 	pmemobj_free(&oid_buff);
-	pmemobj_free(&oid_snap);
 }
 
 int

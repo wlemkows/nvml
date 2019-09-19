@@ -194,43 +194,6 @@ ulog_construct(uint64_t offset, size_t capacity, uint64_t gen_num,
 }
 
 /*
- * ulog_flags_clear - clear specific flags in the pointed ulog
- */
-static void
-ulog_flags_clear(struct ulog *ulog, const struct pmem_ops *ops, uint64_t flags,
-		uint64_t conditional_flag)
-{
-	/* contitional flag must be set to perform flags cleaning */
-	if (conditional_flag && !(ulog->flags & conditional_flag))
-		return;
-
-	ulog->flags &= (~flags);
-	pmemops_persist(ops, &ulog->flags, sizeof(ulog->flags));
-}
-
-/*
- * ulog_flags_set - set specific flags in the pointed ulog
- */
-void
-ulog_flags_set(struct ulog *ulog, const struct pmem_ops *ops, uint64_t flags)
-{
-	ulog->flags |= flags;
-	pmemops_persist(ops, &ulog->flags, sizeof(ulog->flags));
-}
-
-/*
- * ulog_flags_foreach_clear - clear specific flags in all of the ulogs
- * starting from the pointed one
- */
-void
-ulog_flags_foreach_clear(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags, uint64_t cond)
-{
-	for (struct ulog *r = ulog; r != NULL; r = ulog_next(r, ops))
-		ulog_flags_clear(ulog, ops, flags, cond);
-}
-
-/*
  * ulog_foreach_entry -- iterates over every existing entry in the ulog
  */
 int
@@ -665,10 +628,7 @@ ulog_free_next(struct ulog *u, const struct pmem_ops *p_ops,
 		 */
 		while (current != NULL &&
 				(current->flags & ULOG_USER_OWNED)) {
-#ifdef DEBUG
-			ulog_flags_clear(current, p_ops,
-					ULOG_USED, 0);
-#endif
+
 			last_internal->next = current->next;
 			pmemops_persist(p_ops, &last_internal->next,
 							sizeof(last_internal->next));

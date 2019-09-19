@@ -63,6 +63,11 @@ enum log_type {
 	MAX_LOG_TYPE,
 };
 
+struct user_buffer_def {
+	void *addr;
+	size_t size;
+};
+
 struct operation_context;
 
 struct operation_context *

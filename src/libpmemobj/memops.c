@@ -46,6 +46,7 @@
 #include "memops.h"
 #include "obj.h"
 #include "out.h"
+#include "ravl.h"
 #include "valgrind_internal.h"
 #include "vecq.h"
 
@@ -444,6 +445,52 @@ operation_add_buffer(struct operation_context *ctx,
 }
 
 /*
+ * operation_user_buffer_try_insert -- adds a user buffer range to the tree,
+ * if the buffer already exists in the tree function returns -1, otherwise
+ * it returns 0
+ */
+static int
+operation_user_buffer_try_insert(PMEMobjpool *pop, void *addr, size_t size)
+{
+	int ret = 0;
+
+	os_mutex_lock(&pop->ulog_user_buffers.lock);
+	struct user_buffer_def range;
+	range.addr = addr;
+	range.size = size;
+
+	if (ravl_emplace_copy(pop->ulog_user_buffers.map, &range) == EEXIST)
+		ret = -1;
+
+	os_mutex_unlock(&pop->ulog_user_buffers.lock);
+	return ret;
+}
+
+/*
+ * operation_user_buffer_remove -- removed range from the tree and returns 0
+ */
+static int
+operation_user_buffer_remove(PMEMobjpool *pop, void *addr, size_t size)
+{
+	os_mutex_lock(&pop->ulog_user_buffers.lock);
+
+	struct ravl *ravl = pop->ulog_user_buffers.map;
+	enum ravl_predicate predict = RAVL_PREDICATE_EQUAL;
+
+	struct user_buffer_def range;
+	range.addr = addr;
+	range.size = size;
+
+	struct ravl_node *n = ravl_find(ravl, &range, predict);
+	ASSERTne(n, NULL);
+	ravl_remove(ravl, n);
+
+	os_mutex_unlock(&pop->ulog_user_buffers.lock);
+
+	return 0;
+}
+
+/*
  * operation_add_user_buffer -- add user buffer to the ulog
  */
 int
@@ -451,12 +498,9 @@ operation_add_user_buffer(struct operation_context *ctx,
 		void *addr, size_t size)
 {
 	uint64_t extend_offset = OBJ_PTR_TO_OFF(ctx->p_ops->base, addr);
-	struct ulog *new_log = ulog_by_offset(extend_offset, ctx->p_ops);
+	/* struct ulog *new_log = ulog_by_offset(extend_offset, ctx->p_ops); */
 
-	if (new_log->flags & ULOG_USED) {
-		ERR("Allocation currently used");
-		return -1;
-	}
+	/* XXX ERR("Allocation currently used"); */
 
 	size_t extend_capacity = ALIGN_DOWN(size - sizeof(struct ulog),
 			CACHELINE_SIZE);
@@ -477,11 +521,6 @@ operation_add_user_buffer(struct operation_context *ctx,
 	VEC_PUSH_BACK(&ctx->next, extend_offset);
 	ctx->ulog_capacity += extend_capacity;
 	operation_set_any_user_buffer(ctx, 1);
-
-#ifdef DEBUG
-	ASSERT(new_log->flags & ULOG_USER_OWNED);
-	ulog_flags_set(new_log, ctx->p_ops, ULOG_USED);
-#endif
 
 	return 0;
 }
