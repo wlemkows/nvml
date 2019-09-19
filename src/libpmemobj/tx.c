@@ -1796,6 +1796,47 @@ pmemobj_tx_log_auto_alloc(enum pobj_log_type type, int on_off)
 }
 
 /*
+ * pmemobj_tx_log_snapshot_max_size -- calculates the maximum
+ * size of a buffer which will be able to hold n snapshots,
+ * each of size from sizes array
+ */
+size_t
+pmemobj_tx_log_snapshot_max_size(size_t *sizes, size_t nsizes)
+{
+	LOG(3, NULL);
+
+	size_t entry_overhead = TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT;
+	size_t entry_alignment = TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT;
+	size_t buffer_overhead = TX_SNAPSHOT_LOG_BUFFER_OVERHEAD;
+
+	size_t result = buffer_overhead;
+	for (size_t i = 0; i < nsizes; ++i)
+		result += ALIGN_UP(sizes[i] + entry_overhead,
+				entry_alignment);
+
+	return result;
+}
+
+/*
+ * pmemobj_tx_log_intent_max_size -- calculates the maximum size of a buffer
+ * which will be able to hold nintents
+ */
+size_t
+pmemobj_tx_log_intent_max_size(size_t nintents)
+{
+	LOG(3, NULL);
+
+	size_t entry_overhead = TX_INTENT_LOG_ENTRY_OVERHEAD;
+	size_t buffer_alignment = TX_INTENT_LOG_BUFFER_ALIGNMENT;
+	size_t buffer_overhead = TX_INTENT_LOG_BUFFER_OVERHEAD;
+
+	size_t result = buffer_overhead + ALIGN_UP(nintents * entry_overhead,
+					buffer_alignment);
+
+	return result;
+}
+
+/*
  * CTL_READ_HANDLER(size) -- gets the cache size transaction parameter
  */
 static int
