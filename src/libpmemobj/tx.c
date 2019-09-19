@@ -673,7 +673,7 @@ tx_realloc_common(struct tx *tx, PMEMoid oid, size_t size, uint64_t type_num,
  */
 static int
 tx_construct_user_buffer(struct tx *tx, void *addr, size_t size,
-		enum pobj_log_type type, uint64_t outer_tx)
+		enum pobj_log_type type, int outer_tx)
 {
 	if (tx->pop != pmemobj_pool_by_ptr(addr)) {
 		ERR("Allocation from different pool");

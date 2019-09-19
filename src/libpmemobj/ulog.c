@@ -649,37 +649,35 @@ ulog_free_next(struct ulog *u, const struct pmem_ops *p_ops,
 	VEC_INIT(&ulogs_internal_except_first);
 
 	/*
-	 * ulog_internal - pointer to a last found ulog allocated
+	 * last_internal - pointer to a last found ulog allocated
 	 * internally by the libpmemobj
 	 */
-	struct ulog *ulog_internal = u;
-	struct ulog *ulog_next;
+	struct ulog *last_internal = u;
+	struct ulog *current;
 
 	/* iterate all linked logs and unpin user defined */
 	while ((flags & ULOG_ANY_USER_BUFFER) &&
-		ulog_internal != NULL && ulog_internal->next != 0) {
-		ulog_next = ulog_by_offset(ulog_internal->next, p_ops);
+		last_internal != NULL && last_internal->next != 0) {
+		current = ulog_by_offset(last_internal->next, p_ops);
 		/*
 		 * handle case with user logs one after the other
 		 * or mixed user and internal logs
 		 */
-		while (ulog_next != NULL &&
-				ulog_next->flags & ULOG_USER_OWNED) {
+		while (current != NULL &&
+				(current->flags & ULOG_USER_OWNED)) {
 #ifdef DEBUG
-			ulog_flags_clear(ulog_next, p_ops,
+			ulog_flags_clear(current, p_ops,
 					ULOG_USED, 0);
 #endif
-			ulog_internal->next = ulog_next->next;
+			last_internal->next = current->next;
+			pmemops_persist(p_ops, &last_internal->next,
+							sizeof(last_internal->next));
 
-			if (ulog_next->next)
-				pmemops_memset(p_ops, &ulog_next->next, 0,
-					sizeof(ulog_next->next), 0);
-
-			ulog_next = ulog_by_offset(ulog_internal->next, p_ops);
+			current = ulog_by_offset(last_internal->next, p_ops);
 			/* any ulog has been unpinned - set return value to 1 */
 			ret = 1;
 		}
-		ulog_internal = ulog_by_offset(ulog_internal->next, p_ops);
+		last_internal = ulog_by_offset(last_internal->next, p_ops);
 	}
 
 	while (u->next != 0) {
@@ -800,8 +798,8 @@ ulog_clobber_data(struct ulog *ulog_first,
 		return 0;
 
 	/*
-	 * only if there was any prealocation it make sense to check
-	 * if the second ulog is preallocated
+	 * only if there was any user buffer it make sense to check
+	 * if the second ulog is owned by user
 	 */
 	if ((flags & ULOG_ANY_USER_BUFFER) &&
 		(ulog_second->flags & ULOG_USER_OWNED))

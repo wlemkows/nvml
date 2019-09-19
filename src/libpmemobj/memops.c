@@ -81,7 +81,7 @@ struct operation_context {
 	size_t ulog_base_nbytes; /* available bytes in initial ulog log */
 	size_t ulog_capacity; /* sum of capacity, incl all next ulog logs */
 	int ulog_auto_reserve; /* allow or do not to auto ulog reservation */
-	int ulog_any_user_buffer; /* set if any user prealloc occured */
+	int ulog_any_user_buffer; /* set if any user buffer is added */
 
 	struct ulog_next next; /* vector of 'next' fields of persistent ulog */
 
