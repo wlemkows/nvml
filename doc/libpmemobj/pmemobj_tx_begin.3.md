@@ -356,10 +356,10 @@ must internally allocate this space whenever it's needed. This has two downsides
 
 + when transaction snapshots a lot of memory or does a lot of allocations,
   pmemobj may need to do many internal allocations, which must be freed when
-  transaction ends, adding a lot of time overhead when such big transactions are
-  frequent,
-+ when pool is almost full, freeing in a transaction may actually fail because of
-  not enough space for the log
+  transaction ends, adding time overhead when big transactions are frequent,
++ transactions can start to fail due to not enough log space - this can
+  be especially problematic for transactions that want to **deallocate**
+  objects, as those might also fail
 
 To solve both of these problems pmemobj exposes these functions:
 
@@ -373,24 +373,23 @@ To solve both of these problems pmemobj exposes these functions:
 + **TX_LOG_TYPE_SNAPSHOT**,
 + **TX_LOG_TYPE_INTENT**
 
-The range of memory **must** belong to the same pool the transaction is on
-and **must** be zeroed the first time it is used.
-The last requirement means that for example if caller allocated a big object
-and divided it between threads, it **must** zero it each time the division
-changes.
+The range of memory **must** belong to the same pool the transaction is on.
 
 **pmemobj_tx_log_snapshots_max_size** calculates the **maximum** size of
 a buffer which will be able to hold *nsizes* snapshots, each of size *sizes[i]*.
 Application should not expect this function to return the same value between
 restarts. In future versions of pmemobj this function can return smaller
 (because of better accuracy or space optimizations) or higher (because
-of higher alignment required for better performance) value.
+of higher alignment required for better performance) value. This function
+doesn't care about transaction stage and can be called both inside and outside
+of transaction.
 
 **pmemobj_tx_log_intents_max_size** calculates the **maximum** size of
 a buffer which will be able to hold *nintents* intents.
 Just like with **pmemobj_tx_log_snapshots_max_size**, application should not
 expect this function to return the same value between restarts, for the same
-reasons.
+reasons. This function doesn't care about transaction stage and can be called
+both inside and outside of transaction.
 
 **pmemobj_tx_log_auto_alloc**() disables (*on_off* set to 0) or enables
 (*on_off* set to 1) automatic allocation of internal logs of given *type*.
