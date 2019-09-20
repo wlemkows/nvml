@@ -516,14 +516,33 @@ operation_user_buffer_try_insert(PMEMobjpool *pop, void *addr, size_t size)
 	int ret = 0;
 
 	os_mutex_lock(&pop->ulog_user_buffers.lock);
+
+	void *addr_end = (char *)addr + size;
+	struct user_buffer_def search;
+	search.addr = addr_end;
+	struct ravl_node *n = ravl_find(pop->ulog_user_buffers.map,
+		&search, RAVL_PREDICATE_LESS_EQUAL);
+	if (n != NULL) {
+		struct user_buffer_def *r = ravl_data(n);
+		void *r_end = (char *)r->addr + r->size;
+
+		if (r_end >= addr && r->addr <= addr_end) {
+			/* what was found overlaps with what is being added */
+			ret = -1;
+			goto out;
+		}
+	}
+
 	struct user_buffer_def range;
 	range.addr = addr;
 	range.size = size;
 
-	if (ravl_emplace_copy(pop->ulog_user_buffers.map, &range) == -1 &&
-			errno == EEXIST)
+	if (ravl_emplace_copy(pop->ulog_user_buffers.map, &range) == -1) {
+		ASSERTne(errno, EEXIST);
 		ret = -1;
+	}
 
+out:
 	os_mutex_unlock(&pop->ulog_user_buffers.lock);
 	return ret;
 }

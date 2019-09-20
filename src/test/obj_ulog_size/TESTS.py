@@ -38,7 +38,7 @@ import testframework as t
 class TEST0(t.BaseTest):
     test_type = t.Medium
     memcheck = t.DISABLE
-    build = [t.Debug]
+    build = [t.Debug, t.Release]
 
     def run(self, ctx):
         filepath = ctx.create_holey_file(16 * t.MiB, 'testfile')
@@ -47,8 +47,8 @@ class TEST0(t.BaseTest):
 
 class TEST1(t.BaseTest):
     test_type = t.Medium
-    memcheck = t.DISABLE
-    build = [t.Release]
+    memcheck = t.ENABLE
+    build = [t.Debug, t.Release]
 
     def run(self, ctx):
         filepath = ctx.create_holey_file(16 * t.MiB, 'testfile')

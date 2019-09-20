@@ -1261,9 +1261,13 @@ obj_runtime_init(PMEMobjpool *pop, int rdonly, int boot, unsigned nlanes)
 		goto err_ctl;
 	}
 
-	pop->ulog_user_buffers.map = ravl_new_sized(
+	os_mutex_init(&pop->ulog_user_buffers.lock);
+	if ((pop->ulog_user_buffers.map = ravl_new_sized(
 		operation_user_buffer_range_cmp,
-		sizeof(struct user_buffer_def));
+		sizeof(struct user_buffer_def))) == NULL) {
+		ERR("!ravl_new_sized");
+		goto err_user_buffers_map;
+	}
 	ASSERTne(pop->ulog_user_buffers.map, NULL);
 
 	/*
@@ -1276,6 +1280,8 @@ obj_runtime_init(PMEMobjpool *pop, int rdonly, int boot, unsigned nlanes)
 
 	return 0;
 
+err_user_buffers_map:
+	ctl_delete(pop->ctl);
 err_ctl:;
 	void *n = critnib_remove(pools_tree, (uint64_t)pop);
 	ASSERTne(n, NULL);
@@ -1934,6 +1940,9 @@ static void
 obj_pool_cleanup(PMEMobjpool *pop)
 {
 	LOG(3, "pop %p", pop);
+
+	ravl_delete(pop->ulog_user_buffers.map);
+	os_mutex_destroy(&pop->ulog_user_buffers.lock);
 
 	stats_delete(pop, pop->stats);
 	tx_params_delete(pop->tx_params);
