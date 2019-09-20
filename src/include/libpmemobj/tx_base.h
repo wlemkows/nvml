@@ -38,6 +38,7 @@
 #define LIBPMEMOBJ_TX_BASE_H 1
 
 #include <setjmp.h>
+#include <sys/types.h>
 
 #include <libpmemobj/base.h>
 
@@ -344,12 +345,12 @@ int pmemobj_tx_log_auto_alloc(enum pobj_log_type type, int on_off);
 /*
  * Calculates and returns size for user buffers for snapshots.
  */
-size_t pmemobj_tx_log_snapshot_max_size(size_t *sizes, size_t nsizes);
+ssize_t pmemobj_tx_log_snapshot_max_size(size_t *sizes, size_t nsizes);
 
 /*
  * Calculates and returns size for user buffers for intents.
  */
-size_t pmemobj_tx_log_intent_max_size(size_t nintents);
+ssize_t pmemobj_tx_log_intent_max_size(size_t nintents);
 
 #ifdef __cplusplus
 }
