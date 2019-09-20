@@ -46,6 +46,7 @@
 #include "memops.h"
 #include "obj.h"
 #include "out.h"
+#include "ravl.h"
 #include "valgrind_internal.h"
 #include "vecq.h"
 
@@ -238,13 +239,38 @@ operation_delete(struct operation_context *ctx)
 }
 
 /*
+ * operation_user_buffer_remove -- removed range from the tree and returns 0
+ */
+static int
+operation_user_buffer_remove(void *base, void *addr)
+{
+	PMEMobjpool *pop = base;
+	os_mutex_lock(&pop->ulog_user_buffers.lock);
+
+	struct ravl *ravl = pop->ulog_user_buffers.map;
+	enum ravl_predicate predict = RAVL_PREDICATE_EQUAL;
+
+	struct user_buffer_def range;
+	range.addr = addr;
+	range.size = 0;
+
+	struct ravl_node *n = ravl_find(ravl, &range, predict);
+	ASSERTne(n, NULL);
+	ravl_remove(ravl, n);
+
+	os_mutex_unlock(&pop->ulog_user_buffers.lock);
+
+	return 0;
+}
+
+/*
  * operation_free_logs -- free all logs except first
  */
 void
 operation_free_logs(struct operation_context *ctx, uint64_t flags)
 {
-	int freed = ulog_free_next(ctx->ulog, ctx->p_ops,
-			ctx->ulog_free, flags);
+	int freed = ulog_free_next(ctx->ulog, ctx->p_ops, ctx->ulog_free,
+			operation_user_buffer_remove, flags);
 	if (freed) {
 		ctx->ulog_capacity = ulog_capacity(ctx->ulog,
 			ctx->ulog_base_nbytes, ctx->p_ops);
@@ -444,6 +470,47 @@ operation_add_buffer(struct operation_context *ctx,
 }
 
 /*
+ * operation_user_buffer_range_cmp -- compares addresses of
+ * user buffers
+ */
+int
+operation_user_buffer_range_cmp(const void *lhs, const void *rhs)
+{
+	const struct user_buffer_def *l = lhs;
+	const struct user_buffer_def *r = rhs;
+
+	if (l->addr > r->addr)
+		return 1;
+	else if (l->addr < r->addr)
+		return -1;
+
+	return 0;
+}
+
+/*
+ * operation_user_buffer_try_insert -- adds a user buffer range to the tree,
+ * if the buffer already exists in the tree function returns -1, otherwise
+ * it returns 0
+ */
+static int
+operation_user_buffer_try_insert(PMEMobjpool *pop, void *addr, size_t size)
+{
+	int ret = 0;
+
+	os_mutex_lock(&pop->ulog_user_buffers.lock);
+	struct user_buffer_def range;
+	range.addr = addr;
+	range.size = size;
+
+	if (ravl_emplace_copy(pop->ulog_user_buffers.map, &range) == -1 &&
+			errno == EEXIST)
+		ret = -1;
+
+	os_mutex_unlock(&pop->ulog_user_buffers.lock);
+	return ret;
+}
+
+/*
  * operation_add_user_buffer -- add user buffer to the ulog
  */
 int
@@ -451,17 +518,26 @@ operation_add_user_buffer(struct operation_context *ctx,
 		void *addr, size_t size)
 {
 	uint64_t extend_offset = OBJ_PTR_TO_OFF(ctx->p_ops->base, addr);
-	struct ulog *new_log = ulog_by_offset(extend_offset, ctx->p_ops);
+	ssize_t size_diff = (ssize_t)ulog_by_offset(extend_offset,
+		ctx->p_ops) - (ssize_t)addr;
+	ssize_t capacity_unaligned = (ssize_t)size - size_diff
+		- (ssize_t)sizeof(struct ulog);
+	if (capacity_unaligned <= (ssize_t)CACHELINE_SIZE) {
+		ERR("Capacity insufficient");
+		return -1;
+	}
 
-	if (new_log->flags & ULOG_USED) {
+	size_t capacity_aligned = ALIGN_DOWN((size_t)capacity_unaligned,
+		CACHELINE_SIZE);
+
+	if (operation_user_buffer_try_insert(ctx->p_ops->base,
+			ulog_by_offset(extend_offset, ctx->p_ops),
+			capacity_aligned + sizeof(struct ulog))) {
 		ERR("Allocation currently used");
 		return -1;
 	}
 
-	size_t extend_capacity = ALIGN_DOWN(size - sizeof(struct ulog),
-			CACHELINE_SIZE);
-
-	ulog_construct(extend_offset, extend_capacity, ctx->ulog->gen_num,
+	ulog_construct(extend_offset, capacity_aligned, ctx->ulog->gen_num,
 			1, ULOG_USER_OWNED, ctx->p_ops);
 
 	struct ulog *last_log;
@@ -475,13 +551,8 @@ operation_add_user_buffer(struct operation_context *ctx,
 	pmemops_persist(ctx->p_ops, &last_log->next, sizeof(last_log->next));
 
 	VEC_PUSH_BACK(&ctx->next, extend_offset);
-	ctx->ulog_capacity += extend_capacity;
+	ctx->ulog_capacity += capacity_aligned;
 	operation_set_any_user_buffer(ctx, 1);
-
-#ifdef DEBUG
-	ASSERT(new_log->flags & ULOG_USER_OWNED);
-	ulog_flags_set(new_log, ctx->p_ops, ULOG_USED);
-#endif
 
 	return 0;
 }
@@ -685,7 +756,9 @@ operation_finish(struct operation_context *ctx, unsigned flags)
 		 */
 		if (!ulog_clobber_data(ctx->ulog,
 			ctx->total_logged, ctx->ulog_base_nbytes,
-			&ctx->next, ctx->ulog_free, ctx->p_ops, flags))
+			&ctx->next, ctx->ulog_free,
+			operation_user_buffer_remove,
+			ctx->p_ops, flags))
 			return;
 
 		/* clobbering might have shrunk the ulog */

@@ -63,6 +63,11 @@ enum log_type {
 	MAX_LOG_TYPE,
 };
 
+struct user_buffer_def {
+	void *addr;
+	size_t size;
+};
+
 struct operation_context;
 
 struct operation_context *
@@ -92,6 +97,7 @@ void operation_set_auto_reserve(struct operation_context *ctx,
 void operation_set_any_user_buffer(struct operation_context *ctx,
 	int any_user_buffer);
 int operation_get_any_user_buffer(struct operation_context *ctx);
+int operation_user_buffer_range_cmp(const void *lhs, const void *rhs);
 
 int operation_reserve(struct operation_context *ctx, size_t new_capacity);
 void operation_process(struct operation_context *ctx);

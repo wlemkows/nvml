@@ -46,6 +46,7 @@
 #include "mmap.h"
 #include "obj.h"
 #include "ctl_global.h"
+#include "ravl.h"
 
 #include "heap_layout.h"
 #include "os.h"
@@ -1259,6 +1260,11 @@ obj_runtime_init(PMEMobjpool *pop, int rdonly, int boot, unsigned nlanes)
 		errno = EINVAL;
 		goto err_ctl;
 	}
+
+	pop->ulog_user_buffers.map = ravl_new_sized(
+		operation_user_buffer_range_cmp,
+		sizeof(struct user_buffer_def));
+	ASSERTne(pop->ulog_user_buffers.map, NULL);
 
 	/*
 	 * If possible, turn off all permissions on the pool header page.

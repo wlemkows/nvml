@@ -194,43 +194,6 @@ ulog_construct(uint64_t offset, size_t capacity, uint64_t gen_num,
 }
 
 /*
- * ulog_flags_clear - clear specific flags in the pointed ulog
- */
-static void
-ulog_flags_clear(struct ulog *ulog, const struct pmem_ops *ops, uint64_t flags,
-		uint64_t conditional_flag)
-{
-	/* contitional flag must be set to perform flags cleaning */
-	if (conditional_flag && !(ulog->flags & conditional_flag))
-		return;
-
-	ulog->flags &= (~flags);
-	pmemops_persist(ops, &ulog->flags, sizeof(ulog->flags));
-}
-
-/*
- * ulog_flags_set - set specific flags in the pointed ulog
- */
-void
-ulog_flags_set(struct ulog *ulog, const struct pmem_ops *ops, uint64_t flags)
-{
-	ulog->flags |= flags;
-	pmemops_persist(ops, &ulog->flags, sizeof(ulog->flags));
-}
-
-/*
- * ulog_flags_foreach_clear - clear specific flags in all of the ulogs
- * starting from the pointed one
- */
-void
-ulog_flags_foreach_clear(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags, uint64_t cond)
-{
-	for (struct ulog *r = ulog; r != NULL; r = ulog_next(r, ops))
-		ulog_flags_clear(ulog, ops, flags, cond);
-}
-
-/*
  * ulog_foreach_entry -- iterates over every existing entry in the ulog
  */
 int
@@ -638,7 +601,8 @@ ulog_inc_gen_num(struct ulog *ulog, const struct pmem_ops *p_ops)
  */
 int
 ulog_free_next(struct ulog *u, const struct pmem_ops *p_ops,
-		ulog_free_fn ulog_free, uint64_t flags)
+		ulog_free_fn ulog_free, ulog_buffer_remove_fn buff_remove,
+		uint64_t flags)
 {
 	int ret = 0;
 
@@ -664,16 +628,13 @@ ulog_free_next(struct ulog *u, const struct pmem_ops *p_ops,
 		 * or mixed user and internal logs
 		 */
 		while (ulog_next != NULL &&
-				ulog_next->flags & ULOG_USER_OWNED) {
-#ifdef DEBUG
-			ulog_flags_clear(ulog_next, p_ops,
-					ULOG_USED, 0);
-#endif
-			ulog_internal->next = ulog_next->next;
+				(ulog_next->flags & ULOG_USER_OWNED)) {
 
-			if (ulog_next->next)
-				pmemops_memset(p_ops, &ulog_next->next, 0,
-					sizeof(ulog_next->next), 0);
+			ulog_internal->next = ulog_next->next;
+			pmemops_persist(p_ops, &ulog_internal->next,
+				sizeof(ulog_internal->next));
+
+			buff_remove(p_ops->base, ulog_next);
 
 			ulog_next = ulog_by_offset(ulog_internal->next, p_ops);
 			/* any ulog has been unpinned - set return value to 1 */
@@ -730,6 +691,7 @@ int
 ulog_clobber_data(struct ulog *ulog_first,
 	size_t nbytes, size_t ulog_base_nbytes,
 	struct ulog_next *next, ulog_free_fn ulog_free,
+	ulog_buffer_remove_fn buff_remove,
 	const struct pmem_ops *p_ops, unsigned flags)
 {
 	ASSERTne(ulog_first, NULL);
@@ -812,7 +774,7 @@ ulog_clobber_data(struct ulog *ulog_first,
 		 */
 		u = ulog_first;
 
-	return ulog_free_next(u, p_ops, ulog_free, flags);
+	return ulog_free_next(u, p_ops, ulog_free, buff_remove, flags);
 }
 
 /*

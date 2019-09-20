@@ -90,7 +90,6 @@ struct ulog_entry_buf {
  * what user has allocated - user should free himself.
  */
 #define ULOG_USER_OWNED (1U << 0)
-#define ULOG_USED (1U << 1)
 
 /* use this for allocations of aligned ulog extensions */
 #define SIZEOF_ALIGNED_ULOG(base_capacity)\
@@ -122,6 +121,7 @@ typedef int (*ulog_extend_fn)(void *, uint64_t *, uint64_t);
 typedef int (*ulog_entry_cb)(struct ulog_entry_base *e, void *arg,
 	const struct pmem_ops *p_ops);
 typedef void (*ulog_free_fn)(void *base, uint64_t *next);
+typedef int (*ulog_buffer_remove_fn)(void *, void *addr);
 
 struct ulog *ulog_next(struct ulog *ulog, const struct pmem_ops *p_ops);
 
@@ -136,11 +136,6 @@ void ulog_rebuild_next_vec(struct ulog *ulog, struct ulog_next *next,
 int ulog_foreach_entry(struct ulog *ulog,
 	ulog_entry_cb cb, void *arg, const struct pmem_ops *ops);
 
-void ulog_flags_foreach_clear(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags, uint64_t cond);
-void ulog_flags_set(struct ulog *ulog, const struct pmem_ops *ops,
-		uint64_t flags);
-
 int ulog_reserve(struct ulog *ulog,
 	size_t ulog_base_nbytes, size_t gen_num,
 	int auto_reserve, size_t *new_capacity_bytes,
@@ -152,12 +147,14 @@ void ulog_store(struct ulog *dest,
 	struct ulog_next *next, const struct pmem_ops *p_ops);
 
 int ulog_free_next(struct ulog *u, const struct pmem_ops *p_ops,
-		ulog_free_fn ulog_free, uint64_t flags);
+		ulog_free_fn ulog_free, ulog_buffer_remove_fn buff_remove,
+		uint64_t flags);
 void ulog_clobber(struct ulog *dest, struct ulog_next *next,
 	const struct pmem_ops *p_ops);
 int ulog_clobber_data(struct ulog *dest,
 	size_t nbytes, size_t ulog_base_nbytes,
 	struct ulog_next *next, ulog_free_fn ulog_free,
+	ulog_buffer_remove_fn buff_remove,
 	const struct pmem_ops *p_ops, unsigned flags);
 
 void ulog_process(struct ulog *ulog, ulog_check_offset_fn check,
