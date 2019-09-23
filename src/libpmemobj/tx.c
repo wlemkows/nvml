@@ -1801,17 +1801,27 @@ pmemobj_tx_log_auto_alloc(enum pobj_log_type type, int on_off)
  * size of a buffer which will be able to hold nsizes snapshots,
  * each of size from sizes array
  */
-ssize_t
+size_t
 pmemobj_tx_log_snapshot_max_size(size_t *sizes, size_t nsizes)
 {
 	LOG(3, NULL);
 
+	/* each buffer has its header */
 	size_t result = TX_SNAPSHOT_LOG_BUFFER_OVERHEAD;
 	for (size_t i = 0; i < nsizes; ++i) {
-		result += ALIGN_UP(sizes[i] + TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT,
-				TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT);
-		if (result > SSIZE_MAX)
+		/* check for overflow */
+		if (sizes[i] + TX_SNAPSHOT_LOG_ENTRY_OVERHEAD +
+				TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT < sizes[i])
 			goto err_overflow;
+		/* each entry has its header */
+		size_t size =
+			ALIGN_UP(sizes[i] + TX_SNAPSHOT_LOG_ENTRY_OVERHEAD,
+				TX_SNAPSHOT_LOG_ENTRY_ALIGNMENT);
+		/* check for overflow */
+		if (result + size < result)
+			goto err_overflow;
+		/* sum up */
+		result += size;
 	}
 
 	/*
@@ -1819,55 +1829,73 @@ pmemobj_tx_log_snapshot_max_size(size_t *sizes, size_t nsizes)
 	 * into multiple allocations where each of them will have its own buffer
 	 * header and entry header
 	 */
-	size_t nallocs = result / PMEMOBJ_MAX_ALLOC_SIZE;
-	result += nallocs *
-	    (TX_INTENT_LOG_BUFFER_OVERHEAD + TX_INTENT_LOG_ENTRY_OVERHEAD);
+	size_t allocs_overhead = (result / PMEMOBJ_MAX_ALLOC_SIZE) *
+	    (TX_SNAPSHOT_LOG_BUFFER_OVERHEAD + TX_SNAPSHOT_LOG_ENTRY_OVERHEAD);
+	/* check for overflow */
+	if (result + allocs_overhead < result)
+		goto err_overflow;
+	result += allocs_overhead;
 
-	if (result > SSIZE_MAX)
+	/* SIZE_MAX is a special value */
+	if (result == SIZE_MAX)
 		goto err_overflow;
 
-	return (ssize_t)result;
+	return result;
 
 err_overflow:
 	errno = EOVERFLOW;
-	return -1;
+	return SIZE_MAX;
 }
 
 /*
  * pmemobj_tx_log_intent_max_size -- calculates the maximum size of a buffer
  * which will be able to hold nintents
  */
-ssize_t
+size_t
 pmemobj_tx_log_intent_max_size(size_t nintents)
 {
 	LOG(3, NULL);
 
-	/* do not allow to overflow during multiplication */
-	if (nintents > SSIZE_MAX / TX_INTENT_LOG_ENTRY_OVERHEAD)
+	/* check for overflow */
+	if (nintents > SIZE_MAX / TX_INTENT_LOG_ENTRY_OVERHEAD)
 		goto err_overflow;
+	/* each entry has its header */
+	size_t entries_overhead = nintents * TX_INTENT_LOG_ENTRY_OVERHEAD;
+	/* check for overflow */
+	if (entries_overhead + TX_INTENT_LOG_BUFFER_ALIGNMENT
+			< entries_overhead)
+		goto err_overflow;
+	/* the whole buffer is aligned */
+	size_t result =
+		ALIGN_UP(entries_overhead, TX_INTENT_LOG_BUFFER_ALIGNMENT);
 
-	/* sum up all overheads */
-	size_t result = TX_INTENT_LOG_BUFFER_OVERHEAD +
-	    ALIGN_UP(nintents * TX_INTENT_LOG_ENTRY_OVERHEAD,
-	    TX_INTENT_LOG_BUFFER_ALIGNMENT);
+	/* check for overflow */
+	if (result + TX_INTENT_LOG_BUFFER_OVERHEAD < result)
+		goto err_overflow;
+	/* add a buffer overhead */
+	result += TX_INTENT_LOG_BUFFER_OVERHEAD;
 
 	/*
 	 * if the result is bigger than a single allocation it must be divided
 	 * into multiple allocations where each of them will have its own buffer
 	 * header and entry header
 	 */
-	size_t nallocs = result / PMEMOBJ_MAX_ALLOC_SIZE;
-	result += nallocs *
+	size_t allocs_overhead = (result / PMEMOBJ_MAX_ALLOC_SIZE) *
 	    (TX_INTENT_LOG_BUFFER_OVERHEAD + TX_INTENT_LOG_ENTRY_OVERHEAD);
+	/* check for overflow */
+	if (result + allocs_overhead < result)
+		goto err_overflow;
+	result += allocs_overhead;
 
-	if (result > SSIZE_MAX)
+	/* SIZE_MAX is a special value */
+	if (result == SIZE_MAX)
 		goto err_overflow;
 
-	return (ssize_t)result;
+	return result;
 
 err_overflow:
 	errno = EOVERFLOW;
-	return -1;
+	return SIZE_MAX;
 }
 
 /*
