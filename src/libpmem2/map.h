@@ -44,6 +44,14 @@
 extern "C" {
 #endif
 
+#ifndef MAP_SYNC
+#define MAP_SYNC 0x80000
+#endif
+
+#ifndef MAP_SHARED_VALIDATE
+#define MAP_SHARED_VALIDATE 0x03
+#endif
+
 struct pmem2_map {
 	void *addr; /* base address */
 	size_t reserved_length; /* length of the mapping reservation */

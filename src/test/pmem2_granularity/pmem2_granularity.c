@@ -81,11 +81,69 @@ test_granularity_inval(const struct test_case *tc, int argc, char *argv[])
 	return 1;
 }
 
+static int
+test_granularity_req_page_avail_page(const struct test_case *tc,
+	int argc, char *argv[])
+{
+	if (argc != 1)
+		UT_FATAL("usage: test_granularity_req_page_avail_page <file>");
+
+	char *file = argv[0];
+	int fd = OPEN(file, O_RDWR);
+
+	struct pmem2_config cfg;
+	prepare_config(&cfg, &fd);
+
+	enum pmem2_granularity g = PMEM2_GRANULARITY_PAGE;
+	int ret = pmem2_config_set_required_store_granularity(&cfg, g);
+	UT_PMEM2_EXPECT_RETURN(ret, 0);
+
+	struct pmem2_map *map;
+	ret = pmem2_map(&cfg, &map);
+	UT_PMEM2_EXPECT_RETURN(ret, 0);
+	UT_ASSERTne(map, NULL);
+
+	pmem2_unmap(&map);
+	CLOSE(fd);
+
+	return 1;
+}
+
+static int
+test_granularity_req_page_avail_cl(const struct test_case *tc,
+	int argc, char *argv[])
+{
+	if (argc != 1)
+		UT_FATAL("usage: test_granularity_req_page_avail_page <file>");
+
+	char *file = argv[0];
+	int fd = OPEN(file, O_RDWR);
+
+	struct pmem2_config cfg;
+	prepare_config(&cfg, &fd);
+
+	enum pmem2_granularity g = PMEM2_GRANULARITY_PAGE;
+	int ret = pmem2_config_set_required_store_granularity(&cfg, g);
+	UT_PMEM2_EXPECT_RETURN(ret, 0);
+
+	struct pmem2_map *map;
+	ret = pmem2_map(&cfg, &map);
+	UT_PMEM2_EXPECT_RETURN(ret, 0);
+	UT_ASSERTne(map, NULL);
+
+	pmem2_unmap(&map);
+	CLOSE(fd);
+
+	return 1;
+}
+
 /*
  * test_cases -- available test cases
  */
 static struct test_case test_cases[] = {
 	TEST_CASE(test_granularity_inval),
+	TEST_CASE(test_granularity_req_page_avail_page),
+	TEST_CASE(test_granularity_req_page_avail_cl),
 };
 
 #define NTESTS ARRAY_SIZE(test_cases)
