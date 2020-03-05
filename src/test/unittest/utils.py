@@ -6,6 +6,8 @@
 import sys
 import platform
 
+import tools
+
 HEADER_SIZE = 4096
 
 #
@@ -23,6 +25,23 @@ def require_architectures(*archs):
     def wrapped(tc):
         if platform.machine() not in archs:
             tc.enabled = False
+        return tc
+
+    return wrapped
+
+
+def require_cpu_feature(feature):
+    """Enable test only when cpu feature is available"""
+    """ acceptable values: SSE2, AVX, AVX512 """
+    def wrapped(tc):
+        cpufd = tools.Tools(tc.ctx.env, tc.ctx.build).cpufd()
+        f = cpufd.returncode
+
+        if feature.upper() == 'AVX' and (f < 1):
+            tc.enabled = False
+        if feature.upper() == 'AVX512' and (f < 2):
+            tc.enabled = False
+
         return tc
 
     return wrapped

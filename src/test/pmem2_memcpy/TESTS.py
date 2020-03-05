@@ -43,11 +43,13 @@ class TEST0(Pmem2Memcpy):
 
 
 @t.require_architectures('x86_64')
+@t.require_cpu_feature('AVX512')
 class TEST1(Pmem2Memcpy):
     envs = ("PMEM_AVX512F",)
 
 
 @t.require_architectures('x86_64')
+@t.require_cpu_feature('AVX')
 class TEST2(Pmem2Memcpy):
     envs = ("PMEM_AVX",)
 

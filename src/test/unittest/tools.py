@@ -50,6 +50,9 @@ class Tools:
     def gran_detecto(self, *args):
         return self._run_test_tool('gran_detecto', *args)
 
+    def cpufd(self):
+        return self._run_test_tool('cpufd')
+
 
 class Ndctl:
     """ndctl CLI handle"""
