@@ -40,10 +40,19 @@ noflush64b(const char *addr)
 }
 
 #ifndef AVX512F_AVAILABLE
-/* XXX not supported in MSVC version we currently use */
+/* XXX not supported in MSVC version we currently use.
+ * Enable Windows tests pmem2_mem_ext when MSVC we
+ * use will support AVX512F.
+ */
 #ifdef _MSC_VER
+static __attribute__((used)) const char *msg =
+		"compiled AVX512";
+LOG(1, "%s", msg);
 #define AVX512F_AVAILABLE 0
 #else
+static __attribute__((used)) const char *msg =
+		"compiled AVX512f";
+LOG(1, "%s", msg);
 #define AVX512F_AVAILABLE 1
 #endif
 #endif
