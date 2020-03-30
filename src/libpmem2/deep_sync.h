@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
 int pmem2_deep_sync_write(int region_id);
+int pmem2_sync_cacheline(struct pmem2_map *map, void *ptr, size_t size);
 
 #ifdef __cplusplus
 }
