@@ -10,6 +10,7 @@
 #define PMDK_NDCTL_REGION_NAMESPACE_H 1
 
 #include "os.h"
+#include "region_namespace.h"
 
 #ifdef __cplusplus
 extern "C" {
