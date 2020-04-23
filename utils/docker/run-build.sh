@@ -15,6 +15,7 @@ set -e
 # Build all and run tests
 cd $WORKDIR
 if [ "$SRC_CHECKERS" != "0" ]; then
+	echo "nic"
 fi
 
 make -j$(nproc)
