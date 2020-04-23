@@ -15,8 +15,6 @@ set -e
 # Build all and run tests
 cd $WORKDIR
 if [ "$SRC_CHECKERS" != "0" ]; then
-	make -j$(nproc) check-license
-	make -j$(nproc) cstyle
 fi
 
 make -j$(nproc)

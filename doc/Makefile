@@ -120,9 +120,7 @@ MANPAGES_3_DUMMY += librpmem/rpmem_open.3 librpmem/rpmem_set_attr.3 librpmem/rpm
 		    librpmem/rpmem_drain.3
 endif
 
-ifeq ($(NDCTL_ENABLE),y)
 MANPAGES_1_MD += daxio/daxio.1.md
-endif
 
 MANPAGES_7_GROFF = $(MANPAGES_7_MD:.7.md=.7)
 MANPAGES_5_GROFF = $(MANPAGES_5_MD:.5.md=.5)

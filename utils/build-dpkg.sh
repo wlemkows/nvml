@@ -19,8 +19,7 @@ usage()
 	[ "$1" ] && echo Error: $1
 	cat >&2 <<EOF
 Usage: $0 [ -h ] -t version-tag -s source-dir -w working-dir -o output-dir
-	[ -e build-experimental ] [ -c run-check ]
-	[ -n with-ndctl ] [ -f testconfig-file ]
+	[ -e build-experimental ] [ -c run-check ] [ -f testconfig-file ]
 	[ -p build-libpmem2 ]
 
 -h			print this help message
@@ -30,7 +29,6 @@ Usage: $0 [ -h ] -t version-tag -s source-dir -w working-dir -o output-dir
 -o output-dir		output directory
 -e build-experimental	build experimental packages
 -c run-check		run package check
--n with-ndctl		build with libndctl
 -f testconfig-file	custom testconfig.sh
 -p build-libpmem2	build libpmem2 packages
 EOF
@@ -62,10 +60,6 @@ do
 		;;
 	-r)
 		BUILD_RPMEM="$2"
-		shift 2
-		;;
-	-n)
-		NDCTL_ENABLE="$2"
 		shift 2
 		;;
 	-t)
@@ -518,12 +512,6 @@ EOF
 
 cp LICENSE debian/copyright
 
-if [ -n "$NDCTL_ENABLE" ]; then
-	pass_ndctl_enable="NDCTL_ENABLE=$NDCTL_ENABLE"
-else
-	pass_ndctl_enable=""
-fi
-
 cat << EOF > debian/rules
 #!/usr/bin/make -f
 #export DH_VERBOSE=1
@@ -534,10 +522,10 @@ override_dh_strip:
 	dh_strip --dbg-package=$PACKAGE_NAME-dbg
 
 override_dh_auto_build:
-	dh_auto_build -- EXPERIMENTAL=${EXPERIMENTAL} prefix=/$PREFIX libdir=/$LIB_DIR includedir=/$INC_DIR docdir=/$DOC_DIR man1dir=/$MAN1_DIR man3dir=/$MAN3_DIR man5dir=/$MAN5_DIR man7dir=/$MAN7_DIR sysconfdir=/etc bashcompdir=/usr/share/bash-completion/completions NORPATH=1 ${pass_ndctl_enable} SRCVERSION=$SRCVERSION PMEM2_INSTALL=${PMEM2_INSTALL}
+	dh_auto_build -- EXPERIMENTAL=${EXPERIMENTAL} prefix=/$PREFIX libdir=/$LIB_DIR includedir=/$INC_DIR docdir=/$DOC_DIR man1dir=/$MAN1_DIR man3dir=/$MAN3_DIR man5dir=/$MAN5_DIR man7dir=/$MAN7_DIR sysconfdir=/etc bashcompdir=/usr/share/bash-completion/completions NORPATH=1 SRCVERSION=$SRCVERSION PMEM2_INSTALL=${PMEM2_INSTALL}
 
 override_dh_auto_install:
-	dh_auto_install -- EXPERIMENTAL=${EXPERIMENTAL} prefix=/$PREFIX libdir=/$LIB_DIR includedir=/$INC_DIR docdir=/$DOC_DIR man1dir=/$MAN1_DIR man3dir=/$MAN3_DIR man5dir=/$MAN5_DIR man7dir=/$MAN7_DIR sysconfdir=/etc bashcompdir=/usr/share/bash-completion/completions NORPATH=1 ${pass_ndctl_enable} SRCVERSION=$SRCVERSION PMEM2_INSTALL=${PMEM2_INSTALL}
+	dh_auto_install -- EXPERIMENTAL=${EXPERIMENTAL} prefix=/$PREFIX libdir=/$LIB_DIR includedir=/$INC_DIR docdir=/$DOC_DIR man1dir=/$MAN1_DIR man3dir=/$MAN3_DIR man5dir=/$MAN5_DIR man7dir=/$MAN7_DIR sysconfdir=/etc bashcompdir=/usr/share/bash-completion/completions NORPATH=1 SRCVERSION=$SRCVERSION PMEM2_INSTALL=${PMEM2_INSTALL}
 	find -path './debian/*usr/share/man/man*/*.gz' -exec gunzip {} \;
 
 override_dh_install:
@@ -800,11 +788,8 @@ then
 fi
 
 # daxio
-if [ "${NDCTL_ENABLE}" != "n" ]
-then
-	append_daxio_control;
-	daxio_install_triggers_overrides;
-fi
+append_daxio_control;
+daxio_install_triggers_overrides;
 
 # Convert ChangeLog to debian format
 CHANGELOG_TMP=changelog.tmp
@@ -823,7 +808,6 @@ debuild --preserve-envvar=EXTRA_CFLAGS_RELEASE \
 	--preserve-envvar=EXTRA_CFLAGS \
 	--preserve-envvar=EXTRA_CXXFLAGS \
 	--preserve-envvar=EXTRA_LDFLAGS \
-	--preserve-envvar=NDCTL_ENABLE \
 	-us -uc -b
 
 cd $OLD_DIR

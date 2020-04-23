@@ -24,7 +24,7 @@ usage()
 	cat >&2 <<EOF
 Usage: $0 [ -h ] -t version-tag -s source-dir -w working-dir -o output-dir
 	[ -d distro ] [ -e build-experimental ] [ -c run-check ]
-	[ -r build-rpmem ] [ -n with-ndctl ] [ -f testconfig-file ]
+	[ -r build-rpmem ] [ -f testconfig-file ]
 	[ -p build-libpmem2 ]
 
 -h			print this help message
@@ -36,7 +36,6 @@ Usage: $0 [ -h ] -t version-tag -s source-dir -w working-dir -o output-dir
 -e build-experimental	build experimental packages
 -c run-check		run package check
 -r build-rpmem		build librpmem and rpmemd packages
--n with-ndctl		build with libndctl
 -f testconfig-file	custom testconfig.sh
 -p build-libpmem2	build libpmem2 packages
 EOF
@@ -68,10 +67,6 @@ do
 		;;
 	-r)
 		BUILD_RPMEM="$2"
-		shift 2
-		;;
-	-n)
-		NDCTL_ENABLE="$2"
 		shift 2
 		;;
 	-t)
@@ -223,14 +218,6 @@ then
 	RPMBUILD_OPTS+=(--with fabric)
 else
 	RPMBUILD_OPTS+=(--without fabric)
-fi
-
-# daxio & RAS
-if [ "${NDCTL_ENABLE}" = "n" ]
-then
-	RPMBUILD_OPTS+=(--without ndctl)
-else
-	RPMBUILD_OPTS+=(--with ndctl)
 fi
 
 # use specified testconfig file or default

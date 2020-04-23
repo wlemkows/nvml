@@ -364,37 +364,29 @@ LIBDL=-ldl
 LIBUTIL=
 LIBUUID=
 
-NDCTL_ENABLE ?= y
-
-# Detect libndctl if not disabled.
-ifeq ($(NDCTL_ENABLE),y)
-    ifeq ($(LIBNDCTL_LIBS),)
-        HAS_NDCTL :=  $(call check_package, libndctl --atleast-version $(NDCTL_MIN_VERSION))
-        ifeq ($(HAS_NDCTL),y)
-            OS_DIMM_CFLAG=-DNDCTL_ENABLED=1
-        else
-            $(error Please install libndctl-dev/libndctl-devel >= $(NDCTL_MIN_VERSION))
-        endif
-        HAS_DAXCTL := $(call check_package, libdaxctl --atleast-version $(NDCTL_MIN_VERSION))
-        ifeq ($(HAS_DAXCTL),n)
-            $(error Please install libdaxctl-dev/libdaxctl-devel >= $(NDCTL_MIN_VERSION))
-        endif
-        LIBNDCTL_PKG_CONFIG_DEPS := libndctl libdaxctl
-        LIBNDCTL_PKG_CONFIG_DEPS_VAR := ,libndctl,libdaxctl
-        LIBNDCTL_CFLAGS := $(shell $(PKG_CONFIG) --cflags $(LIBNDCTL_PKG_CONFIG_DEPS))
-        LIBNDCTL_LD_LIBRARY_PATHS := $(shell $(PKG_CONFIG) --variable=libdir $(LIBNDCTL_PKG_CONFIG_DEPS) | sed "s/ /:/")
-        LIBNDCTL_LIBS := $(shell $(PKG_CONFIG) --libs $(LIBNDCTL_PKG_CONFIG_DEPS))
+# Detect libndctl.
+ifeq ($(LIBNDCTL_LIBS),)
+    HAS_NDCTL :=  $(call check_package, libndctl --atleast-version $(NDCTL_MIN_VERSION))
+    ifeq ($(HAS_NDCTL),n)
+        $(error Please install libndctl-dev/libndctl-devel >= $(NDCTL_MIN_VERSION))
     endif
-    OS_DIMM := ndctl
-else
-    OS_DIMM := none
+    HAS_DAXCTL := $(call check_package, libdaxctl --atleast-version $(NDCTL_MIN_VERSION))
+    ifeq ($(HAS_DAXCTL),n)
+        $(error Please install libdaxctl-dev/libdaxctl-devel >= $(NDCTL_MIN_VERSION))
+    endif
+    LIBNDCTL_PKG_CONFIG_DEPS := libndctl libdaxctl
+    LIBNDCTL_PKG_CONFIG_DEPS_VAR := ,libndctl,libdaxctl
+    LIBNDCTL_CFLAGS := $(shell $(PKG_CONFIG) --cflags $(LIBNDCTL_PKG_CONFIG_DEPS))
+    LIBNDCTL_LD_LIBRARY_PATHS := $(shell $(PKG_CONFIG) --variable=libdir $(LIBNDCTL_PKG_CONFIG_DEPS) | sed "s/ /:/")
+    LIBNDCTL_LIBS := $(shell $(PKG_CONFIG) --libs $(LIBNDCTL_PKG_CONFIG_DEPS))
+	OS_DIMM := ndctl
 endif
+
 export OS_DIMM
 export LIBNDCTL_PKG_CONFIG_DEPS
 export LIBNDCTL_PKG_CONFIG_DEPS_VAR
 export LIBNDCTL_CFLAGS
 export LIBNDCTL_LD_LIBRARY_PATHS
 export LIBNDCTL_LIBS
-export OS_DIMM_CFLAG
 
 endif

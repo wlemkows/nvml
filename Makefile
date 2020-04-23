@@ -122,7 +122,7 @@ rpm dpkg: pkg-clean
 	$(MAKE) source DESTDIR="$(DESTDIR)"
 	+utils/build-$@.sh -t $(SRCVERSION) -s "$(DESTDIR)"/pmdk -w "$(DESTDIR)" -o $(CURDIR)/$@\
 			-e $(EXPERIMENTAL) -c $(BUILD_PACKAGE_CHECK) -r $(BUILD_RPMEM)\
-			-f $(TEST_CONFIG_FILE) -n $(NDCTL_ENABLE) -p $(PMEM2_INSTALL)
+			-f $(TEST_CONFIG_FILE) -p $(PMEM2_INSTALL)
 
 install: all
 

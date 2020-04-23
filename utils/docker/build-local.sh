@@ -61,7 +61,6 @@ else
 fi
 
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
-if [ -z "$NDCTL_ENABLE" ]; then ndctl_enable=; else ndctl_enable="--env NDCTL_ENABLE=$NDCTL_ENABLE"; fi
 
 WORKDIR=/pmdk
 SCRIPTSDIR=$WORKDIR/utils/docker
@@ -102,7 +101,6 @@ docker run --name=$containerName -ti \
 	--env KEEP_TEST_CONFIG=$KEEP_TEST_CONFIG \
 	--env CI_RUN=$CI_RUN \
 	--env BLACKLIST_FILE=$BLACKLIST_FILE \
-	$ndctl_enable \
 	--tmpfs /tmp:rw,relatime,suid,dev,exec,size=6G \
 	-v $HOST_WORKDIR:$WORKDIR \
 	-v /etc/localtime:/etc/localtime \

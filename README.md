@@ -128,10 +128,7 @@ or features:
 
 * **libfabric** (v1.4.2 or later) -- required by **librpmem**
 
-><sup>1</sup> PMDK depends on libndctl to support RAS features. It is possible
-to disable this support by passing NDCTL_ENABLE=n to "make", but we strongly
-discourage users from doing that. Disabling NDCTL strips PMDK from ability to
-detect hardware failures, which may lead to silent data corruption.
+><sup>1</sup> PMDK depends on libndctl to support RAS features.
 For information how to disable RAS at runtime for kernels prior to 5.0.4 please
 see https://github.com/pmem/pmdk/issues/4207.
 

@@ -1,7 +1,6 @@
 
 # rpmbuild options:
 #   --with | --without fabric
-#   --with | --without ndctl
 #   --define _testconfig <path to custom testconfig.sh>
 #   --define _skip_check 1
 #   --define _pmem2_install 1
@@ -24,8 +23,6 @@
 %else
 %bcond_with fabric
 %endif
-
-%bcond_without ndctl
 
 %define min_libfabric_ver __LIBFABRIC_MIN_VER__
 %define min_ndctl_ver __NDCTL_MIN_VER__
@@ -55,13 +52,11 @@ BuildRequires:	gdb
 BuildRequires: fdupes
 %endif
 
-%if %{with ndctl}
 %if %{defined suse_version}
 BuildRequires:	libndctl-devel >= %{min_ndctl_ver}
 %else
 BuildRequires:	ndctl-devel >= %{min_ndctl_ver}
 BuildRequires:	daxctl-devel >= %{min_ndctl_ver}
-%endif
 %endif
 
 %if %{with fabric}
@@ -610,9 +605,6 @@ provided in the command line options to check whether files are in a consistent 
 %license LICENSE
 %doc ChangeLog CONTRIBUTING.md README.md
 
-
-%if %{with ndctl}
-
 %package -n daxio
 Summary: Perform I/O on Device DAX devices or zero a Device DAX device
 Group: __GROUP_SYS_BASE__
@@ -631,8 +623,6 @@ a device.
 %license LICENSE
 %doc ChangeLog CONTRIBUTING.md README.md
 
-%endif # _with_ndctl
-
 %prep
 %setup -q -n %{name}-%{version}
 
@@ -643,18 +633,12 @@ a device.
 CFLAGS="%{optflags}" \
 LDFLAGS="%{?__global_ldflags}" \
 make %{?_smp_mflags} \
-%if %{without ndctl}
-	NDCTL_ENABLE=n \
-%endif
 	__MAKE_FLAGS__
 
 
 # Override LIB_AR with empty string to skip installation of static libraries
 %install
 make install DESTDIR=%{buildroot} \
-%if %{without ndctl}
-        NDCTL_ENABLE=n \
-%endif
 	LIB_AR= \
 	prefix=%{_prefix} \
 	libdir=%{_libdir} \
@@ -680,11 +664,7 @@ __MAKE_INSTALL_FDUPES__
 		echo 'TEST_BUILD="debug nondebug"' >> src/test/testconfig.sh
 		echo 'TEST_FS="pmem any none"' >> src/test/testconfig.sh
 	%endif
-	make \
-%if %{without ndctl}
-        NDCTL_ENABLE=n \
-%endif
-	check
+	make check
 %endif
 
 %post   -n libpmem__PKG_NAME_SUFFIX__ -p /sbin/ldconfig

@@ -482,7 +482,6 @@ CFLAGS += $(EXTRA_CFLAGS)
 LDFLAGS = -Wl,--warn-common -Wl,--fatal-warnings $(EXTRA_LDFLAGS)
 
 ifeq ($(OS_DIMM),ndctl)
-CFLAGS += $(OS_DIMM_CFLAG)
 CFLAGS += -DSDS_ENABLED
 endif
 
