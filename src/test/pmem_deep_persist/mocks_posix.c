@@ -43,3 +43,18 @@ FUNC_MOCK_RUN_DEFAULT {
 	return _FUNC_REAL(write)(fd, buffer, count);
 }
 FUNC_MOCK_END
+
+/*
+ * read  -- read mock
+ */
+FUNC_MOCK(read, size_t, int fd, void *buffer, size_t nbyte)
+FUNC_MOCK_RUN_DEFAULT {
+	if (fd == 999) {
+		char pattern[2] = {'1', '\n'};
+		memcpy(buffer, pattern, sizeof(pattern));
+		UT_OUT("mocked read, fd %d", fd);
+		return sizeof(buffer);
+	}
+	return _FUNC_REAL(read)(fd, buffer, nbyte);
+}
+FUNC_MOCK_END
