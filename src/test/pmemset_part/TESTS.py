@@ -1,6 +1,6 @@
 #!../env.py
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2021, Intel Corporation
 #
 
 import testframework as t
@@ -126,3 +126,20 @@ class TEST19(PMEMSET_PART):
     """map a part turn on the coalescing feature and map a part second time"""
     test_case = "test_part_map_coalesce_after"
     file_size = 64 * t.KiB
+
+
+class TEST20(PMEMSET_PART):
+    """
+    map two parts to the pmemset, iterate over
+    the set to find them, then remove them
+    """
+    test_case = "test_remove_part_map"
+
+
+class TEST21(PMEMSET_PART):
+    """
+    enable the part coalescing feature, map two parts to the pmemset.
+    If no error returned those parts should appear as single part mapping.
+    Iterate over the set to obtain coalesced part mapping and delete it.
+    """
+    test_case = "test_coalescing_remove_part_map"
