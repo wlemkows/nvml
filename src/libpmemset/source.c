@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * source.c -- implementation of common config API
@@ -29,7 +29,28 @@ struct pmemset_source {
 			struct pmem2_source *src;
 		} pmem2;
 	};
+	struct pmemset_file *file_set;
 };
+
+/*
+ * pmemset_source_create -- validate and create source from file
+ */
+static int
+pmemset_source_create(struct pmemset_source *srcp)
+{
+	int ret;
+
+	ret = pmemset_source_validate(srcp);
+	if (ret)
+		goto end;
+
+	/* last param cfg will be needed in the future */
+	ret = pmemset_source_create_pmemset_file(srcp, &srcp->file_set, NULL);
+	if (ret)
+		goto end;
+end:
+	return ret;
+}
 
 /*
  * pmemset_source_from_pmem2 -- create pmemset source using source from pmem2
@@ -57,9 +78,17 @@ pmemset_source_from_pmem2(struct pmemset_source **src,
 	srcp->type = PMEMSET_SOURCE_PMEM2;
 	srcp->pmem2.src = pmem2_src;
 
+	ret = pmemset_source_create(srcp);
+	if (ret)
+		goto free_srcp;
+
 	*src = srcp;
 
 	return 0;
+
+free_srcp:
+	Free(srcp);
+	return ret;
 }
 
 #ifndef _WIN32
@@ -94,9 +123,17 @@ pmemset_source_from_file(struct pmemset_source **src, const char *file)
 		return PMEMSET_E_ERRNO;
 	}
 
+	ret = pmemset_source_create(srcp);
+	if (ret)
+		goto free_srcp;
+
 	*src = srcp;
 
 	return 0;
+
+free_srcp:
+	Free(srcp);
+	return ret;
 }
 
 /*
@@ -138,9 +175,18 @@ pmemset_source_from_fileU(struct pmemset_source **src, const char *file)
 		Free(srcp);
 		return PMEMSET_E_ERRNO;
 	}
+
+	ret = pmemset_source_create(srcp);
+	if (ret)
+		goto free_srcp;
+
 	*src = srcp;
 
 	return 0;
+
+free_srcp:
+	Free(srcp);
+	return ret;
 }
 
 /*
@@ -365,8 +411,14 @@ static const struct {
 int
 pmemset_source_delete(struct pmemset_source **src)
 {
+	if (! *src)
+		return 0;
+
 	enum pmemset_source_type type = (*src)->type;
 	ASSERTne(type, PMEMSET_SOURCE_UNSPECIFIED);
+
+	struct pmemset_file *f = pmemset_source_get_set_file(*src);
+	pmemset_file_delete(&f);
 
 	pmemset_source_ops[type].destroy(src);
 
@@ -427,4 +479,10 @@ pmemset_source_create_pmemset_file(struct pmemset_source *src,
 	ASSERTne(type, PMEMSET_SOURCE_UNSPECIFIED);
 
 	return pmemset_source_ops[type].create_file(src, file, cfg);
+}
+
+struct pmemset_file *
+pmemset_source_get_set_file(struct pmemset_source *src)
+{
+	return src->file_set;
 }
