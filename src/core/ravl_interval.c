@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * ravl_interval.c -- ravl_interval implementation
@@ -40,11 +40,13 @@ ravl_interval_compare(const void *lhs, const void *rhs)
 	const struct ravl_interval_node *left = lhs;
 	const struct ravl_interval_node *right = rhs;
 
-	if (left->get_max(left->addr) <= right->get_min(right->addr))
-		return -1;
 	if (left->get_min(left->addr) >= right->get_max(right->addr))
 		return 1;
-	return 0;
+	if (left->get_min(left->addr) == right->get_min(right->addr) &&
+		left->get_max(left->addr) == right->get_max(right->addr))
+		return 0;
+
+	return -1;
 }
 
 /*
@@ -131,29 +133,44 @@ ravl_interval_remove(struct ravl_interval *ri, struct ravl_interval_node *rin)
 }
 
 /*
- * ravl_interval_find_prior_or_eq -- find overlapping interval starting prior to
- *                                   the current one or at the same place
+ * ravl_interval_find_prior -- find overlapping interval starting prior to
+ *                             the current one
  */
 static struct ravl_interval_node *
-ravl_interval_find_prior_or_eq(struct ravl *tree,
-		struct ravl_interval_node *rin)
+ravl_interval_find_prior(struct ravl *tree, struct ravl_interval_node *rin)
 {
 	struct ravl_node *node;
 	struct ravl_interval_node *cur;
 
-	node = ravl_find(tree, rin, RAVL_PREDICATE_LESS_EQUAL);
+	node = ravl_find(tree, rin, RAVL_PREDICATE_LESS);
 	if (!node)
 		return NULL;
 
 	cur = ravl_data(node);
 	/*
 	 * If the end of the found interval is below the searched boundary, then
-	 * this is not our interval.
+	 * those intervals are not overlapping.
 	 */
 	if (cur->get_max(cur->addr) <= rin->get_min(rin->addr))
 		return NULL;
 
 	return cur;
+}
+
+/*
+ * ravl_interval_find_eq -- find overlapping interval starting neither prior or
+ *                          lather than the current one
+ */
+static struct ravl_interval_node *
+ravl_interval_find_eq(struct ravl *tree, struct ravl_interval_node *rin)
+{
+	struct ravl_node *node;
+
+	node = ravl_find(tree, rin, RAVL_PREDICATE_EQUAL);
+	if (!node)
+		return NULL;
+
+	return ravl_data(node);
 }
 
 /*
@@ -174,7 +191,7 @@ ravl_interval_find_later(struct ravl *tree, struct ravl_interval_node *rin)
 
 	/*
 	 * If the beginning of the found interval is above the end of
-	 * the searched range, then this is not our interval.
+	 * the searched range, then those interval are not overlapping
 	 */
 	if (cur->get_min(cur->addr) >= rin->get_max(rin->addr))
 		return NULL;
@@ -213,7 +230,9 @@ ravl_interval_find(struct ravl_interval *ri, void *addr)
 	range.get_max = ri->get_max;
 
 	struct ravl_interval_node *cur;
-	cur = ravl_interval_find_prior_or_eq(ri->tree, &range);
+	cur = ravl_interval_find_prior(ri->tree, &range);
+	if (!cur)
+		cur = ravl_interval_find_eq(ri->tree, &range);
 	if (!cur)
 		cur = ravl_interval_find_later(ri->tree, &range);
 
