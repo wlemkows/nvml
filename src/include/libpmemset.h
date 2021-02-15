@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * libpmemset.h -- definitions of libpmemset entry points (EXPERIMENTAL)
@@ -128,13 +128,13 @@ int pmemset_get_store_granularity(struct pmemset *set,
 		PMEMSET_F_MEM_WB | \
 		PMEMSET_F_MEM_NOFLUSH)
 
-int pmemset_memmove(struct pmemset *set, void *pmemdest, const void *src,
+void *pmemset_memmove(struct pmemset *set, void *pmemdest, const void *src,
 		size_t len, unsigned flags);
 
-int pmemset_memcpy(struct pmemset *set, void *pmemdest, const void *src,
+void *pmemset_memcpy(struct pmemset *set, void *pmemdest, const void *src,
 		size_t len, unsigned flags);
 
-int pmemset_memset(struct pmemset *set, void *pmemdest, int c, size_t len,
+void *pmemset_memset(struct pmemset *set, void *pmemdest, int c, size_t len,
 		unsigned flags);
 
 int pmemset_deep_flush(struct pmemset *set, void *ptr, size_t size);
