@@ -17,12 +17,14 @@ INCS += -I$(TOP)/src/librpmem
 INCS += -I$(TOP)/src/libpmem2
 
 vpath %.c ../librpmem
+vpath %.c ../libpmemblk
 
 include ../core/pmemcore.inc
 include ../common/pmemcommon.inc
 
 SOURCE +=\
 	libpmempool.c\
+	btt.c\
 	check.c\
 	check_bad_blocks.c\
 	check_backup.c\
@@ -45,9 +47,9 @@ SOURCE +=\
 	transform.c\
 	rm.c
 
-LIBPMEMBLK_PRIV_FUNCS=btt_info_set btt_arena_datasize btt_flog_size\
-	btt_map_size btt_flog_get_valid map_entry_is_initial btt_info_convert2h\
-	btt_info_convert2le btt_flog_convert2h btt_flog_convert2le
+#LIBPMEMBLK_PRIV_FUNCS=btt_info_set btt_arena_datasize btt_flog_size\
+#	btt_map_size btt_flog_get_valid map_entry_is_initial btt_info_convert2h\
+#	btt_info_convert2le btt_flog_convert2h btt_flog_convert2le
 
 include ../Makefile.inc
 
@@ -55,7 +57,3 @@ CFLAGS += $(LIBNDCTL_CFLAGS)
 LIBS += -pthread -lpmem $(LIBDL) $(LIBNDCTL_LIBS)
 CFLAGS += -DUSE_LIBDL
 CFLAGS += -DUSE_RPMEM
-
-pmemblk_priv_funcs.o: $(PMEMBLK_PRIV_OBJ)
-	$(OBJCOPY) --localize-hidden $(addprefix -G, $(LIBPMEMBLK_PRIV_FUNCS)) \
-	$< $@

@@ -8,12 +8,15 @@ TOP=../../../..
 
 SCP_TO_REMOTE_NODES = y
 
+vpath %.c ../../../libpmemblk/
+
 TARGET = pmemspoil
 
-OBJS = spoil.o
+OBJS = spoil.o btt.o
 
-LIBPMEM=y
+LIBPMEM=internal-debug
 TOOLS_COMMON=y
-LIBPMEMBLK_PRIV=btt_info_convert2h
+#LIBPMEMBLK_PRIV=btt_info_convert2h
+INCS += -I$(TOP)/src/libpmemblk
 
 include $(TOP)/src/tools/Makefile.inc

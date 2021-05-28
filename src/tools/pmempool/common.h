@@ -13,7 +13,6 @@
 #include "queue.h"
 #include "log.h"
 #include "blk.h"
-#include "libpmemobj.h"
 #include "lane.h"
 #include "ulog.h"
 #include "memops.h"

@@ -23,6 +23,7 @@
 
 #include "set.h"
 #include "output.h"
+#include "obj.h"
 #include "libpmemblk.h"
 #include "libpmemlog.h"
 #include "libpmempool.h"

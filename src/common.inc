@@ -305,6 +305,32 @@ export pkgconfigdir := $(libdir)/pkgconfig
 export bindir := $(exec_prefix)/bin
 export bashcompdir := $(sysconfdir)/bash_completion.d
 
+$(info ************  TEST COMMON.INC ****************************************************** ************)
+
+ifeq ($(OBJS_LIBPMEMOBJ_DEBUG),)
+OBJS_LIBPMEMOBJ_DEBUG = \
+	$(TOP)/src/debug/libpmemobj/alloc_class.o\
+	$(TOP)/src/debug/libpmemobj/bucket.o\
+	$(TOP)/src/debug/libpmemobj/container_ravl.o\
+	$(TOP)/src/debug/libpmemobj/container_seglists.o\
+	$(TOP)/src/debug/libpmemobj/critnib.o\
+	$(TOP)/src/debug/libpmemobj/ctl_debug.o\
+	$(TOP)/src/debug/libpmemobj/heap.o\
+	$(TOP)/src/debug/libpmemobj/lane.o\
+	$(TOP)/src/debug/libpmemobj/libpmemobj.o\
+	$(TOP)/src/debug/libpmemobj/list.o\
+	$(TOP)/src/debug/libpmemobj/memblock.o\
+	$(TOP)/src/debug/libpmemobj/memops.o\
+	$(TOP)/src/debug/libpmemobj/obj.o\
+	$(TOP)/src/debug/libpmemobj/palloc.o\
+	$(TOP)/src/debug/libpmemobj/pmalloc.o\
+	$(TOP)/src/debug/libpmemobj/recycler.o\
+	$(TOP)/src/debug/libpmemobj/ulog.o\
+	$(TOP)/src/debug/libpmemobj/sync.o\
+	$(TOP)/src/debug/libpmemobj/tx.o\
+	$(TOP)/src/debug/libpmemobj/stats.o
+endif
+
 LIBFABRIC_MIN_VERSION := 1.4.2
 
 # Keep in sync with requirements in src/test/unittest/unittest.sh and

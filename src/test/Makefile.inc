@@ -71,7 +71,9 @@ endif
 ifeq ($(LIBPMEMOBJ), internal-debug)
 LIBPMEM=y
 LIBPMEMCOMMON=internal-debug
-OBJS += $(TOP)/src/debug/libpmemobj/alloc_class.o\
+$(info ************  TEST MAKEFILE.INC test $(OBJS_LIBPMEMOBJ_DEBUG)****************************************************** ************)
+OBJS += \
+	$(TOP)/src/debug/libpmemobj/alloc_class.o\
 	$(TOP)/src/debug/libpmemobj/bucket.o\
 	$(TOP)/src/debug/libpmemobj/container_ravl.o\
 	$(TOP)/src/debug/libpmemobj/container_seglists.o\
@@ -91,7 +93,6 @@ OBJS += $(TOP)/src/debug/libpmemobj/alloc_class.o\
 	$(TOP)/src/debug/libpmemobj/sync.o\
 	$(TOP)/src/debug/libpmemobj/tx.o\
 	$(TOP)/src/debug/libpmemobj/stats.o
-
 INCS += -I$(TOP)/src/libpmemobj
 endif
 

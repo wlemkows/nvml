@@ -5,6 +5,7 @@
 #
 
 vpath %.c ../../rpmem_common/
+#vpath %.c ../../libpmemblk/
 
 TOP = ../../..
 include $(TOP)/src/common.inc
@@ -24,7 +25,6 @@ OBJS = rpmemd.o\
 
 LIBPMEM=y
 TOOLS_COMMON=y
-LIBPMEMBLK_PRIV=btt_info_convert2h
 
 INCS += -I$(TOP)/src/rpmem_common
 CFLAGS += -DRPMEMC_LOG_RPMEMD
